@@ -7,6 +7,9 @@ import {
   TouchableOpacity,
   Dimensions,
   Modal,
+  TextInput,
+  Alert,
+  Image,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
@@ -30,11 +33,18 @@ type FilterType = "all" | "expense" | "saving";
 type TabType = "list" | "reports";
 
 export const TransactionsScreen = () => {
-  const { expenses, emotions, categories } = useAppStore();
+  const { expenses, emotions, categories, deleteExpense, tags } = useAppStore();
   const { isDark } = useTheme();
   const colors = getColors(isDark);
   const [filter, setFilter] = useState<FilterType>("all");
   const [activeTab, setActiveTab] = useState<TabType>("list");
+
+  // Search
+  const [searchQuery, setSearchQuery] = useState("");
+
+  // Edit/Delete
+  const [selectedExpense, setSelectedExpense] = useState<Expense | null>(null);
+  const [showActionMenu, setShowActionMenu] = useState(false);
 
   // Filtros avançados
   const [showFilters, setShowFilters] = useState(false);
@@ -58,9 +68,58 @@ export const TransactionsScreen = () => {
     Calmo: "#14B8A6",
   };
 
+  // Handle long press
+  const handleLongPress = (expense: Expense) => {
+    setSelectedExpense(expense);
+    setShowActionMenu(true);
+  };
+
+  // Handle delete
+  const handleDelete = () => {
+    if (!selectedExpense) return;
+    
+    Alert.alert(
+      "Confirmar exclusão",
+      "Tem certeza que deseja excluir esta transação?",
+      [
+        { text: "Cancelar", style: "cancel" },
+        {
+          text: "Excluir",
+          style: "destructive",
+          onPress: async () => {
+            try {
+              await deleteExpense(selectedExpense.id!);
+              setShowActionMenu(false);
+              setSelectedExpense(null);
+            } catch (error) {
+              Alert.alert("Erro", "Não foi possível excluir a transação");
+            }
+          },
+        },
+      ]
+    );
+  };
+
   // Filtrar transações
   const filteredExpenses = expenses
     .filter((e) => {
+      // Filtro por busca
+      if (searchQuery) {
+        const query = searchQuery.toLowerCase();
+        const categoryName = getCategoryName(e.categoryId).toLowerCase();
+        const emotionName = getEmotionName(e.emotionId).toLowerCase();
+        const note = (e.note || "").toLowerCase();
+        const amount = e.amount.toString();
+        
+        const matchesSearch = 
+          categoryName.includes(query) ||
+          emotionName.includes(query) ||
+          note.includes(query) ||
+          amount.includes(query);
+        
+        if (!matchesSearch) return false;
+      }
+
       // Filtro por tipo (all, expense, saving)
       if (filter !== "all" && e.type !== filter) return false;
 
@@ -235,9 +294,16 @@ export const TransactionsScreen = () => {
   const renderTransaction = (expense: Expense) => {
     const isExpense = expense.type === "expense";
     const categoryColor = getCategoryColor(expense.categoryId);
+    const hasAttachments = expense.attachments && expense.attachments.length > 0;
 
     return (
-      <View key={expense.id} style={styles.transactionCard}>
+      <TouchableOpacity
+        key={expense.id}
+        style={styles.transactionCard}
+        onLongPress={() => handleLongPress(expense)}
+        activeOpacity={0.7}
+        delayLongPress={500}
+      >
         <View style={styles.transactionHeader}>
           <View style={styles.transactionLeft}>
             <View
@@ -283,7 +349,24 @@ export const TransactionsScreen = () => {
             {expense.note}
           </Text>
         )}
-      </View>
+        {hasAttachments && (
+          <View style={styles.attachmentsPreview}>
+            <Ionicons name="images" size={14} color={colors.primary[500]} />
+            <Text style={styles.attachmentsCount}>
+              {expense.attachments!.length} {expense.attachments!.length === 1 ? 'foto' : 'fotos'}
+            </Text>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+              {expense.attachments!.slice(0, 3).map((uri, index) => (
+                <Image
+                  key={index}
+                  source={{ uri }}
+                  style={styles.attachmentThumbnail}
+                />
+              ))}
+            </ScrollView>
+          </View>
+        )}
+      </TouchableOpacity>
     );
   };
 
@@ -573,6 +656,27 @@ export const TransactionsScreen = () => {
           </Text>
         </TouchableOpacity>
       </View>
+
+      {/* Search Bar */}
+      {activeTab === "list" && (
+        <View style={styles.searchContainer}>
+          <View style={styles.searchInputWrapper}>
+            <Ionicons name="search" size={20} color={colors.text.tertiary} />
+            <TextInput
+              style={styles.searchInput}
+              placeholder="Buscar por categoria, emoção, valor..."
+              placeholderTextColor={colors.gray[400]}
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+            />
+            {searchQuery.length > 0 && (
+              <TouchableOpacity onPress={() => setSearchQuery("")}>
+                <Ionicons name="close-circle" size={20} color={colors.text.tertiary} />
+              </TouchableOpacity>
+            )}
+          </View>
+        </View>
+      )}
 
       {/* Filtros */}
       <View style={styles.filterContainer}>
@@ -917,6 +1021,53 @@ export const TransactionsScreen = () => {
             </View>
           </View>
         </View>
+      </Modal>
+
+      {/* Action Menu Modal */}
+      <Modal
+        visible={showActionMenu}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowActionMenu(false)}
+      >
+        <TouchableOpacity
+          style={styles.modalOverlay}
+          activeOpacity={1}
+          onPress={() => setShowActionMenu(false)}
+        >
+          <View style={styles.actionMenu}>
+            <View style={styles.actionMenuHeader}>
+              <Text style={styles.actionMenuTitle}>Ações</Text>
+              <TouchableOpacity onPress={() => setShowActionMenu(false)}>
+                <Ionicons name="close" size={24} color={colors.text.primary} />
+              </TouchableOpacity>
+            </View>
+            
+            <TouchableOpacity
+              style={styles.actionMenuItem}
+              onPress={handleDelete}
+              activeOpacity={0.7}
+            >
+              <Ionicons name="trash-outline" size={24} color={colors.error} />
+              <Text style={[styles.actionMenuText, { color: colors.error }]}>
+                Excluir Transação
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.actionMenuItem}
+              onPress={() => {
+                setShowActionMenu(false);
+                // TODO: Navigate to edit screen
+                Alert.alert("Em breve", "Funcionalidade de edição em desenvolvimento");
+              }}
+              activeOpacity={0.7}
+            >
+              <Ionicons name="create-outline" size={24} color={colors.primary[500]} />
+              <Text style={styles.actionMenuText}>Editar Transação</Text>
+            </TouchableOpacity>
+          </View>
+        </TouchableOpacity>
       </Modal>
     </SafeAreaView>
   );
@@ -1351,5 +1502,80 @@ const createStyles = (colors: ReturnType<typeof getColors>) =>
       fontSize: fontSize.md,
       fontWeight: fontWeight.bold,
       color: colors.text.inverse,
+    },
+    searchContainer: {
+      padding: spacing.md,
+      backgroundColor: colors.background,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.border,
+    },
+    searchInputWrapper: {
+      flexDirection: "row",
+      alignItems: "center",
+      backgroundColor: colors.backgroundSecondary,
+      borderRadius: borderRadius.lg,
+      paddingHorizontal: spacing.md,
+      gap: spacing.sm,
+    },
+    searchInput: {
+      flex: 1,
+      padding: spacing.sm,
+      fontSize: fontSize.md,
+      color: colors.text.primary,
+    },
+    attachmentsPreview: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: spacing.sm,
+      marginTop: spacing.sm,
+      paddingTop: spacing.sm,
+      borderTopWidth: 1,
+      borderTopColor: colors.border,
+    },
+    attachmentsCount: {
+      fontSize: fontSize.sm,
+      color: colors.text.secondary,
+      marginRight: spacing.sm,
+    },
+    attachmentThumbnail: {
+      width: 40,
+      height: 40,
+      borderRadius: borderRadius.sm,
+      marginRight: spacing.xs,
+    },
+    actionMenu: {
+      backgroundColor: colors.background,
+      borderRadius: borderRadius.xl,
+      padding: spacing.lg,
+      margin: spacing.xl,
+      marginTop: "auto",
+      ...shadows.lg,
+    },
+    actionMenuHeader: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      marginBottom: spacing.md,
+      paddingBottom: spacing.md,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.border,
+    },
+    actionMenuTitle: {
+      fontSize: fontSize.lg,
+      fontWeight: fontWeight.bold,
+      color: colors.text.primary,
+    },
+    actionMenuItem: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: spacing.md,
+      padding: spacing.md,
+      borderRadius: borderRadius.lg,
+      marginVertical: spacing.xs,
+    },
+    actionMenuText: {
+      fontSize: fontSize.md,
+      fontWeight: fontWeight.medium,
+      color: colors.text.primary,
     },
   });

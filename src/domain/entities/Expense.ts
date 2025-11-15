@@ -9,7 +9,8 @@ export class Expense {
     public readonly categoryId: number,
     public readonly note: string,
     public readonly userId: number,
-    public readonly type: TransactionType = "expense"
+    public readonly type: TransactionType = "expense",
+    public readonly attachments: string[] = []
   ) {
     this.validate();
   }
@@ -34,6 +35,7 @@ export class Expense {
     note: string;
     userId: number;
     type?: TransactionType;
+    attachments?: string[];
   }): Expense {
     return new Expense(
       null,
@@ -43,7 +45,8 @@ export class Expense {
       data.categoryId,
       data.note,
       data.userId,
-      data.type || "expense"
+      data.type || "expense",
+      data.attachments || []
     );
   }
 }

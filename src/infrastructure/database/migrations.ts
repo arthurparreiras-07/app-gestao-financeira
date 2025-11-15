@@ -6,7 +6,7 @@ import { DatabaseManager } from "./DatabaseManager";
  */
 
 export class DatabaseMigrations {
-  private static readonly CURRENT_VERSION = 2;
+  private static readonly CURRENT_VERSION = 3;
 
   /**
    * Executa todas as migrations necessárias
@@ -75,8 +75,81 @@ export class DatabaseMigrations {
           `);
           break;
 
+        case 3:
+          // Adicionar novas tabelas para features avançadas
+          
+          // Tabela de orçamentos
+          await db.execAsync(`
+            CREATE TABLE IF NOT EXISTS budgets (
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              category_id INTEGER,
+              monthly_limit REAL NOT NULL,
+              month INTEGER NOT NULL,
+              year INTEGER NOT NULL,
+              alert_threshold INTEGER DEFAULT 80,
+              user_id INTEGER NOT NULL,
+              FOREIGN KEY (category_id) REFERENCES categories(id),
+              UNIQUE(category_id, month, year, user_id)
+            );
+          `);
+
+          // Tabela de transações recorrentes
+          await db.execAsync(`
+            CREATE TABLE IF NOT EXISTS recurring_expenses (
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              frequency TEXT NOT NULL,
+              amount REAL NOT NULL,
+              emotion_id INTEGER NOT NULL,
+              category_id INTEGER NOT NULL,
+              note TEXT,
+              start_date TEXT NOT NULL,
+              end_date TEXT,
+              is_active INTEGER DEFAULT 1,
+              user_id INTEGER NOT NULL,
+              type TEXT DEFAULT 'expense',
+              FOREIGN KEY (emotion_id) REFERENCES emotions(id),
+              FOREIGN KEY (category_id) REFERENCES categories(id)
+            );
+          `);
+
+          // Tabela de tags
+          await db.execAsync(`
+            CREATE TABLE IF NOT EXISTS tags (
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              name TEXT NOT NULL,
+              color TEXT NOT NULL,
+              user_id INTEGER NOT NULL,
+              UNIQUE(name, user_id)
+            );
+          `);
+
+          // Tabela de relacionamento expense-tags
+          await db.execAsync(`
+            CREATE TABLE IF NOT EXISTS expense_tags (
+              expense_id INTEGER NOT NULL,
+              tag_id INTEGER NOT NULL,
+              PRIMARY KEY (expense_id, tag_id),
+              FOREIGN KEY (expense_id) REFERENCES expenses(id) ON DELETE CASCADE,
+              FOREIGN KEY (tag_id) REFERENCES tags(id) ON DELETE CASCADE
+            );
+          `);
+
+          // Adicionar campo attachments na tabela expenses
+          await db.execAsync(`
+            ALTER TABLE expenses ADD COLUMN attachments TEXT DEFAULT '[]';
+          `);
+
+          // Criar índices para melhor performance
+          await db.execAsync(`
+            CREATE INDEX IF NOT EXISTS idx_budgets_month_year ON budgets(month, year);
+            CREATE INDEX IF NOT EXISTS idx_recurring_active ON recurring_expenses(is_active);
+            CREATE INDEX IF NOT EXISTS idx_tags_user ON tags(user_id);
+          `);
+          
+          break;
+
         // Adicione novos cases para versões futuras
-        // case 3:
+        // case 4:
         //   await db.execAsync('ALTER TABLE expenses ADD COLUMN new_field TEXT;');
         //   break;
       }

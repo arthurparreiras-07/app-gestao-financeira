@@ -9,6 +9,9 @@ import { HomeScreen } from "../screens/HomeScreen";
 import { AddExpenseScreen } from "../screens/AddExpenseScreen";
 import { SettingsScreen } from "../screens/SettingsScreen";
 import { TransactionsScreen } from "../screens/TransactionsScreen";
+import { BudgetScreen } from "../screens/BudgetScreen";
+import { RecurringExpensesScreen } from "../screens/RecurringExpensesScreen";
+import { TagsScreen } from "../screens/TagsScreen";
 import { useTheme } from "../../theme/ThemeContext";
 import { getColors } from "../../theme/theme";
 
@@ -99,6 +102,27 @@ export function AppNavigator() {
               headerTitleStyle: {
                 fontWeight: "600",
               },
+            }}
+          />
+          <Stack.Screen
+            name="Budget"
+            component={BudgetScreen}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="RecurringExpenses"
+            component={RecurringExpensesScreen}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="Tags"
+            component={TagsScreen}
+            options={{
+              headerShown: false,
             }}
           />
         </Stack.Navigator>

@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   Alert,
+  ActivityIndicator,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
@@ -20,11 +21,14 @@ import {
   shadows,
 } from "../../theme/theme";
 
-export const SettingsScreen: React.FC = () => {
-  const { clearAllData } = useAppStore();
+export const SettingsScreen: React.FC<{ navigation?: any }> = ({ navigation }) => {
+  const { clearAllData, exportToCSV, exportToJSON, exportReport } = useAppStore();
   const { isDark, toggleTheme } = useTheme();
   const colors = getColors(isDark);
   const [notifications, setNotifications] = useState(false);
+  const [exportingCSV, setExportingCSV] = useState(false);
+  const [exportingJSON, setExportingJSON] = useState(false);
+  const [exportingReport, setExportingReport] = useState(false);
 
   const handleClearData = () => {
     Alert.alert(
@@ -48,8 +52,40 @@ export const SettingsScreen: React.FC = () => {
     );
   };
 
-  const handleExportData = () => {
-    Alert.alert("Em breve", "Funcionalidade de exportação em desenvolvimento.");
+  const handleExportCSV = async () => {
+    setExportingCSV(true);
+    try {
+      await exportToCSV();
+      Alert.alert("Sucesso", "Dados exportados em CSV!");
+    } catch (error) {
+      Alert.alert("Erro", "Não foi possível exportar os dados.");
+    } finally {
+      setExportingCSV(false);
+    }
+  };
+
+  const handleExportJSON = async () => {
+    setExportingJSON(true);
+    try {
+      await exportToJSON();
+      Alert.alert("Sucesso", "Backup completo criado!");
+    } catch (error) {
+      Alert.alert("Erro", "Não foi possível criar o backup.");
+    } finally {
+      setExportingJSON(false);
+    }
+  };
+
+  const handleExportReport = async () => {
+    setExportingReport(true);
+    try {
+      await exportReport();
+      Alert.alert("Sucesso", "Relatório exportado!");
+    } catch (error) {
+      Alert.alert("Erro", "Não foi possível exportar o relatório.");
+    } finally {
+      setExportingReport(false);
+    }
   };
 
   const handleToggleDarkMode = () => {
@@ -150,13 +186,14 @@ export const SettingsScreen: React.FC = () => {
           </TouchableOpacity>
         </View>
 
-        {/* Dados */}
+        {/* Gerenciamento */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Gerenciar Dados</Text>
+          <Text style={styles.sectionTitle}>Gerenciamento</Text>
 
           <TouchableOpacity
             style={styles.settingItem}
-            onPress={handleExportData}
+            onPress={() => navigation?.navigate("Budget")}
+            activeOpacity={0.7}
           >
             <View
               style={[
@@ -165,15 +202,15 @@ export const SettingsScreen: React.FC = () => {
               ]}
             >
               <Ionicons
-                name="download-outline"
+                name="wallet-outline"
                 size={20}
                 color={colors.primary[500]}
               />
             </View>
             <View style={styles.settingContent}>
-              <Text style={styles.settingLabel}>Exportar dados</Text>
+              <Text style={styles.settingLabel}>Orçamentos</Text>
               <Text style={styles.settingDescription}>
-                Baixar histórico em CSV
+                Defina limites mensais
               </Text>
             </View>
             <Ionicons
@@ -185,7 +222,183 @@ export const SettingsScreen: React.FC = () => {
 
           <TouchableOpacity
             style={styles.settingItem}
+            onPress={() => navigation?.navigate("RecurringExpenses")}
+            activeOpacity={0.7}
+          >
+            <View
+              style={[
+                styles.settingIconContainer,
+                { backgroundColor: `${colors.secondary[500]}15` },
+              ]}
+            >
+              <Ionicons
+                name="repeat-outline"
+                size={20}
+                color={colors.secondary[500]}
+              />
+            </View>
+            <View style={styles.settingContent}>
+              <Text style={styles.settingLabel}>Transações Recorrentes</Text>
+              <Text style={styles.settingDescription}>
+                Gastos automáticos
+              </Text>
+            </View>
+            <Ionicons
+              name="chevron-forward"
+              size={20}
+              color={colors.gray[400]}
+            />
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.settingItem}
+            onPress={() => navigation?.navigate("Tags")}
+            activeOpacity={0.7}
+          >
+            <View
+              style={[
+                styles.settingIconContainer,
+                { backgroundColor: `${colors.success}15` },
+              ]}
+            >
+              <Ionicons
+                name="pricetags-outline"
+                size={20}
+                color={colors.success}
+              />
+            </View>
+            <View style={styles.settingContent}>
+              <Text style={styles.settingLabel}>Tags Personalizadas</Text>
+              <Text style={styles.settingDescription}>
+                Organize suas transações
+              </Text>
+            </View>
+            <Ionicons
+              name="chevron-forward"
+              size={20}
+              color={colors.gray[400]}
+            />
+          </TouchableOpacity>
+        </View>
+
+        {/* Dados */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Exportar Dados</Text>
+
+          <TouchableOpacity
+            style={styles.settingItem}
+            onPress={handleExportCSV}
+            disabled={exportingCSV}
+            activeOpacity={0.7}
+          >
+            <View
+              style={[
+                styles.settingIconContainer,
+                { backgroundColor: `${colors.success}15` },
+              ]}
+            >
+              <Ionicons
+                name="document-text-outline"
+                size={20}
+                color={colors.success}
+              />
+            </View>
+            <View style={styles.settingContent}>
+              <Text style={styles.settingLabel}>Exportar CSV</Text>
+              <Text style={styles.settingDescription}>
+                Para Excel ou planilhas
+              </Text>
+            </View>
+            {exportingCSV ? (
+              <ActivityIndicator size="small" color={colors.primary[500]} />
+            ) : (
+              <Ionicons
+                name="chevron-forward"
+                size={20}
+                color={colors.gray[400]}
+              />
+            )}
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.settingItem}
+            onPress={handleExportJSON}
+            disabled={exportingJSON}
+            activeOpacity={0.7}
+          >
+            <View
+              style={[
+                styles.settingIconContainer,
+                { backgroundColor: `${colors.primary[500]}15` },
+              ]}
+            >
+              <Ionicons
+                name="cloud-download-outline"
+                size={20}
+                color={colors.primary[500]}
+              />
+            </View>
+            <View style={styles.settingContent}>
+              <Text style={styles.settingLabel}>Backup Completo (JSON)</Text>
+              <Text style={styles.settingDescription}>
+                Todos os dados em JSON
+              </Text>
+            </View>
+            {exportingJSON ? (
+              <ActivityIndicator size="small" color={colors.primary[500]} />
+            ) : (
+              <Ionicons
+                name="chevron-forward"
+                size={20}
+                color={colors.gray[400]}
+              />
+            )}
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.settingItem}
+            onPress={handleExportReport}
+            disabled={exportingReport}
+            activeOpacity={0.7}
+          >
+            <View
+              style={[
+                styles.settingIconContainer,
+                { backgroundColor: `${colors.warning}15` },
+              ]}
+            >
+              <Ionicons
+                name="bar-chart-outline"
+                size={20}
+                color={colors.warning}
+              />
+            </View>
+            <View style={styles.settingContent}>
+              <Text style={styles.settingLabel}>Relatório Mensal</Text>
+              <Text style={styles.settingDescription}>
+                Resumo formatado em TXT
+              </Text>
+            </View>
+            {exportingReport ? (
+              <ActivityIndicator size="small" color={colors.primary[500]} />
+            ) : (
+              <Ionicons
+                name="chevron-forward"
+                size={20}
+                color={colors.gray[400]}
+              />
+            )}
+          </TouchableOpacity>
+        </View>
+
+        {/* Zona de Perigo */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Zona de Perigo</Text>
+
+          <TouchableOpacity
+            style={styles.settingItem}
             onPress={handleClearData}
+            activeOpacity={0.7}
           >
             <View
               style={[
@@ -217,7 +430,7 @@ export const SettingsScreen: React.FC = () => {
 
           <View style={styles.aboutCard}>
             <Text style={styles.appName}>MindBudget</Text>
-            <Text style={styles.version}>Versão 1.0.0</Text>
+            <Text style={styles.version}>Versão 2.0.0</Text>
             <Text style={styles.description}>
               Aplicativo de gestão financeira com análise emocional de gastos.
             </Text>
