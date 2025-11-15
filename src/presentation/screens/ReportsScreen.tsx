@@ -4,8 +4,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useAppStore } from "../../application/store/useAppStore";
 import { PieChart } from "react-native-chart-kit";
+import { useTheme } from "../../theme/ThemeContext";
 import {
-  colors,
+  getColors,
   spacing,
   borderRadius,
   fontSize,
@@ -15,6 +16,8 @@ import {
 
 export const ReportsScreen = () => {
   const { expenses, emotions, categories } = useAppStore();
+  const { isDark } = useTheme();
+  const colors = getColors(isDark);
 
   // Cores distintas para cada emoção
   const emotionColors: Record<string, string> = {
@@ -30,7 +33,7 @@ export const ReportsScreen = () => {
   const expensesByEmotion = emotions
     .map((emotion) => {
       const emotionExpenses = expenses.filter(
-        (e) => e.emotionId === emotion.id
+        (e) => e.emotionId === emotion.id && e.type === "expense"
       );
       const total = emotionExpenses.reduce((sum, e) => sum + e.amount, 0);
       return {
@@ -46,7 +49,7 @@ export const ReportsScreen = () => {
   const expensesByCategory = categories
     .map((category) => {
       const categoryExpenses = expenses.filter(
-        (e) => e.categoryId === category.id
+        (e) => e.categoryId === category.id && e.type === "expense"
       );
       const total = categoryExpenses.reduce((sum, e) => sum + e.amount, 0);
       return {
@@ -60,20 +63,18 @@ export const ReportsScreen = () => {
     .filter((item) => item.amount > 0);
 
   const screenWidth = Dimensions.get("window").width;
-  const totalExpenses = expenses.reduce((sum, e) => sum + e.amount, 0);
+  const allExpenses = expenses.filter((e) => e.type === "expense");
+  const totalExpenses = allExpenses.reduce((sum, e) => sum + e.amount, 0);
 
   const chartConfig = {
     color: (opacity = 1) => `rgba(31, 166, 114, ${opacity})`,
   };
 
+  const styles = createStyles(colors);
+
   return (
     <SafeAreaView style={styles.safeArea} edges={["bottom"]}>
       <ScrollView style={styles.container}>
-        <View style={styles.header}>
-          <Ionicons name="stats-chart" size={32} color={colors.text.inverse} />
-          <Text style={styles.title}>Relatórios</Text>
-        </View>
-
         <View style={styles.summaryCard}>
           <View style={styles.summaryHeader}>
             <Ionicons name="wallet" size={24} color={colors.primary[500]} />
@@ -82,7 +83,7 @@ export const ReportsScreen = () => {
           <View style={styles.summaryRow}>
             <View style={styles.summaryItem}>
               <Text style={styles.summaryLabel}>Total de Gastos</Text>
-              <Text style={styles.summaryValue}>{expenses.length}</Text>
+              <Text style={styles.summaryValue}>{allExpenses.length}</Text>
             </View>
             <View style={styles.divider} />
             <View style={styles.summaryItem}>
@@ -179,138 +180,124 @@ export const ReportsScreen = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: colors.backgroundSecondary,
-  },
-  container: {
-    flex: 1,
-    backgroundColor: colors.backgroundSecondary,
-  },
-  header: {
-    backgroundColor: colors.primary[500],
-    paddingTop: 60,
-    paddingBottom: spacing.xl,
-    paddingHorizontal: spacing.lg,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.md,
-  },
-  title: {
-    fontSize: fontSize.xxxl,
-    fontWeight: fontWeight.bold,
-    color: colors.text.inverse,
-  },
-  summaryCard: {
-    backgroundColor: colors.background,
-    margin: spacing.md,
-    marginTop: -spacing.lg,
-    padding: spacing.lg,
-    borderRadius: borderRadius.lg,
-    ...shadows.md,
-  },
-  summaryHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.sm,
-    marginBottom: spacing.md,
-  },
-  summaryTitle: {
-    fontSize: fontSize.lg,
-    fontWeight: fontWeight.bold,
-    color: colors.text.primary,
-  },
-  summaryRow: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    alignItems: "center",
-  },
-  summaryItem: {
-    flex: 1,
-    alignItems: "center",
-  },
-  divider: {
-    width: 1,
-    height: 40,
-    backgroundColor: colors.border,
-  },
-  summaryLabel: {
-    fontSize: fontSize.sm,
-    color: colors.text.secondary,
-    marginBottom: spacing.xs,
-  },
-  summaryValue: {
-    fontSize: fontSize.xxl,
-    fontWeight: fontWeight.bold,
-    color: colors.primary[500],
-  },
-  chartContainer: {
-    backgroundColor: colors.background,
-    margin: spacing.md,
-    padding: spacing.md,
-    borderRadius: borderRadius.lg,
-    ...shadows.sm,
-  },
-  chartHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.sm,
-    marginBottom: spacing.md,
-  },
-  chartTitle: {
-    fontSize: fontSize.lg,
-    fontWeight: fontWeight.bold,
-    color: colors.text.primary,
-  },
-  emptyChart: {
-    alignItems: "center",
-    paddingVertical: spacing.xxl,
-  },
-  emptyState: {
-    alignItems: "center",
-    paddingVertical: spacing.lg,
-  },
-  emptyText: {
-    textAlign: "center",
-    color: colors.text.tertiary,
-    fontSize: fontSize.sm,
-    marginTop: spacing.sm,
-    fontStyle: "italic",
-  },
-  detailsContainer: {
-    backgroundColor: colors.background,
-    margin: spacing.md,
-    padding: spacing.md,
-    borderRadius: borderRadius.lg,
-    ...shadows.sm,
-  },
-  detailItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingVertical: spacing.md,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.gray[100],
-  },
-  detailLeft: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.md,
-  },
-  colorDot: {
-    width: 12,
-    height: 12,
-    borderRadius: 6,
-  },
-  detailName: {
-    fontSize: fontSize.md,
-    color: colors.text.primary,
-    fontWeight: fontWeight.medium,
-  },
-  detailAmount: {
-    fontSize: fontSize.md,
-    fontWeight: fontWeight.bold,
-    color: colors.primary[500],
-  },
-});
+const createStyles = (colors: ReturnType<typeof getColors>) =>
+  StyleSheet.create({
+    safeArea: {
+      flex: 1,
+      backgroundColor: colors.backgroundSecondary,
+    },
+    container: {
+      flex: 1,
+      backgroundColor: colors.backgroundSecondary,
+    },
+    summaryCard: {
+      backgroundColor: colors.background,
+      margin: spacing.md,
+      padding: spacing.lg,
+      borderRadius: borderRadius.lg,
+      ...shadows.md,
+    },
+    summaryHeader: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: spacing.sm,
+      marginBottom: spacing.md,
+    },
+    summaryTitle: {
+      fontSize: fontSize.lg,
+      fontWeight: fontWeight.bold,
+      color: colors.text.primary,
+    },
+    summaryRow: {
+      flexDirection: "row",
+      justifyContent: "space-around",
+      alignItems: "center",
+    },
+    summaryItem: {
+      flex: 1,
+      alignItems: "center",
+    },
+    divider: {
+      width: 1,
+      height: 40,
+      backgroundColor: colors.border,
+    },
+    summaryLabel: {
+      fontSize: fontSize.sm,
+      color: colors.text.secondary,
+      marginBottom: spacing.xs,
+    },
+    summaryValue: {
+      fontSize: fontSize.xxl,
+      fontWeight: fontWeight.bold,
+      color: colors.primary[500],
+    },
+    chartContainer: {
+      backgroundColor: colors.background,
+      margin: spacing.md,
+      padding: spacing.md,
+      borderRadius: borderRadius.lg,
+      ...shadows.sm,
+    },
+    chartHeader: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: spacing.sm,
+      marginBottom: spacing.md,
+    },
+    chartTitle: {
+      fontSize: fontSize.lg,
+      fontWeight: fontWeight.bold,
+      color: colors.text.primary,
+    },
+    emptyChart: {
+      alignItems: "center",
+      paddingVertical: spacing.xxl,
+    },
+    emptyState: {
+      alignItems: "center",
+      paddingVertical: spacing.lg,
+    },
+    emptyText: {
+      textAlign: "center",
+      color: colors.text.tertiary,
+      fontSize: fontSize.sm,
+      marginTop: spacing.sm,
+      fontStyle: "italic",
+    },
+    detailsContainer: {
+      backgroundColor: colors.background,
+      margin: spacing.md,
+      padding: spacing.md,
+      borderRadius: borderRadius.lg,
+      ...shadows.sm,
+    },
+    detailItem: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      paddingVertical: spacing.md,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.border,
+    },
+    detailLeft: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: spacing.md,
+    },
+    colorDot: {
+      width: 12,
+      height: 12,
+      borderRadius: 6,
+    },
+    detailName: {
+      fontSize: fontSize.md,
+      color: colors.text.primary,
+      fontWeight: fontWeight.medium,
+    },
+    detailAmount: {
+      fontSize: fontSize.md,
+      fontWeight: fontWeight.bold,
+      color: colors.primary[500],
+    },
+  });

@@ -2,8 +2,9 @@ import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Emotion } from "../../domain/entities/Emotion";
+import { useTheme } from "../../theme/ThemeContext";
 import {
-  colors,
+  getColors,
   spacing,
   borderRadius,
   fontSize,
@@ -35,6 +36,10 @@ export const EmotionSelector: React.FC<EmotionSelectorProps> = ({
   selectedEmotionId,
   onSelect,
 }) => {
+  const { isDark } = useTheme();
+  const colors = getColors(isDark);
+  const styles = createStyles(colors);
+
   return (
     <View style={styles.container}>
       <View style={styles.labelContainer}>
@@ -91,50 +96,51 @@ export const EmotionSelector: React.FC<EmotionSelectorProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    marginVertical: spacing.md,
-  },
-  labelContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.sm,
-    marginBottom: spacing.md,
-  },
-  label: {
-    fontSize: fontSize.md,
-    fontWeight: fontWeight.semibold,
-    color: colors.text.primary,
-  },
-  emotionsGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: spacing.sm,
-  },
-  emotionButton: {
-    alignItems: "center",
-    padding: spacing.md,
-    borderRadius: borderRadius.lg,
-    width: "31%",
-    backgroundColor: colors.backgroundSecondary,
-    ...shadows.sm,
-  },
-  iconContainer: {
-    width: 48,
-    height: 48,
-    borderRadius: borderRadius.full,
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: spacing.sm,
-  },
-  emotionName: {
-    fontSize: fontSize.xs,
-    color: colors.text.secondary,
-    textAlign: "center",
-    fontWeight: fontWeight.medium,
-  },
-  emotionNameSelected: {
-    color: colors.text.primary,
-    fontWeight: fontWeight.semibold,
-  },
-});
+const createStyles = (colors: ReturnType<typeof getColors>) =>
+  StyleSheet.create({
+    container: {
+      marginVertical: spacing.md,
+    },
+    labelContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: spacing.sm,
+      marginBottom: spacing.md,
+    },
+    label: {
+      fontSize: fontSize.md,
+      fontWeight: fontWeight.semibold,
+      color: colors.text.primary,
+    },
+    emotionsGrid: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      gap: spacing.sm,
+    },
+    emotionButton: {
+      alignItems: "center",
+      padding: spacing.md,
+      borderRadius: borderRadius.lg,
+      width: "31%",
+      backgroundColor: colors.background,
+      ...shadows.sm,
+    },
+    iconContainer: {
+      width: 48,
+      height: 48,
+      borderRadius: borderRadius.full,
+      justifyContent: "center",
+      alignItems: "center",
+      marginBottom: spacing.sm,
+    },
+    emotionName: {
+      fontSize: fontSize.xs,
+      color: colors.text.secondary,
+      textAlign: "center",
+      fontWeight: fontWeight.medium,
+    },
+    emotionNameSelected: {
+      color: colors.text.primary,
+      fontWeight: fontWeight.semibold,
+    },
+  });

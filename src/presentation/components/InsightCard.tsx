@@ -2,8 +2,9 @@ import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Insight } from "../../application/services/InsightsService";
+import { useTheme } from "../../theme/ThemeContext";
 import {
-  colors,
+  getColors,
   spacing,
   borderRadius,
   fontSize,
@@ -15,38 +16,42 @@ interface InsightCardProps {
   insight: Insight;
 }
 
-const getInsightStyle = (type: Insight["type"]) => {
-  switch (type) {
-    case "warning":
-      return {
-        icon: "warning" as keyof typeof Ionicons.glyphMap,
-        backgroundColor: `${colors.warning}15`,
-        borderColor: colors.warning,
-        iconBackground: colors.warning,
-        textColor: colors.warning,
-      };
-    case "success":
-      return {
-        icon: "checkmark-circle" as keyof typeof Ionicons.glyphMap,
-        backgroundColor: `${colors.success}15`,
-        borderColor: colors.success,
-        iconBackground: colors.success,
-        textColor: colors.success,
-      };
-    case "info":
-    default:
-      return {
-        icon: "information-circle" as keyof typeof Ionicons.glyphMap,
-        backgroundColor: `${colors.info}15`,
-        borderColor: colors.info,
-        iconBackground: colors.info,
-        textColor: colors.secondary[700],
-      };
-  }
-};
-
 export const InsightCard: React.FC<InsightCardProps> = ({ insight }) => {
+  const { isDark } = useTheme();
+  const colors = getColors(isDark);
+
+  const getInsightStyle = (type: Insight["type"]) => {
+    switch (type) {
+      case "warning":
+        return {
+          icon: "warning" as keyof typeof Ionicons.glyphMap,
+          backgroundColor: `${colors.warning}15`,
+          borderColor: colors.warning,
+          iconBackground: colors.warning,
+          textColor: colors.warning,
+        };
+      case "success":
+        return {
+          icon: "checkmark-circle" as keyof typeof Ionicons.glyphMap,
+          backgroundColor: `${colors.success}15`,
+          borderColor: colors.success,
+          iconBackground: colors.success,
+          textColor: colors.success,
+        };
+      case "info":
+      default:
+        return {
+          icon: "information-circle" as keyof typeof Ionicons.glyphMap,
+          backgroundColor: `${colors.info}15`,
+          borderColor: colors.info,
+          iconBackground: colors.info,
+          textColor: colors.secondary[700],
+        };
+    }
+  };
+
   const style = getInsightStyle(insight.type);
+  const styles = createStyles(colors);
 
   return (
     <View
@@ -76,28 +81,29 @@ export const InsightCard: React.FC<InsightCardProps> = ({ insight }) => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: "row",
-    padding: spacing.md,
-    borderRadius: borderRadius.lg,
-    marginBottom: spacing.md,
-    ...shadows.sm,
-  },
-  iconContainer: {
-    width: 36,
-    height: 36,
-    borderRadius: borderRadius.md,
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: spacing.md,
-  },
-  content: {
-    flex: 1,
-  },
-  message: {
-    fontSize: fontSize.md,
-    fontWeight: fontWeight.medium,
-    lineHeight: 20,
-  },
-});
+const createStyles = (colors: ReturnType<typeof getColors>) =>
+  StyleSheet.create({
+    container: {
+      flexDirection: "row",
+      padding: spacing.md,
+      borderRadius: borderRadius.lg,
+      marginBottom: spacing.md,
+      ...shadows.sm,
+    },
+    iconContainer: {
+      width: 36,
+      height: 36,
+      borderRadius: borderRadius.md,
+      justifyContent: "center",
+      alignItems: "center",
+      marginRight: spacing.md,
+    },
+    content: {
+      flex: 1,
+    },
+    message: {
+      fontSize: fontSize.md,
+      fontWeight: fontWeight.medium,
+      lineHeight: 20,
+    },
+  });

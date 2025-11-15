@@ -9,12 +9,16 @@ import { HomeScreen } from "../screens/HomeScreen";
 import { AddExpenseScreen } from "../screens/AddExpenseScreen";
 import { ReportsScreen } from "../screens/ReportsScreen";
 import { SettingsScreen } from "../screens/SettingsScreen";
-import { colors } from "../../theme/theme";
+import { useTheme } from "../../theme/ThemeContext";
+import { getColors } from "../../theme/theme";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
 function HomeTabs() {
+  const { isDark } = useTheme();
+  const colors = getColors(isDark);
+
   return (
     <Tab.Navigator
       screenOptions={{
@@ -71,6 +75,9 @@ function HomeTabs() {
 }
 
 export function AppNavigator() {
+  const { isDark } = useTheme();
+  const colors = getColors(isDark);
+
   return (
     <SafeAreaProvider>
       <NavigationContainer>
@@ -84,7 +91,7 @@ export function AppNavigator() {
             name="AddExpense"
             component={AddExpenseScreen}
             options={{
-              title: "Novo Gasto",
+              title: "Nova Transação",
               headerStyle: {
                 backgroundColor: colors.primary[500],
               },
