@@ -1,32 +1,41 @@
 {
-"compilerOptions": {
-  "target": "esnext",
-  "module": "esnext",
-  "lib": ["esnext"],
-  "jsx": "react-native",
-  "strict": true,
-  "esModuleInterop": true,
-  "skipLibCheck": true,
-  "resolveJsonModule": true,
-  "moduleResolution": "node",
-  "allowSyntheticDefaultImports": true,
-  "forceConsistentCasingInFileNames": true,
-  "noEmit": true,
-  "baseUrl": ".",
-  "paths": {
-    "@domain/*": ["src/domain/*"],
-    "@infrastructure/*": ["src/infrastructure/*"],
-    "@application/*": ["src/application/*"],
-    "@presentation/*": ["src/presentation/*"]
-  }
-},
-"include": [
-  "**/*.ts",
-  "**/*.tsx",
-  ".expo/types/**/*.ts",
-  "expo-env.d.ts"
-],
-"exclude": [
-  "node_modules"
-]
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "esnext",
+    "lib": [
+      "esnext"
+    ],
+    "jsx": "react-native",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "baseUrl": ".",
+    "paths": {
+      "@domain/*": [
+        "src/domain/*"
+      ],
+      "@infrastructure/*": [
+        "src/infrastructure/*"
+      ],
+      "@application/*": [
+        "src/application/*"
+      ],
+      "@presentation/*": [
+        "src/presentation/*"
+      ]
+    }
+  },
+  "include": [
+    "**/*.ts",
+    "**/*.tsx"
+  ],
+  "exclude": [
+    "node_modules"
+  ],
+  "extends": "expo/tsconfig.base"
 }
