@@ -1,44 +1,60 @@
-import React from 'react';
+import React from "react";
 import {
   View,
   Text,
   StyleSheet,
   ScrollView,
   Dimensions,
-} from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { useAppStore } from '../../application/store/useAppStore';
-import { PieChart } from 'react-native-chart-kit';
-import { colors, spacing, borderRadius, fontSize, fontWeight, shadows } from '../../theme/theme';
+  SafeAreaView,
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { useAppStore } from "../../application/store/useAppStore";
+import { PieChart } from "react-native-chart-kit";
+import {
+  colors,
+  spacing,
+  borderRadius,
+  fontSize,
+  fontWeight,
+  shadows,
+} from "../../theme/theme";
 
 export const ReportsScreen = () => {
   const { expenses, emotions, categories } = useAppStore();
 
-  const expensesByEmotion = emotions.map((emotion) => {
-    const emotionExpenses = expenses.filter((e) => e.emotionId === emotion.id);
-    const total = emotionExpenses.reduce((sum, e) => sum + e.amount, 0);
-    return {
-      name: emotion.name,
-      amount: total,
-      color: colors.primary[Math.floor(Math.random() * 3 + 4) * 100],
-      legendFontColor: colors.text.secondary,
-      legendFontSize: 12,
-    };
-  }).filter((item) => item.amount > 0);
+  const expensesByEmotion = emotions
+    .map((emotion) => {
+      const emotionExpenses = expenses.filter(
+        (e) => e.emotionId === emotion.id
+      );
+      const total = emotionExpenses.reduce((sum, e) => sum + e.amount, 0);
+      return {
+        name: emotion.name,
+        amount: total,
+        color: colors.primary[Math.floor(Math.random() * 3 + 4) * 100 as 400 | 500 | 600],
+        legendFontColor: colors.text.secondary,
+        legendFontSize: 12,
+      };
+    })
+    .filter((item) => item.amount > 0);
 
-  const expensesByCategory = categories.map((category) => {
-    const categoryExpenses = expenses.filter((e) => e.categoryId === category.id);
-    const total = categoryExpenses.reduce((sum, e) => sum + e.amount, 0);
-    return {
-      name: category.name,
-      amount: total,
-      color: category.color,
-      legendFontColor: colors.text.secondary,
-      legendFontSize: 12,
-    };
-  }).filter((item) => item.amount > 0);
+  const expensesByCategory = categories
+    .map((category) => {
+      const categoryExpenses = expenses.filter(
+        (e) => e.categoryId === category.id
+      );
+      const total = categoryExpenses.reduce((sum, e) => sum + e.amount, 0);
+      return {
+        name: category.name,
+        amount: total,
+        color: category.color,
+        legendFontColor: colors.text.secondary,
+        legendFontSize: 12,
+      };
+    })
+    .filter((item) => item.amount > 0);
 
-  const screenWidth = Dimensions.get('window').width;
+  const screenWidth = Dimensions.get("window").width;
   const totalExpenses = expenses.reduce((sum, e) => sum + e.amount, 0);
 
   const chartConfig = {
@@ -46,103 +62,123 @@ export const ReportsScreen = () => {
   };
 
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.header}>
-        <Ionicons name="stats-chart" size={32} color={colors.text.inverse} />
-        <Text style={styles.title}>Relatórios</Text>
-      </View>
+    <SafeAreaView style={styles.safeArea}>
+      <ScrollView style={styles.container}>
+        <View style={styles.header}>
+          <Ionicons name="stats-chart" size={32} color={colors.text.inverse} />
+          <Text style={styles.title}>Relatórios</Text>
+        </View>
 
-      <View style={styles.summaryCard}>
-        <View style={styles.summaryHeader}>
-          <Ionicons name="wallet" size={24} color={colors.primary[500]} />
-          <Text style={styles.summaryTitle}>Resumo Geral</Text>
-        </View>
-        <View style={styles.summaryRow}>
-          <View style={styles.summaryItem}>
-            <Text style={styles.summaryLabel}>Total de Gastos</Text>
-            <Text style={styles.summaryValue}>{expenses.length}</Text>
+        <View style={styles.summaryCard}>
+          <View style={styles.summaryHeader}>
+            <Ionicons name="wallet" size={24} color={colors.primary[500]} />
+            <Text style={styles.summaryTitle}>Resumo Geral</Text>
           </View>
-          <View style={styles.divider} />
-          <View style={styles.summaryItem}>
-            <Text style={styles.summaryLabel}>Valor Total</Text>
-            <Text style={styles.summaryValue}>R$ {totalExpenses.toFixed(2)}</Text>
-          </View>
-        </View>
-      </View>
-
-      <View style={styles.chartContainer}>
-        <View style={styles.chartHeader}>
-          <Ionicons name="heart" size={20} color={colors.primary[500]} />
-          <Text style={styles.chartTitle}>Gastos por Emoção</Text>
-        </View>
-        {expensesByEmotion.length > 0 ? (
-          <PieChart
-            data={expensesByEmotion}
-            width={screenWidth - 40}
-            height={220}
-            chartConfig={chartConfig}
-            accessor="amount"
-            backgroundColor="transparent"
-            paddingLeft="15"
-            absolute
-          />
-        ) : (
-          <View style={styles.emptyChart}>
-            <Ionicons name="bar-chart-outline" size={48} color={colors.gray[300]} />
-            <Text style={styles.emptyText}>Nenhum dado disponível</Text>
-          </View>
-        )}
-      </View>
-
-      <View style={styles.chartContainer}>
-        <View style={styles.chartHeader}>
-          <Ionicons name="pricetags" size={20} color={colors.primary[500]} />
-          <Text style={styles.chartTitle}>Gastos por Categoria</Text>
-        </View>
-        {expensesByCategory.length > 0 ? (
-          <PieChart
-            data={expensesByCategory}
-            width={screenWidth - 40}
-            height={220}
-            chartConfig={chartConfig}
-            accessor="amount"
-            backgroundColor="transparent"
-            paddingLeft="15"
-            absolute
-          />
-        ) : (
-          <View style={styles.emptyChart}>
-            <Ionicons name="pie-chart-outline" size={48} color={colors.gray[300]} />
-            <Text style={styles.emptyText}>Nenhum dado disponível</Text>
-          </View>
-        )}
-      </View>
-
-      <View style={styles.detailsContainer}>
-        <View style={styles.chartHeader}>
-          <Ionicons name="list" size={20} color={colors.primary[500]} />
-          <Text style={styles.chartTitle}>Detalhamento por Emoção</Text>
-        </View>
-        {expensesByEmotion.map((item, index) => (
-          <View key={index} style={styles.detailItem}>
-            <View style={styles.detailLeft}>
-              <View style={[styles.colorDot, { backgroundColor: item.color }]} />
-              <Text style={styles.detailName}>{item.name}</Text>
+          <View style={styles.summaryRow}>
+            <View style={styles.summaryItem}>
+              <Text style={styles.summaryLabel}>Total de Gastos</Text>
+              <Text style={styles.summaryValue}>{expenses.length}</Text>
             </View>
-            <Text style={styles.detailAmount}>R$ {item.amount.toFixed(2)}</Text>
+            <View style={styles.divider} />
+            <View style={styles.summaryItem}>
+              <Text style={styles.summaryLabel}>Valor Total</Text>
+              <Text style={styles.summaryValue}>
+                R$ {totalExpenses.toFixed(2)}
+              </Text>
+            </View>
           </View>
-        ))}
-        {expensesByEmotion.length === 0 && (
-          <View style={styles.emptyState}>
-            <Text style={styles.emptyText}>Nenhum gasto registrado</Text>
+        </View>
+
+        <View style={styles.chartContainer}>
+          <View style={styles.chartHeader}>
+            <Ionicons name="heart" size={20} color={colors.primary[500]} />
+            <Text style={styles.chartTitle}>Gastos por Emoção</Text>
           </View>
-        )}
-      </View>
-    </ScrollView>
+          {expensesByEmotion.length > 0 ? (
+            <PieChart
+              data={expensesByEmotion}
+              width={screenWidth - 40}
+              height={220}
+              chartConfig={chartConfig}
+              accessor="amount"
+              backgroundColor="transparent"
+              paddingLeft="15"
+              absolute
+            />
+          ) : (
+            <View style={styles.emptyChart}>
+              <Ionicons
+                name="bar-chart-outline"
+                size={48}
+                color={colors.gray[300]}
+              />
+              <Text style={styles.emptyText}>Nenhum dado disponível</Text>
+            </View>
+          )}
+        </View>
+
+        <View style={styles.chartContainer}>
+          <View style={styles.chartHeader}>
+            <Ionicons name="pricetags" size={20} color={colors.primary[500]} />
+            <Text style={styles.chartTitle}>Gastos por Categoria</Text>
+          </View>
+          {expensesByCategory.length > 0 ? (
+            <PieChart
+              data={expensesByCategory}
+              width={screenWidth - 40}
+              height={220}
+              chartConfig={chartConfig}
+              accessor="amount"
+              backgroundColor="transparent"
+              paddingLeft="15"
+              absolute
+            />
+          ) : (
+            <View style={styles.emptyChart}>
+              <Ionicons
+                name="pie-chart-outline"
+                size={48}
+                color={colors.gray[300]}
+              />
+              <Text style={styles.emptyText}>Nenhum dado disponível</Text>
+            </View>
+          )}
+        </View>
+
+        <View style={styles.detailsContainer}>
+          <View style={styles.chartHeader}>
+            <Ionicons name="list" size={20} color={colors.primary[500]} />
+            <Text style={styles.chartTitle}>Detalhamento por Emoção</Text>
+          </View>
+          {expensesByEmotion.map((item, index) => (
+            <View key={index} style={styles.detailItem}>
+              <View style={styles.detailLeft}>
+                <View
+                  style={[styles.colorDot, { backgroundColor: item.color }]}
+                />
+                <Text style={styles.detailName}>{item.name}</Text>
+              </View>
+              <Text style={styles.detailAmount}>
+                R$ {item.amount.toFixed(2)}
+              </Text>
+            </View>
+          ))}
+          {expensesByEmotion.length === 0 && (
+            <View style={styles.emptyState}>
+              <Text style={styles.emptyText}>Nenhum gasto registrado</Text>
+            </View>
+          )}
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: colors.backgroundSecondary,
+  },
   container: {
     flex: 1,
     backgroundColor: colors.backgroundSecondary,
@@ -152,8 +188,8 @@ const styles = StyleSheet.create({
     paddingTop: 60,
     paddingBottom: spacing.xl,
     paddingHorizontal: spacing.lg,
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: spacing.md,
   },
   title: {
@@ -170,8 +206,8 @@ const styles = StyleSheet.create({
     ...shadows.md,
   },
   summaryHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: spacing.sm,
     marginBottom: spacing.md,
   },
@@ -181,13 +217,13 @@ const styles = StyleSheet.create({
     color: colors.text.primary,
   },
   summaryRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "center",
   },
   summaryItem: {
     flex: 1,
-    alignItems: 'center',
+    alignItems: "center",
   },
   divider: {
     width: 1,
@@ -212,8 +248,8 @@ const styles = StyleSheet.create({
     ...shadows.sm,
   },
   chartHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: spacing.sm,
     marginBottom: spacing.md,
   },
@@ -223,19 +259,19 @@ const styles = StyleSheet.create({
     color: colors.text.primary,
   },
   emptyChart: {
-    alignItems: 'center',
+    alignItems: "center",
     paddingVertical: spacing.xxl,
   },
   emptyState: {
-    alignItems: 'center',
+    alignItems: "center",
     paddingVertical: spacing.lg,
   },
   emptyText: {
-    textAlign: 'center',
+    textAlign: "center",
     color: colors.text.tertiary,
     fontSize: fontSize.sm,
     marginTop: spacing.sm,
-    fontStyle: 'italic',
+    fontStyle: "italic",
   },
   detailsContainer: {
     backgroundColor: colors.background,
@@ -245,16 +281,16 @@ const styles = StyleSheet.create({
     ...shadows.sm,
   },
   detailItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     paddingVertical: spacing.md,
     borderBottomWidth: 1,
     borderBottomColor: colors.gray[100],
   },
   detailLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: spacing.md,
   },
   colorDot: {

@@ -3,6 +3,8 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Ionicons } from "@expo/vector-icons";
+import { Platform } from "react-native";
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { HomeScreen } from "../screens/HomeScreen";
 import { AddExpenseScreen } from "../screens/AddExpenseScreen";
 import { ReportsScreen } from "../screens/ReportsScreen";
@@ -22,12 +24,14 @@ function HomeTabs() {
           backgroundColor: colors.background,
           borderTopColor: colors.border,
           borderTopWidth: 1,
-          paddingBottom: 4,
-          height: 60,
+          paddingBottom: Platform.OS === 'ios' ? 20 : 8,
+          paddingTop: 8,
+          height: Platform.OS === 'ios' ? 85 : 65,
         },
         tabBarLabelStyle: {
           fontSize: 12,
           fontWeight: "500",
+          marginBottom: Platform.OS === 'ios' ? 0 : 4,
         },
       }}
     >
@@ -57,28 +61,30 @@ function HomeTabs() {
 
 export function AppNavigator() {
   return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen
-          name="Main"
-          component={HomeTabs}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="AddExpense"
-          component={AddExpenseScreen}
-          options={{
-            title: "Novo Gasto",
-            headerStyle: {
-              backgroundColor: colors.primary[500],
-            },
-            headerTintColor: colors.text.inverse,
-            headerTitleStyle: {
-              fontWeight: "600",
-            },
-          }}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <SafeAreaProvider>
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen
+            name="Main"
+            component={HomeTabs}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="AddExpense"
+            component={AddExpenseScreen}
+            options={{
+              title: "Novo Gasto",
+              headerStyle: {
+                backgroundColor: colors.primary[500],
+              },
+              headerTintColor: colors.text.inverse,
+              headerTitleStyle: {
+                fontWeight: "600",
+              },
+            }}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </SafeAreaProvider>
   );
 }

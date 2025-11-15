@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   Alert,
+  SafeAreaView,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useAppStore } from "../../application/store/useAppStore";
@@ -48,126 +49,160 @@ export const SettingsScreen: React.FC = () => {
   };
 
   return (
-    <ScrollView style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <View style={styles.iconContainer}>
-          <Ionicons name="settings" size={28} color={colors.primary[500]} />
+    <SafeAreaView style={styles.safeArea}>
+      <ScrollView style={styles.container}>
+        {/* Header */}
+        <View style={styles.header}>
+          <View style={styles.iconContainer}>
+            <Ionicons name="settings" size={28} color={colors.primary[500]} />
+          </View>
+          <View style={styles.titleContainer}>
+            <Text style={styles.title}>Configurações</Text>
+            <Text style={styles.subtitle}>MindBudget - Gestão Financeira</Text>
+          </View>
         </View>
-        <View style={styles.titleContainer}>
-          <Text style={styles.title}>Configurações</Text>
-          <Text style={styles.subtitle}>MindBudget - Gestão Financeira</Text>
-        </View>
-      </View>
 
-      {/* Notificações */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Preferências</Text>
+        {/* Notificações */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Preferências</Text>
 
-        <TouchableOpacity style={styles.settingItem} onPress={() => {}}>
-          <View
-            style={[
-              styles.settingIconContainer,
-              { backgroundColor: `${colors.secondary[500]}15` },
-            ]}
-          >
+          <TouchableOpacity style={styles.settingItem} onPress={() => {}}>
+            <View
+              style={[
+                styles.settingIconContainer,
+                { backgroundColor: `${colors.secondary[500]}15` },
+              ]}
+            >
+              <Ionicons
+                name="notifications-outline"
+                size={20}
+                color={colors.secondary[500]}
+              />
+            </View>
+            <View style={styles.settingContent}>
+              <Text style={styles.settingLabel}>Notificações</Text>
+              <Text style={styles.settingDescription}>
+                Receber lembretes de gastos
+              </Text>
+            </View>
             <Ionicons
-              name="notifications-outline"
+              name="chevron-forward"
               size={20}
-              color={colors.secondary[500]}
+              color={colors.gray[400]}
             />
-          </View>
-          <View style={styles.settingContent}>
-            <Text style={styles.settingLabel}>Notificações</Text>
-            <Text style={styles.settingDescription}>
-              Receber lembretes de gastos
-            </Text>
-          </View>
-          <Ionicons name="chevron-forward" size={20} color={colors.gray[400]} />
-        </TouchableOpacity>
+          </TouchableOpacity>
 
-        <TouchableOpacity style={styles.settingItem} onPress={() => {}}>
-          <View
-            style={[
-              styles.settingIconContainer,
-              { backgroundColor: `${colors.gray[600]}15` },
-            ]}
-          >
-            <Ionicons name="moon-outline" size={20} color={colors.gray[600]} />
-          </View>
-          <View style={styles.settingContent}>
-            <Text style={styles.settingLabel}>Tema escuro</Text>
-            <Text style={styles.settingDescription}>Ativar modo noturno</Text>
-          </View>
-          <Ionicons name="chevron-forward" size={20} color={colors.gray[400]} />
-        </TouchableOpacity>
-      </View>
-
-      {/* Dados */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Gerenciar Dados</Text>
-
-        <TouchableOpacity style={styles.settingItem} onPress={handleExportData}>
-          <View
-            style={[
-              styles.settingIconContainer,
-              { backgroundColor: `${colors.primary[500]}15` },
-            ]}
-          >
+          <TouchableOpacity style={styles.settingItem} onPress={() => {}}>
+            <View
+              style={[
+                styles.settingIconContainer,
+                { backgroundColor: `${colors.gray[600]}15` },
+              ]}
+            >
+              <Ionicons
+                name="moon-outline"
+                size={20}
+                color={colors.gray[600]}
+              />
+            </View>
+            <View style={styles.settingContent}>
+              <Text style={styles.settingLabel}>Tema escuro</Text>
+              <Text style={styles.settingDescription}>Ativar modo noturno</Text>
+            </View>
             <Ionicons
-              name="download-outline"
+              name="chevron-forward"
               size={20}
-              color={colors.primary[500]}
+              color={colors.gray[400]}
             />
-          </View>
-          <View style={styles.settingContent}>
-            <Text style={styles.settingLabel}>Exportar dados</Text>
-            <Text style={styles.settingDescription}>
-              Baixar histórico em CSV
-            </Text>
-          </View>
-          <Ionicons name="chevron-forward" size={20} color={colors.gray[400]} />
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.settingItem} onPress={handleClearData}>
-          <View
-            style={[
-              styles.settingIconContainer,
-              { backgroundColor: `${colors.error}15` },
-            ]}
-          >
-            <Ionicons name="trash-outline" size={20} color={colors.error} />
-          </View>
-          <View style={styles.settingContent}>
-            <Text style={[styles.settingLabel, { color: colors.error }]}>
-              Limpar todos os dados
-            </Text>
-            <Text style={styles.settingDescription}>
-              Excluir permanentemente tudo
-            </Text>
-          </View>
-          <Ionicons name="chevron-forward" size={20} color={colors.gray[400]} />
-        </TouchableOpacity>
-      </View>
-
-      {/* Sobre */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Sobre</Text>
-
-        <View style={styles.aboutCard}>
-          <Text style={styles.appName}>MindBudget</Text>
-          <Text style={styles.version}>Versão 1.0.0</Text>
-          <Text style={styles.description}>
-            Aplicativo de gestão financeira com análise emocional de gastos.
-          </Text>
-          <Text style={styles.credits}>Desenvolvido com ❤️ para PUC Minas</Text>
+          </TouchableOpacity>
         </View>
-      </View>
-    </ScrollView>
+
+        {/* Dados */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Gerenciar Dados</Text>
+
+          <TouchableOpacity
+            style={styles.settingItem}
+            onPress={handleExportData}
+          >
+            <View
+              style={[
+                styles.settingIconContainer,
+                { backgroundColor: `${colors.primary[500]}15` },
+              ]}
+            >
+              <Ionicons
+                name="download-outline"
+                size={20}
+                color={colors.primary[500]}
+              />
+            </View>
+            <View style={styles.settingContent}>
+              <Text style={styles.settingLabel}>Exportar dados</Text>
+              <Text style={styles.settingDescription}>
+                Baixar histórico em CSV
+              </Text>
+            </View>
+            <Ionicons
+              name="chevron-forward"
+              size={20}
+              color={colors.gray[400]}
+            />
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.settingItem}
+            onPress={handleClearData}
+          >
+            <View
+              style={[
+                styles.settingIconContainer,
+                { backgroundColor: `${colors.error}15` },
+              ]}
+            >
+              <Ionicons name="trash-outline" size={20} color={colors.error} />
+            </View>
+            <View style={styles.settingContent}>
+              <Text style={[styles.settingLabel, { color: colors.error }]}>
+                Limpar todos os dados
+              </Text>
+              <Text style={styles.settingDescription}>
+                Excluir permanentemente tudo
+              </Text>
+            </View>
+            <Ionicons
+              name="chevron-forward"
+              size={20}
+              color={colors.gray[400]}
+            />
+          </TouchableOpacity>
+        </View>
+
+        {/* Sobre */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Sobre</Text>
+
+          <View style={styles.aboutCard}>
+            <Text style={styles.appName}>MindBudget</Text>
+            <Text style={styles.version}>Versão 1.0.0</Text>
+            <Text style={styles.description}>
+              Aplicativo de gestão financeira com análise emocional de gastos.
+            </Text>
+            <Text style={styles.credits}>
+              Desenvolvido com ❤️ para PUC Minas
+            </Text>
+          </View>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: colors.backgroundSecondary,
+  },
   container: {
     flex: 1,
     backgroundColor: colors.backgroundSecondary,

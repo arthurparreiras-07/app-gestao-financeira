@@ -6,6 +6,7 @@ import {
   ScrollView,
   TouchableOpacity,
   ActivityIndicator,
+  SafeAreaView,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useAppStore } from "../../application/store/useAppStore";
@@ -36,131 +37,145 @@ export const HomeScreen = ({ navigation }: any) => {
 
   if (loading) {
     return (
-      <View style={styles.loadingContainer}>
+      <SafeAreaView style={styles.loadingContainer}>
         <ActivityIndicator size="large" color={colors.primary[500]} />
-      </View>
+      </SafeAreaView>
     );
   }
 
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.header}>
-        <View style={styles.headerTop}>
-          <View>
-            <Text style={styles.title}>MindBudget</Text>
-            <Text style={styles.subtitle}>
-              {format(new Date(), "EEEE, d 'de' MMMM", { locale: ptBR })}
+    <SafeAreaView style={styles.safeArea}>
+      <ScrollView style={styles.container}>
+        <View style={styles.header}>
+          <View style={styles.headerTop}>
+            <View>
+              <Text style={styles.title}>MindBudget</Text>
+              <Text style={styles.subtitle}>
+                {format(new Date(), "EEEE, d 'de' MMMM", { locale: ptBR })}
+              </Text>
+            </View>
+            <Ionicons name="wallet" size={32} color={colors.text.inverse} />
+          </View>
+        </View>
+
+        <View style={styles.summaryContainer}>
+          <View style={styles.summaryCard}>
+            <View style={styles.summaryIconContainer}>
+              <Ionicons
+                name="cash-outline"
+                size={24}
+                color={colors.primary[500]}
+              />
+            </View>
+            <Text style={styles.summaryLabel}>Total Gasto</Text>
+            <Text style={styles.summaryValue}>
+              R$ {totalExpenses.toFixed(2)}
             </Text>
           </View>
-          <Ionicons name="wallet" size={32} color={colors.text.inverse} />
+          <View style={styles.summaryCard}>
+            <View style={styles.summaryIconContainer}>
+              <Ionicons
+                name="calendar-outline"
+                size={24}
+                color={colors.secondary[500]}
+              />
+            </View>
+            <Text style={styles.summaryLabel}>Este Mês</Text>
+            <Text style={styles.summaryValue}>R$ {monthTotal.toFixed(2)}</Text>
+          </View>
         </View>
-      </View>
 
-      <View style={styles.summaryContainer}>
-        <View style={styles.summaryCard}>
-          <View style={styles.summaryIconContainer}>
+        <TouchableOpacity
+          style={styles.addButton}
+          onPress={() => navigation.navigate("AddExpense")}
+          activeOpacity={0.8}
+        >
+          <Ionicons name="add-circle" size={20} color={colors.text.inverse} />
+          <Text style={styles.addButtonText}>Adicionar Gasto</Text>
+        </TouchableOpacity>
+
+        <View style={styles.insightsContainer}>
+          <View style={styles.sectionHeader}>
+            <Ionicons name="bulb" size={20} color={colors.primary[500]} />
+            <Text style={styles.sectionTitle}>Insights</Text>
+          </View>
+          {insights.length > 0 ? (
+            insights.map((insight) => (
+              <InsightCard key={insight.id} insight={insight} />
+            ))
+          ) : (
+            <View style={styles.emptyState}>
+              <Ionicons
+                name="analytics-outline"
+                size={48}
+                color={colors.gray[300]}
+              />
+              <Text style={styles.emptyText}>
+                Adicione gastos para receber insights personalizados
+              </Text>
+            </View>
+          )}
+        </View>
+
+        <View style={styles.recentContainer}>
+          <View style={styles.sectionHeader}>
             <Ionicons
-              name="cash-outline"
-              size={24}
+              name="time-outline"
+              size={20}
               color={colors.primary[500]}
             />
+            <Text style={styles.sectionTitle}>Gastos Recentes</Text>
           </View>
-          <Text style={styles.summaryLabel}>Total Gasto</Text>
-          <Text style={styles.summaryValue}>R$ {totalExpenses.toFixed(2)}</Text>
-        </View>
-        <View style={styles.summaryCard}>
-          <View style={styles.summaryIconContainer}>
-            <Ionicons
-              name="calendar-outline"
-              size={24}
-              color={colors.secondary[500]}
-            />
-          </View>
-          <Text style={styles.summaryLabel}>Este Mês</Text>
-          <Text style={styles.summaryValue}>R$ {monthTotal.toFixed(2)}</Text>
-        </View>
-      </View>
-
-      <TouchableOpacity
-        style={styles.addButton}
-        onPress={() => navigation.navigate("AddExpense")}
-        activeOpacity={0.8}
-      >
-        <Ionicons name="add-circle" size={20} color={colors.text.inverse} />
-        <Text style={styles.addButtonText}>Adicionar Gasto</Text>
-      </TouchableOpacity>
-
-      <View style={styles.insightsContainer}>
-        <View style={styles.sectionHeader}>
-          <Ionicons name="bulb" size={20} color={colors.primary[500]} />
-          <Text style={styles.sectionTitle}>Insights</Text>
-        </View>
-        {insights.length > 0 ? (
-          insights.map((insight) => (
-            <InsightCard key={insight.id} insight={insight} />
-          ))
-        ) : (
-          <View style={styles.emptyState}>
-            <Ionicons
-              name="analytics-outline"
-              size={48}
-              color={colors.gray[300]}
-            />
-            <Text style={styles.emptyText}>
-              Adicione gastos para receber insights personalizados
-            </Text>
-          </View>
-        )}
-      </View>
-
-      <View style={styles.recentContainer}>
-        <View style={styles.sectionHeader}>
-          <Ionicons name="time-outline" size={20} color={colors.primary[500]} />
-          <Text style={styles.sectionTitle}>Gastos Recentes</Text>
-        </View>
-        {expenses.slice(0, 5).length > 0 ? (
-          expenses.slice(0, 5).map((expense) => (
-            <View key={expense.id} style={styles.expenseItem}>
-              <View style={styles.expenseLeft}>
-                <View style={styles.expenseIconContainer}>
-                  <Ionicons
-                    name="receipt-outline"
-                    size={20}
-                    color={colors.primary[500]}
-                  />
+          {expenses.slice(0, 5).length > 0 ? (
+            expenses.slice(0, 5).map((expense) => (
+              <View key={expense.id} style={styles.expenseItem}>
+                <View style={styles.expenseLeft}>
+                  <View style={styles.expenseIconContainer}>
+                    <Ionicons
+                      name="receipt-outline"
+                      size={20}
+                      color={colors.primary[500]}
+                    />
+                  </View>
+                  <View>
+                    <Text style={styles.expenseAmount}>
+                      R$ {expense.amount.toFixed(2)}
+                    </Text>
+                    <Text style={styles.expenseDate}>
+                      {format(expense.date, "dd/MM/yyyy")}
+                    </Text>
+                  </View>
                 </View>
-                <View>
-                  <Text style={styles.expenseAmount}>
-                    R$ {expense.amount.toFixed(2)}
+                {expense.note && (
+                  <Text style={styles.expenseNote} numberOfLines={1}>
+                    {expense.note}
                   </Text>
-                  <Text style={styles.expenseDate}>
-                    {format(expense.date, "dd/MM/yyyy")}
-                  </Text>
-                </View>
+                )}
               </View>
-              {expense.note && (
-                <Text style={styles.expenseNote} numberOfLines={1}>
-                  {expense.note}
-                </Text>
-              )}
+            ))
+          ) : (
+            <View style={styles.emptyState}>
+              <Ionicons
+                name="document-outline"
+                size={48}
+                color={colors.gray[300]}
+              />
+              <Text style={styles.emptyText}>
+                Nenhum gasto registrado ainda
+              </Text>
             </View>
-          ))
-        ) : (
-          <View style={styles.emptyState}>
-            <Ionicons
-              name="document-outline"
-              size={48}
-              color={colors.gray[300]}
-            />
-            <Text style={styles.emptyText}>Nenhum gasto registrado ainda</Text>
-          </View>
-        )}
-      </View>
-    </ScrollView>
+          )}
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: colors.backgroundSecondary,
+  },
   container: {
     flex: 1,
     backgroundColor: colors.backgroundSecondary,
