@@ -7,7 +7,6 @@ import { Platform } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { HomeScreen } from "../screens/HomeScreen";
 import { AddExpenseScreen } from "../screens/AddExpenseScreen";
-import { ReportsScreen } from "../screens/ReportsScreen";
 import { SettingsScreen } from "../screens/SettingsScreen";
 import { TransactionsScreen } from "../screens/TransactionsScreen";
 import { useTheme } from "../../theme/ThemeContext";
@@ -58,16 +57,6 @@ function HomeTabs() {
           title: "Transações",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="list" size={size} color={color} />
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="Reports"
-        component={ReportsScreen}
-        options={{
-          title: "Relatórios",
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="stats-chart" size={size} color={color} />
           ),
         }}
       />
