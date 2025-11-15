@@ -12,6 +12,9 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 import { useAppStore } from "../../application/store/useAppStore";
 import { EmotionSelector } from "../components/EmotionSelector";
 import { CategorySelector } from "../components/CategorySelector";
@@ -36,6 +39,8 @@ export const AddExpenseScreen = ({ navigation }: any) => {
   const [emotionId, setEmotionId] = useState<number>();
   const [categoryId, setCategoryId] = useState<number>();
   const [note, setNote] = useState("");
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [showDatePicker, setShowDatePicker] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async () => {
@@ -60,7 +65,7 @@ export const AddExpenseScreen = ({ navigation }: any) => {
       });
       await addExpense({
         amount: numAmount,
-        date: new Date(),
+        date: selectedDate,
         emotionId,
         categoryId,
         note,
@@ -181,6 +186,47 @@ export const AddExpenseScreen = ({ navigation }: any) => {
                   onChangeText={setAmount}
                 />
               </View>
+            </View>
+
+            <View style={styles.inputContainer}>
+              <View style={styles.labelContainer}>
+                <Ionicons
+                  name="calendar"
+                  size={20}
+                  color={colors.primary[500]}
+                />
+                <Text style={styles.label}>Data *</Text>
+              </View>
+              <TouchableOpacity
+                style={styles.dateButton}
+                onPress={() => setShowDatePicker(true)}
+                activeOpacity={0.7}
+              >
+                <Text style={styles.dateText}>
+                  {format(selectedDate, "dd 'de' MMMM 'de' yyyy", {
+                    locale: ptBR,
+                  })}
+                </Text>
+                <Ionicons
+                  name="chevron-down"
+                  size={20}
+                  color={colors.text.secondary}
+                />
+              </TouchableOpacity>
+              {showDatePicker && (
+                <DateTimePicker
+                  value={selectedDate}
+                  mode="date"
+                  display={Platform.OS === "ios" ? "spinner" : "default"}
+                  onChange={(event, date) => {
+                    setShowDatePicker(Platform.OS === "ios");
+                    if (date) {
+                      setSelectedDate(date);
+                    }
+                  }}
+                  maximumDate={new Date()}
+                />
+              )}
             </View>
 
             <View style={styles.section}>
@@ -338,6 +384,22 @@ const createStyles = (colors: ReturnType<typeof getColors>) =>
       borderWidth: 1,
       borderColor: colors.border,
       ...shadows.sm,
+    },
+    dateButton: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      backgroundColor: colors.background,
+      borderRadius: borderRadius.lg,
+      borderWidth: 1,
+      borderColor: colors.border,
+      padding: spacing.md,
+      ...shadows.sm,
+    },
+    dateText: {
+      fontSize: fontSize.md,
+      color: colors.text.primary,
+      fontWeight: fontWeight.medium,
     },
     submitButton: {
       backgroundColor: colors.primary[500],

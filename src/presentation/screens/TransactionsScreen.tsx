@@ -6,12 +6,14 @@ import {
   ScrollView,
   TouchableOpacity,
   Dimensions,
+  Modal,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
-import { useAppStore } from "../../application/store/useAppStore";
+import DateTimePicker from "@react-native-community/datetimepicker";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { useAppStore } from "../../application/store/useAppStore";
 import { useTheme } from "../../theme/ThemeContext";
 import {
   getColors,
@@ -34,6 +36,15 @@ export const TransactionsScreen = () => {
   const [filter, setFilter] = useState<FilterType>("all");
   const [activeTab, setActiveTab] = useState<TabType>("list");
 
+  // Filtros avançados
+  const [showFilters, setShowFilters] = useState(false);
+  const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
+  const [selectedEmotions, setSelectedEmotions] = useState<number[]>([]);
+  const [startDate, setStartDate] = useState<Date | null>(null);
+  const [endDate, setEndDate] = useState<Date | null>(null);
+  const [showStartDatePicker, setShowStartDatePicker] = useState(false);
+  const [showEndDatePicker, setShowEndDatePicker] = useState(false);
+
   const screenWidth = Dimensions.get("window").width;
 
   // Cores para emoções
@@ -50,8 +61,40 @@ export const TransactionsScreen = () => {
   // Filtrar transações
   const filteredExpenses = expenses
     .filter((e) => {
-      if (filter === "all") return true;
-      return e.type === filter;
+      // Filtro por tipo (all, expense, saving)
+      if (filter !== "all" && e.type !== filter) return false;
+
+      // Filtro por categoria
+      if (
+        selectedCategories.length > 0 &&
+        !selectedCategories.includes(e.categoryId)
+      ) {
+        return false;
+      }
+
+      // Filtro por emoção
+      if (
+        selectedEmotions.length > 0 &&
+        !selectedEmotions.includes(e.emotionId)
+      ) {
+        return false;
+      }
+
+      // Filtro por data mínima
+      if (startDate && e.date < startDate) {
+        return false;
+      }
+
+      // Filtro por data máxima
+      if (endDate) {
+        const endOfDay = new Date(endDate);
+        endOfDay.setHours(23, 59, 59, 999);
+        if (e.date > endOfDay) {
+          return false;
+        }
+      }
+
+      return true;
     })
     .sort((a, b) => b.date.getTime() - a.date.getTime());
 
@@ -155,6 +198,36 @@ export const TransactionsScreen = () => {
   const chartConfig = {
     color: (opacity = 1) => `rgba(31, 166, 114, ${opacity})`,
   };
+
+  // Funções de filtros
+  const toggleCategory = (categoryId: number) => {
+    setSelectedCategories((prev) =>
+      prev.includes(categoryId)
+        ? prev.filter((id) => id !== categoryId)
+        : [...prev, categoryId]
+    );
+  };
+
+  const toggleEmotion = (emotionId: number) => {
+    setSelectedEmotions((prev) =>
+      prev.includes(emotionId)
+        ? prev.filter((id) => id !== emotionId)
+        : [...prev, emotionId]
+    );
+  };
+
+  const clearFilters = () => {
+    setSelectedCategories([]);
+    setSelectedEmotions([]);
+    setStartDate(null);
+    setEndDate(null);
+  };
+
+  const hasActiveFilters =
+    selectedCategories.length > 0 ||
+    selectedEmotions.length > 0 ||
+    startDate !== null ||
+    endDate !== null;
 
   const styles = createStyles(colors);
 
@@ -573,10 +646,278 @@ export const TransactionsScreen = () => {
             Economias
           </Text>
         </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[
+            styles.advancedFilterButton,
+            hasActiveFilters && styles.advancedFilterButtonActive,
+          ]}
+          onPress={() => setShowFilters(true)}
+          activeOpacity={0.7}
+        >
+          <Ionicons
+            name="options"
+            size={18}
+            color={
+              hasActiveFilters ? colors.primary[500] : colors.text.secondary
+            }
+          />
+          {hasActiveFilters && <View style={styles.filterBadge} />}
+        </TouchableOpacity>
       </View>
 
       {/* Conteúdo da aba ativa */}
       {activeTab === "list" ? renderListTab() : renderReportsTab()}
+
+      {/* Modal de Filtros Avançados */}
+      <Modal
+        visible={showFilters}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={() => setShowFilters(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Filtros Avançados</Text>
+              <TouchableOpacity
+                onPress={() => setShowFilters(false)}
+                style={styles.closeButton}
+              >
+                <Ionicons name="close" size={24} color={colors.text.primary} />
+              </TouchableOpacity>
+            </View>
+
+            <ScrollView style={styles.modalScroll}>
+              {/* Filtro de Data */}
+              <View style={styles.filterSection}>
+                <Text style={styles.filterSectionTitle}>Período</Text>
+
+                <View style={styles.dateFilterRow}>
+                  <View style={styles.dateFilterItem}>
+                    <Text style={styles.dateFilterLabel}>Data Inicial</Text>
+                    <TouchableOpacity
+                      style={styles.datePickerButton}
+                      onPress={() => setShowStartDatePicker(true)}
+                    >
+                      <Text style={styles.datePickerText}>
+                        {startDate
+                          ? format(startDate, "dd/MM/yyyy")
+                          : "Selecionar"}
+                      </Text>
+                      <Ionicons
+                        name="calendar"
+                        size={16}
+                        color={colors.text.secondary}
+                      />
+                    </TouchableOpacity>
+                    {startDate && (
+                      <TouchableOpacity
+                        onPress={() => setStartDate(null)}
+                        style={styles.clearDateButton}
+                      >
+                        <Ionicons
+                          name="close-circle"
+                          size={20}
+                          color={colors.error}
+                        />
+                      </TouchableOpacity>
+                    )}
+                  </View>
+
+                  <View style={styles.dateFilterItem}>
+                    <Text style={styles.dateFilterLabel}>Data Final</Text>
+                    <TouchableOpacity
+                      style={styles.datePickerButton}
+                      onPress={() => setShowEndDatePicker(true)}
+                    >
+                      <Text style={styles.datePickerText}>
+                        {endDate ? format(endDate, "dd/MM/yyyy") : "Selecionar"}
+                      </Text>
+                      <Ionicons
+                        name="calendar"
+                        size={16}
+                        color={colors.text.secondary}
+                      />
+                    </TouchableOpacity>
+                    {endDate && (
+                      <TouchableOpacity
+                        onPress={() => setEndDate(null)}
+                        style={styles.clearDateButton}
+                      >
+                        <Ionicons
+                          name="close-circle"
+                          size={20}
+                          color={colors.error}
+                        />
+                      </TouchableOpacity>
+                    )}
+                  </View>
+                </View>
+
+                {showStartDatePicker && (
+                  <DateTimePicker
+                    value={startDate || new Date()}
+                    mode="date"
+                    display="default"
+                    onChange={(event, date) => {
+                      setShowStartDatePicker(false);
+                      if (date) setStartDate(date);
+                    }}
+                    maximumDate={endDate || new Date()}
+                  />
+                )}
+
+                {showEndDatePicker && (
+                  <DateTimePicker
+                    value={endDate || new Date()}
+                    mode="date"
+                    display="default"
+                    onChange={(event, date) => {
+                      setShowEndDatePicker(false);
+                      if (date) setEndDate(date);
+                    }}
+                    minimumDate={startDate || undefined}
+                    maximumDate={new Date()}
+                  />
+                )}
+              </View>
+
+              {/* Filtro de Categorias */}
+              <View style={styles.filterSection}>
+                <Text style={styles.filterSectionTitle}>Categorias</Text>
+                <View style={styles.filterChipsContainer}>
+                  {categories.map((category) => {
+                    if (!category.id) return null;
+                    return (
+                      <TouchableOpacity
+                        key={category.id}
+                        style={[
+                          styles.filterChip,
+                          selectedCategories.includes(category.id) &&
+                            styles.filterChipActive,
+                          {
+                            borderColor: selectedCategories.includes(
+                              category.id
+                            )
+                              ? category.color
+                              : colors.border,
+                          },
+                        ]}
+                        onPress={() => toggleCategory(category.id!)}
+                      >
+                        <View
+                          style={[
+                            styles.chipColorDot,
+                            { backgroundColor: category.color },
+                          ]}
+                        />
+                        <Text
+                          style={[
+                            styles.filterChipText,
+                            selectedCategories.includes(category.id) &&
+                              styles.filterChipTextActive,
+                          ]}
+                        >
+                          {category.name}
+                        </Text>
+                        {selectedCategories.includes(category.id) && (
+                          <Ionicons
+                            name="checkmark-circle"
+                            size={16}
+                            color={category.color}
+                          />
+                        )}
+                      </TouchableOpacity>
+                    );
+                  })}
+                </View>
+              </View>
+
+              {/* Filtro de Emoções */}
+              <View style={styles.filterSection}>
+                <Text style={styles.filterSectionTitle}>Emoções</Text>
+                <View style={styles.filterChipsContainer}>
+                  {emotions.map((emotion) => {
+                    if (!emotion.id) return null;
+                    return (
+                      <TouchableOpacity
+                        key={emotion.id}
+                        style={[
+                          styles.filterChip,
+                          selectedEmotions.includes(emotion.id) &&
+                            styles.filterChipActive,
+                          {
+                            borderColor: selectedEmotions.includes(emotion.id)
+                              ? emotionColors[emotion.name] ||
+                                colors.primary[500]
+                              : colors.border,
+                          },
+                        ]}
+                        onPress={() => toggleEmotion(emotion.id!)}
+                      >
+                        <Text style={styles.emotionIcon}>{emotion.icon}</Text>
+                        <Text
+                          style={[
+                            styles.filterChipText,
+                            selectedEmotions.includes(emotion.id) &&
+                              styles.filterChipTextActive,
+                          ]}
+                        >
+                          {emotion.name}
+                        </Text>
+                        {selectedEmotions.includes(emotion.id) && (
+                          <Ionicons
+                            name="checkmark-circle"
+                            size={16}
+                            color={
+                              emotionColors[emotion.name] || colors.primary[500]
+                            }
+                          />
+                        )}
+                      </TouchableOpacity>
+                    );
+                  })}
+                </View>
+              </View>
+            </ScrollView>
+
+            <View style={styles.modalFooter}>
+              <TouchableOpacity
+                style={styles.clearFiltersButton}
+                onPress={clearFilters}
+                disabled={!hasActiveFilters}
+              >
+                <Ionicons
+                  name="refresh"
+                  size={18}
+                  color={hasActiveFilters ? colors.error : colors.gray[400]}
+                />
+                <Text
+                  style={[
+                    styles.clearFiltersText,
+                    !hasActiveFilters && styles.clearFiltersTextDisabled,
+                  ]}
+                >
+                  Limpar
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.applyFiltersButton}
+                onPress={() => setShowFilters(false)}
+              >
+                <Text style={styles.applyFiltersText}>Aplicar Filtros</Text>
+                <Ionicons
+                  name="checkmark"
+                  size={18}
+                  color={colors.text.inverse}
+                />
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 };
@@ -647,6 +988,30 @@ const createStyles = (colors: ReturnType<typeof getColors>) =>
     filterTextActive: {
       color: colors.primary[600],
       fontWeight: fontWeight.bold,
+    },
+    advancedFilterButton: {
+      width: 48,
+      height: 48,
+      alignItems: "center",
+      justifyContent: "center",
+      borderRadius: borderRadius.md,
+      backgroundColor: colors.backgroundSecondary,
+      borderWidth: 1,
+      borderColor: colors.border,
+      position: "relative",
+    },
+    advancedFilterButtonActive: {
+      backgroundColor: `${colors.primary[500]}15`,
+      borderColor: colors.primary[500],
+    },
+    filterBadge: {
+      position: "absolute",
+      top: 8,
+      right: 8,
+      width: 8,
+      height: 8,
+      borderRadius: 4,
+      backgroundColor: colors.primary[500],
     },
     tabContent: {
       flex: 1,
@@ -832,5 +1197,159 @@ const createStyles = (colors: ReturnType<typeof getColors>) =>
     emptyChart: {
       alignItems: "center",
       paddingVertical: spacing.xxl,
+    },
+    // Estilos do Modal
+    modalOverlay: {
+      flex: 1,
+      backgroundColor: "rgba(0, 0, 0, 0.5)",
+      justifyContent: "flex-end",
+    },
+    modalContent: {
+      backgroundColor: colors.background,
+      borderTopLeftRadius: borderRadius.xl,
+      borderTopRightRadius: borderRadius.xl,
+      maxHeight: "90%",
+      ...shadows.lg,
+    },
+    modalHeader: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      padding: spacing.lg,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.border,
+    },
+    modalTitle: {
+      fontSize: fontSize.xl,
+      fontWeight: fontWeight.bold,
+      color: colors.text.primary,
+    },
+    closeButton: {
+      padding: spacing.xs,
+    },
+    modalScroll: {
+      maxHeight: 500,
+    },
+    filterSection: {
+      padding: spacing.lg,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.border,
+    },
+    filterSectionTitle: {
+      fontSize: fontSize.lg,
+      fontWeight: fontWeight.bold,
+      color: colors.text.primary,
+      marginBottom: spacing.md,
+    },
+    dateFilterRow: {
+      flexDirection: "row",
+      gap: spacing.md,
+    },
+    dateFilterItem: {
+      flex: 1,
+    },
+    dateFilterLabel: {
+      fontSize: fontSize.sm,
+      color: colors.text.secondary,
+      marginBottom: spacing.xs,
+      fontWeight: fontWeight.medium,
+    },
+    datePickerButton: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      backgroundColor: colors.backgroundSecondary,
+      borderRadius: borderRadius.md,
+      borderWidth: 1,
+      borderColor: colors.border,
+      padding: spacing.sm,
+    },
+    datePickerText: {
+      fontSize: fontSize.sm,
+      color: colors.text.primary,
+    },
+    clearDateButton: {
+      position: "absolute",
+      top: 22,
+      right: 35,
+    },
+    filterChipsContainer: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      gap: spacing.sm,
+    },
+    filterChip: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: spacing.xs,
+      paddingVertical: spacing.sm,
+      paddingHorizontal: spacing.md,
+      borderRadius: borderRadius.full,
+      borderWidth: 2,
+      backgroundColor: colors.background,
+    },
+    filterChipActive: {
+      backgroundColor: colors.backgroundSecondary,
+    },
+    filterChipText: {
+      fontSize: fontSize.sm,
+      color: colors.text.secondary,
+      fontWeight: fontWeight.medium,
+    },
+    filterChipTextActive: {
+      color: colors.text.primary,
+      fontWeight: fontWeight.semibold,
+    },
+    chipColorDot: {
+      width: 12,
+      height: 12,
+      borderRadius: 6,
+    },
+    emotionIcon: {
+      fontSize: fontSize.md,
+    },
+    modalFooter: {
+      flexDirection: "row",
+      gap: spacing.md,
+      padding: spacing.lg,
+      borderTopWidth: 1,
+      borderTopColor: colors.border,
+      backgroundColor: colors.background,
+    },
+    clearFiltersButton: {
+      flex: 1,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: spacing.sm,
+      padding: spacing.md,
+      borderRadius: borderRadius.lg,
+      borderWidth: 1,
+      borderColor: colors.border,
+      backgroundColor: colors.backgroundSecondary,
+    },
+    clearFiltersText: {
+      fontSize: fontSize.md,
+      fontWeight: fontWeight.semibold,
+      color: colors.error,
+    },
+    clearFiltersTextDisabled: {
+      color: colors.gray[400],
+    },
+    applyFiltersButton: {
+      flex: 2,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: spacing.sm,
+      padding: spacing.md,
+      borderRadius: borderRadius.lg,
+      backgroundColor: colors.primary[500],
+      ...shadows.md,
+    },
+    applyFiltersText: {
+      fontSize: fontSize.md,
+      fontWeight: fontWeight.bold,
+      color: colors.text.inverse,
     },
   });
