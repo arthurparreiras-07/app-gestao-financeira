@@ -168,9 +168,7 @@ export const ReportsScreen = () => {
             styles.summaryCard,
             {
               backgroundColor:
-                balance >= 0
-                  ? `${colors.success}15`
-                  : `${colors.error}15`,
+                balance >= 0 ? `${colors.success}15` : `${colors.error}15`,
               borderLeftWidth: 4,
               borderLeftColor: balance >= 0 ? colors.success : colors.error,
             },

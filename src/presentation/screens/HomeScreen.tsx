@@ -24,7 +24,8 @@ import {
 } from "../../theme/theme";
 
 export const HomeScreen = ({ navigation }: any) => {
-  const { expenses, insights, loading, loadData } = useAppStore();
+  const { expenses, insights, loading, loadData, emotions, categories } =
+    useAppStore();
   const { isDark } = useTheme();
   const colors = getColors(isDark);
 
@@ -199,47 +200,98 @@ export const HomeScreen = ({ navigation }: any) => {
               size={20}
               color={colors.primary[500]}
             />
-            <Text style={styles.sectionTitle}>Gastos Recentes</Text>
+            <Text style={styles.sectionTitle}>Últimas 24 Horas</Text>
           </View>
-          {expenses.slice(0, 5).length > 0 ? (
-            expenses.slice(0, 5).map((expense) => (
-              <View key={expense.id} style={styles.expenseItem}>
-                <View style={styles.expenseLeft}>
-                  <View style={styles.expenseIconContainer}>
-                    <Ionicons
-                      name="receipt-outline"
-                      size={20}
-                      color={colors.primary[500]}
-                    />
-                  </View>
-                  <View>
-                    <Text style={styles.expenseAmount}>
-                      R$ {expense.amount.toFixed(2)}
-                    </Text>
-                    <Text style={styles.expenseDate}>
-                      {format(expense.date, "dd/MM/yyyy")}
-                    </Text>
-                  </View>
-                </View>
-                {expense.note && (
-                  <Text style={styles.expenseNote} numberOfLines={1}>
-                    {expense.note}
-                  </Text>
-                )}
+          {(() => {
+            const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+            const recentTransactions = expenses
+              .filter((e) => e.date >= oneDayAgo)
+              .sort((a, b) => b.date.getTime() - a.date.getTime())
+              .slice(0, 5);
+
+            return recentTransactions.length > 0 ? (
+              <>
+                {recentTransactions.map((expense) => {
+                  const emotion = emotions.find(
+                    (e) => e.id === expense.emotionId
+                  );
+                  const category = categories.find(
+                    (c) => c.id === expense.categoryId
+                  );
+                  const isExpense = expense.type === "expense";
+
+                  return (
+                    <View key={expense.id} style={styles.expenseItem}>
+                      <View style={styles.expenseHeader}>
+                        <View style={styles.expenseLeft}>
+                          <View
+                            style={[
+                              styles.expenseIconContainer,
+                              {
+                                backgroundColor: category
+                                  ? `${category.color}15`
+                                  : `${colors.primary[500]}15`,
+                              },
+                            ]}
+                          >
+                            <Ionicons
+                              name={isExpense ? "trending-down" : "trending-up"}
+                              size={20}
+                              color={isExpense ? colors.error : colors.success}
+                            />
+                          </View>
+                          <View style={styles.expenseInfo}>
+                            <Text style={styles.expenseCategory}>
+                              {category?.name || "Sem categoria"}
+                            </Text>
+                            <View style={styles.expenseMeta}>
+                              <Ionicons
+                                name="heart"
+                                size={12}
+                                color={colors.text.tertiary}
+                              />
+                              <Text style={styles.expenseEmotion}>
+                                {emotion?.name || "Desconhecido"}
+                              </Text>
+                              <Text style={styles.expenseTime}>
+                                • {format(expense.date, "HH:mm")}
+                              </Text>
+                            </View>
+                          </View>
+                        </View>
+                        <Text
+                          style={[
+                            styles.expenseAmount,
+                            {
+                              color: isExpense ? colors.error : colors.success,
+                            },
+                          ]}
+                        >
+                          {isExpense ? "-" : "+"}R$ {expense.amount.toFixed(2)}
+                        </Text>
+                      </View>
+                      {expense.note && (
+                        <Text style={styles.expenseNote} numberOfLines={2}>
+                          {expense.note}
+                        </Text>
+                      )}
+                    </View>
+                  );
+                })}
+              </>
+            ) : (
+              <View style={styles.emptyState}>
+                <Ionicons
+                  name="document-outline"
+                  size={48}
+                  color={colors.gray[300]}
+                />
+                <Text style={styles.emptyText}>
+                  Nenhuma transação nas últimas 24 horas
+                </Text>
               </View>
-            ))
-          ) : (
-            <View style={styles.emptyState}>
-              <Ionicons
-                name="document-outline"
-                size={48}
-                color={colors.gray[300]}
-              />
-              <Text style={styles.emptyText}>
-                Nenhum gasto registrado ainda
-              </Text>
-            </View>
-          )}
+            );
+          })()}
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -374,23 +426,49 @@ const createStyles = (colors: ReturnType<typeof getColors>) =>
       marginBottom: spacing.sm,
       ...shadows.sm,
     },
+    expenseHeader: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+    },
     expenseLeft: {
       flexDirection: "row",
       alignItems: "center",
       gap: spacing.md,
+      flex: 1,
     },
     expenseIconContainer: {
       width: 40,
       height: 40,
       borderRadius: borderRadius.md,
-      backgroundColor: `${colors.secondary[500]}15`,
       justifyContent: "center",
       alignItems: "center",
     },
-    expenseAmount: {
-      fontSize: fontSize.lg,
+    expenseInfo: {
+      flex: 1,
+    },
+    expenseCategory: {
+      fontSize: fontSize.md,
       fontWeight: fontWeight.semibold,
       color: colors.text.primary,
+      marginBottom: spacing.xs,
+    },
+    expenseMeta: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: spacing.xs,
+    },
+    expenseEmotion: {
+      fontSize: fontSize.xs,
+      color: colors.text.tertiary,
+    },
+    expenseTime: {
+      fontSize: fontSize.xs,
+      color: colors.text.tertiary,
+    },
+    expenseAmount: {
+      fontSize: fontSize.lg,
+      fontWeight: fontWeight.bold,
     },
     expenseDate: {
       fontSize: fontSize.xs,
@@ -399,8 +477,29 @@ const createStyles = (colors: ReturnType<typeof getColors>) =>
     },
     expenseNote: {
       fontSize: fontSize.sm,
-      color: colors.text.tertiary,
+      color: colors.text.secondary,
+      marginTop: spacing.md,
+      paddingTop: spacing.sm,
+      borderTopWidth: 1,
+      borderTopColor: colors.border,
+      lineHeight: 18,
+    },
+    viewAllButton: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: spacing.sm,
+      backgroundColor: colors.background,
+      padding: spacing.md,
+      borderRadius: borderRadius.lg,
       marginTop: spacing.sm,
-      marginLeft: 56,
+      borderWidth: 1,
+      borderColor: colors.primary[500],
+      ...shadows.sm,
+    },
+    viewAllText: {
+      fontSize: fontSize.md,
+      fontWeight: fontWeight.semibold,
+      color: colors.primary[500],
     },
   });

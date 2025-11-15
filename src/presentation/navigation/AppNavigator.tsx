@@ -9,6 +9,7 @@ import { HomeScreen } from "../screens/HomeScreen";
 import { AddExpenseScreen } from "../screens/AddExpenseScreen";
 import { ReportsScreen } from "../screens/ReportsScreen";
 import { SettingsScreen } from "../screens/SettingsScreen";
+import { TransactionsScreen } from "../screens/TransactionsScreen";
 import { useTheme } from "../../theme/ThemeContext";
 import { getColors } from "../../theme/theme";
 
@@ -47,6 +48,16 @@ function HomeTabs() {
           title: "Início",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="home" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Transactions"
+        component={TransactionsScreen}
+        options={{
+          title: "Transações",
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="list" size={size} color={color} />
           ),
         }}
       />
