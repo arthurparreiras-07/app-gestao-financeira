@@ -103,7 +103,7 @@ const darkTheme = {
   },
 };
 
-export const getColors = (isDark: boolean) => isDark ? darkTheme : lightTheme;
+export const getColors = (isDark: boolean) => (isDark ? darkTheme : lightTheme);
 
 // Para compatibilidade com código existente
 export const colors = lightTheme;

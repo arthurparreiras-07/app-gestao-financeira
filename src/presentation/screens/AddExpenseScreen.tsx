@@ -30,7 +30,8 @@ export const AddExpenseScreen = ({ navigation }: any) => {
   const { emotions, categories, addExpense } = useAppStore();
   const { isDark } = useTheme();
   const colors = getColors(isDark);
-  const [transactionType, setTransactionType] = useState<TransactionType>('expense');
+  const [transactionType, setTransactionType] =
+    useState<TransactionType>("expense");
   const [amount, setAmount] = useState("");
   const [emotionId, setEmotionId] = useState<number>();
   const [categoryId, setCategoryId] = useState<number>();
@@ -51,6 +52,12 @@ export const AddExpenseScreen = ({ navigation }: any) => {
 
     setLoading(true);
     try {
+      console.log("Tentando salvar:", {
+        numAmount,
+        emotionId,
+        categoryId,
+        type: transactionType,
+      });
       await addExpense({
         amount: numAmount,
         date: new Date(),
@@ -59,10 +66,24 @@ export const AddExpenseScreen = ({ navigation }: any) => {
         note,
         type: transactionType,
       });
-      Alert.alert("Sucesso", `${transactionType === 'expense' ? 'Gasto' : 'Economia'} registrado com sucesso!`);
+      console.log("Salvo com sucesso!");
+      Alert.alert(
+        "Sucesso",
+        `${
+          transactionType === "expense" ? "Gasto" : "Economia"
+        } registrado com sucesso!`
+      );
       navigation.goBack();
     } catch (error) {
-      Alert.alert("Erro", `Não foi possível salvar ${transactionType === 'expense' ? 'o gasto' : 'a economia'}`);
+      console.error("Erro ao salvar:", error);
+      Alert.alert(
+        "Erro",
+        `Não foi possível salvar ${
+          transactionType === "expense" ? "o gasto" : "a economia"
+        }. Detalhes: ${
+          error instanceof Error ? error.message : "Erro desconhecido"
+        }`
+      );
     } finally {
       setLoading(false);
     }
@@ -71,53 +92,74 @@ export const AddExpenseScreen = ({ navigation }: any) => {
   const styles = createStyles(colors);
 
   return (
-    <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.backgroundSecondary }]} edges={["bottom"]}>
+    <SafeAreaView
+      style={[styles.safeArea, { backgroundColor: colors.backgroundSecondary }]}
+      edges={["bottom"]}
+    >
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{ flex: 1 }}
       >
-        <ScrollView style={[styles.container, { backgroundColor: colors.backgroundSecondary }]}>
+        <ScrollView
+          style={[
+            styles.container,
+            { backgroundColor: colors.backgroundSecondary },
+          ]}
+        >
           <View style={styles.content}>
             {/* Tipo de transação */}
             <View style={styles.typeContainer}>
               <TouchableOpacity
                 style={[
                   styles.typeButton,
-                  transactionType === 'expense' && styles.typeButtonActive
+                  transactionType === "expense" && styles.typeButtonActive,
                 ]}
-                onPress={() => setTransactionType('expense')}
+                onPress={() => setTransactionType("expense")}
                 activeOpacity={0.7}
               >
                 <Ionicons
                   name="trending-down"
                   size={20}
-                  color={transactionType === 'expense' ? colors.error : colors.text.secondary}
+                  color={
+                    transactionType === "expense"
+                      ? colors.error
+                      : colors.text.secondary
+                  }
                 />
-                <Text style={[
-                  styles.typeButtonText,
-                  transactionType === 'expense' && styles.typeButtonTextActive
-                ]}>
+                <Text
+                  style={[
+                    styles.typeButtonText,
+                    transactionType === "expense" &&
+                      styles.typeButtonTextActive,
+                  ]}
+                >
                   Gasto
                 </Text>
               </TouchableOpacity>
-              
+
               <TouchableOpacity
                 style={[
                   styles.typeButton,
-                  transactionType === 'saving' && styles.typeButtonActive
+                  transactionType === "saving" && styles.typeButtonActive,
                 ]}
-                onPress={() => setTransactionType('saving')}
+                onPress={() => setTransactionType("saving")}
                 activeOpacity={0.7}
               >
                 <Ionicons
                   name="trending-up"
                   size={20}
-                  color={transactionType === 'saving' ? colors.success : colors.text.secondary}
+                  color={
+                    transactionType === "saving"
+                      ? colors.success
+                      : colors.text.secondary
+                  }
                 />
-                <Text style={[
-                  styles.typeButtonText,
-                  transactionType === 'saving' && styles.typeButtonTextActive
-                ]}>
+                <Text
+                  style={[
+                    styles.typeButtonText,
+                    transactionType === "saving" && styles.typeButtonTextActive,
+                  ]}
+                >
                   Economia
                 </Text>
               </TouchableOpacity>
@@ -192,7 +234,11 @@ export const AddExpenseScreen = ({ navigation }: any) => {
                 color={colors.text.inverse}
               />
               <Text style={styles.submitButtonText}>
-                {loading ? "Salvando..." : `Salvar ${transactionType === 'expense' ? 'Gasto' : 'Economia'}`}
+                {loading
+                  ? "Salvando..."
+                  : `Salvar ${
+                      transactionType === "expense" ? "Gasto" : "Economia"
+                    }`}
               </Text>
             </TouchableOpacity>
           </View>
@@ -202,113 +248,114 @@ export const AddExpenseScreen = ({ navigation }: any) => {
   );
 };
 
-const createStyles = (colors: ReturnType<typeof getColors>) => StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: colors.backgroundSecondary,
-  },
-  container: {
-    flex: 1,
-    backgroundColor: colors.backgroundSecondary,
-  },
-  content: {
-    padding: spacing.lg,
-  },
-  typeContainer: {
-    flexDirection: "row",
-    gap: spacing.md,
-    marginBottom: spacing.lg,
-  },
-  typeButton: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: spacing.sm,
-    backgroundColor: colors.background,
-    padding: spacing.md,
-    borderRadius: borderRadius.lg,
-    borderWidth: 2,
-    borderColor: colors.border,
-  },
-  typeButtonActive: {
-    borderColor: colors.primary[500],
-    backgroundColor: `${colors.primary[500]}10`,
-  },
-  typeButtonText: {
-    fontSize: fontSize.md,
-    fontWeight: fontWeight.medium,
-    color: colors.text.secondary,
-  },
-  typeButtonTextActive: {
-    color: colors.primary[600],
-    fontWeight: fontWeight.bold,
-  },
-  section: {
-    marginBottom: spacing.lg,
-  },
-  inputContainer: {
-    marginBottom: spacing.lg,
-  },
-  labelContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.sm,
-    marginBottom: spacing.sm,
-  },
-  label: {
-    fontSize: fontSize.md,
-    fontWeight: fontWeight.semibold,
-    color: colors.text.primary,
-  },
-  inputWrapper: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: colors.background,
-    borderRadius: borderRadius.lg,
-    borderWidth: 1,
-    borderColor: colors.border,
-    paddingHorizontal: spacing.md,
-    ...shadows.sm,
-  },
-  currency: {
-    fontSize: fontSize.lg,
-    fontWeight: fontWeight.semibold,
-    color: colors.text.secondary,
-    marginRight: spacing.sm,
-  },
-  input: {
-    flex: 1,
-    backgroundColor: colors.background,
-    borderRadius: borderRadius.lg,
-    padding: spacing.md,
-    fontSize: fontSize.md,
-    color: colors.text.primary,
-  },
-  textArea: {
-    height: 100,
-    textAlignVertical: "top",
-    borderWidth: 1,
-    borderColor: colors.border,
-    ...shadows.sm,
-  },
-  submitButton: {
-    backgroundColor: colors.primary[500],
-    padding: spacing.md,
-    borderRadius: borderRadius.lg,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: spacing.sm,
-    marginTop: spacing.xl,
-    ...shadows.md,
-  },
-  submitButtonDisabled: {
-    opacity: 0.6,
-  },
-  submitButtonText: {
-    color: colors.text.inverse,
-    fontSize: fontSize.md,
-    fontWeight: fontWeight.semibold,
-  },
-});
+const createStyles = (colors: ReturnType<typeof getColors>) =>
+  StyleSheet.create({
+    safeArea: {
+      flex: 1,
+      backgroundColor: colors.backgroundSecondary,
+    },
+    container: {
+      flex: 1,
+      backgroundColor: colors.backgroundSecondary,
+    },
+    content: {
+      padding: spacing.lg,
+    },
+    typeContainer: {
+      flexDirection: "row",
+      gap: spacing.md,
+      marginBottom: spacing.lg,
+    },
+    typeButton: {
+      flex: 1,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: spacing.sm,
+      backgroundColor: colors.background,
+      padding: spacing.md,
+      borderRadius: borderRadius.lg,
+      borderWidth: 2,
+      borderColor: colors.border,
+    },
+    typeButtonActive: {
+      borderColor: colors.primary[500],
+      backgroundColor: `${colors.primary[500]}10`,
+    },
+    typeButtonText: {
+      fontSize: fontSize.md,
+      fontWeight: fontWeight.medium,
+      color: colors.text.secondary,
+    },
+    typeButtonTextActive: {
+      color: colors.primary[600],
+      fontWeight: fontWeight.bold,
+    },
+    section: {
+      marginBottom: spacing.lg,
+    },
+    inputContainer: {
+      marginBottom: spacing.lg,
+    },
+    labelContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: spacing.sm,
+      marginBottom: spacing.sm,
+    },
+    label: {
+      fontSize: fontSize.md,
+      fontWeight: fontWeight.semibold,
+      color: colors.text.primary,
+    },
+    inputWrapper: {
+      flexDirection: "row",
+      alignItems: "center",
+      backgroundColor: colors.background,
+      borderRadius: borderRadius.lg,
+      borderWidth: 1,
+      borderColor: colors.border,
+      paddingHorizontal: spacing.md,
+      ...shadows.sm,
+    },
+    currency: {
+      fontSize: fontSize.lg,
+      fontWeight: fontWeight.semibold,
+      color: colors.text.secondary,
+      marginRight: spacing.sm,
+    },
+    input: {
+      flex: 1,
+      backgroundColor: colors.background,
+      borderRadius: borderRadius.lg,
+      padding: spacing.md,
+      fontSize: fontSize.md,
+      color: colors.text.primary,
+    },
+    textArea: {
+      height: 100,
+      textAlignVertical: "top",
+      borderWidth: 1,
+      borderColor: colors.border,
+      ...shadows.sm,
+    },
+    submitButton: {
+      backgroundColor: colors.primary[500],
+      padding: spacing.md,
+      borderRadius: borderRadius.lg,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: spacing.sm,
+      marginTop: spacing.xl,
+      ...shadows.md,
+    },
+    submitButtonDisabled: {
+      opacity: 0.6,
+    },
+    submitButtonText: {
+      color: colors.text.inverse,
+      fontSize: fontSize.md,
+      fontWeight: fontWeight.semibold,
+    },
+  });

@@ -67,8 +67,13 @@ export const SettingsScreen: React.FC = () => {
   const styles = createStyles(colors);
 
   return (
-    <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]} edges={["bottom"]}>
-      <ScrollView style={[styles.container, { backgroundColor: colors.background }]}>
+    <SafeAreaView
+      style={[styles.safeArea, { backgroundColor: colors.background }]}
+      edges={["bottom"]}
+    >
+      <ScrollView
+        style={[styles.container, { backgroundColor: colors.background }]}
+      >
         {/* Header */}
         <View style={styles.header}>
           <View style={styles.iconContainer}>
@@ -226,115 +231,116 @@ export const SettingsScreen: React.FC = () => {
   );
 };
 
-const createStyles = (colors: ReturnType<typeof getColors>) => StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: colors.backgroundSecondary,
-  },
-  container: {
-    flex: 1,
-    backgroundColor: colors.backgroundSecondary,
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    padding: spacing.lg,
-    backgroundColor: colors.background,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
-  },
-  iconContainer: {
-    width: 56,
-    height: 56,
-    borderRadius: borderRadius.lg,
-    backgroundColor: `${colors.primary[500]}15`,
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: spacing.md,
-  },
-  titleContainer: {
-    flex: 1,
-  },
-  title: {
-    fontSize: fontSize.xl,
-    fontWeight: fontWeight.bold,
-    color: colors.text.primary,
-    marginBottom: spacing.xs,
-  },
-  subtitle: {
-    fontSize: fontSize.sm,
-    color: colors.text.secondary,
-  },
-  section: {
-    marginTop: spacing.lg,
-    paddingHorizontal: spacing.lg,
-  },
-  sectionTitle: {
-    fontSize: fontSize.md,
-    fontWeight: fontWeight.semibold,
-    color: colors.text.secondary,
-    marginBottom: spacing.md,
-    textTransform: "uppercase",
-    letterSpacing: 0.5,
-  },
-  settingItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: colors.background,
-    padding: spacing.md,
-    borderRadius: borderRadius.lg,
-    marginBottom: spacing.sm,
-    ...shadows.sm,
-  },
-  settingIconContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: borderRadius.md,
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: spacing.md,
-  },
-  settingContent: {
-    flex: 1,
-  },
-  settingLabel: {
-    fontSize: fontSize.md,
-    fontWeight: fontWeight.semibold,
-    color: colors.text.primary,
-    marginBottom: spacing.xs,
-  },
-  settingDescription: {
-    fontSize: fontSize.sm,
-    color: colors.text.secondary,
-  },
-  aboutCard: {
-    backgroundColor: colors.background,
-    padding: spacing.xl,
-    borderRadius: borderRadius.lg,
-    alignItems: "center",
-    ...shadows.md,
-  },
-  appName: {
-    fontSize: fontSize.xl,
-    fontWeight: fontWeight.bold,
-    color: colors.primary[600],
-    marginBottom: spacing.xs,
-  },
-  version: {
-    fontSize: fontSize.sm,
-    color: colors.text.secondary,
-    marginBottom: spacing.lg,
-  },
-  description: {
-    fontSize: fontSize.md,
-    color: colors.text.primary,
-    textAlign: "center",
-    lineHeight: 22,
-    marginBottom: spacing.md,
-  },
-  credits: {
-    fontSize: fontSize.sm,
-    color: colors.text.tertiary,
-    textAlign: "center",
-  },
-});
+const createStyles = (colors: ReturnType<typeof getColors>) =>
+  StyleSheet.create({
+    safeArea: {
+      flex: 1,
+      backgroundColor: colors.backgroundSecondary,
+    },
+    container: {
+      flex: 1,
+      backgroundColor: colors.backgroundSecondary,
+    },
+    header: {
+      flexDirection: "row",
+      alignItems: "center",
+      padding: spacing.lg,
+      backgroundColor: colors.background,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.border,
+    },
+    iconContainer: {
+      width: 56,
+      height: 56,
+      borderRadius: borderRadius.lg,
+      backgroundColor: `${colors.primary[500]}15`,
+      justifyContent: "center",
+      alignItems: "center",
+      marginRight: spacing.md,
+    },
+    titleContainer: {
+      flex: 1,
+    },
+    title: {
+      fontSize: fontSize.xl,
+      fontWeight: fontWeight.bold,
+      color: colors.text.primary,
+      marginBottom: spacing.xs,
+    },
+    subtitle: {
+      fontSize: fontSize.sm,
+      color: colors.text.secondary,
+    },
+    section: {
+      marginTop: spacing.lg,
+      paddingHorizontal: spacing.lg,
+    },
+    sectionTitle: {
+      fontSize: fontSize.md,
+      fontWeight: fontWeight.semibold,
+      color: colors.text.secondary,
+      marginBottom: spacing.md,
+      textTransform: "uppercase",
+      letterSpacing: 0.5,
+    },
+    settingItem: {
+      flexDirection: "row",
+      alignItems: "center",
+      backgroundColor: colors.background,
+      padding: spacing.md,
+      borderRadius: borderRadius.lg,
+      marginBottom: spacing.sm,
+      ...shadows.sm,
+    },
+    settingIconContainer: {
+      width: 40,
+      height: 40,
+      borderRadius: borderRadius.md,
+      justifyContent: "center",
+      alignItems: "center",
+      marginRight: spacing.md,
+    },
+    settingContent: {
+      flex: 1,
+    },
+    settingLabel: {
+      fontSize: fontSize.md,
+      fontWeight: fontWeight.semibold,
+      color: colors.text.primary,
+      marginBottom: spacing.xs,
+    },
+    settingDescription: {
+      fontSize: fontSize.sm,
+      color: colors.text.secondary,
+    },
+    aboutCard: {
+      backgroundColor: colors.background,
+      padding: spacing.xl,
+      borderRadius: borderRadius.lg,
+      alignItems: "center",
+      ...shadows.md,
+    },
+    appName: {
+      fontSize: fontSize.xl,
+      fontWeight: fontWeight.bold,
+      color: colors.primary[600],
+      marginBottom: spacing.xs,
+    },
+    version: {
+      fontSize: fontSize.sm,
+      color: colors.text.secondary,
+      marginBottom: spacing.lg,
+    },
+    description: {
+      fontSize: fontSize.md,
+      color: colors.text.primary,
+      textAlign: "center",
+      lineHeight: 22,
+      marginBottom: spacing.md,
+    },
+    credits: {
+      fontSize: fontSize.sm,
+      color: colors.text.tertiary,
+      textAlign: "center",
+    },
+  });

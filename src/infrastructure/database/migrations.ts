@@ -1,5 +1,5 @@
-import * as SQLite from 'expo-sqlite';
-import { DatabaseManager } from './DatabaseManager';
+import * as SQLite from "expo-sqlite";
+import { DatabaseManager } from "./DatabaseManager";
 
 /**
  * Arquivo de migrations para gerenciar versionamento e alterações do banco de dados
@@ -37,14 +37,14 @@ export class DatabaseMigrations {
 
     // Obter versão atual
     const row = await db.getFirstAsync<{ version: number }>(
-      'SELECT version FROM schema_version ORDER BY version DESC LIMIT 1'
+      "SELECT version FROM schema_version ORDER BY version DESC LIMIT 1"
     );
 
     if (row) {
       return row.version;
     } else {
       // Se não há versão, inserir versão 0
-      await db.runAsync('INSERT INTO schema_version (version) VALUES (0)');
+      await db.runAsync("INSERT INTO schema_version (version) VALUES (0)");
       return 0;
     }
   }
@@ -83,7 +83,7 @@ export class DatabaseMigrations {
     }
 
     // Atualizar versão no banco
-    await db.runAsync('INSERT INTO schema_version (version) VALUES (?)', [
+    await db.runAsync("INSERT INTO schema_version (version) VALUES (?)", [
       toVersion,
     ]);
     console.log(`Database migrated to version ${toVersion}`);
@@ -101,7 +101,7 @@ export class DatabaseMigrations {
       DROP TABLE IF EXISTS users;
       DROP TABLE IF EXISTS schema_version;
     `);
-    console.log('Database reset complete');
+    console.log("Database reset complete");
     await DatabaseManager.initialize();
   }
 }

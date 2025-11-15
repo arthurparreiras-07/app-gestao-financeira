@@ -54,6 +54,7 @@ export class DatabaseManager {
         category_id INTEGER NOT NULL,
         note TEXT,
         user_id INTEGER NOT NULL,
+        type TEXT DEFAULT 'expense',
         FOREIGN KEY (emotion_id) REFERENCES emotions(id),
         FOREIGN KEY (category_id) REFERENCES categories(id),
         FOREIGN KEY (user_id) REFERENCES users(id)

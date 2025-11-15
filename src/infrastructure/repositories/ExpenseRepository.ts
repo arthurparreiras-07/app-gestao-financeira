@@ -15,21 +15,38 @@ interface ExpenseRow {
 
 export class ExpenseRepository implements IExpenseRepository {
   async create(expense: Expense): Promise<number> {
-    const db = await DatabaseManager.getInstance();
-    const result = await db.runAsync(
-      `INSERT INTO expenses (amount, date, emotion_id, category_id, note, user_id, type)
-       VALUES (?, ?, ?, ?, ?, ?, ?)`,
-      [
-        expense.amount,
-        expense.date.toISOString(),
-        expense.emotionId,
-        expense.categoryId,
-        expense.note,
-        expense.userId,
-        expense.type,
-      ]
-    );
-    return result.lastInsertRowId;
+    try {
+      console.log("ExpenseRepository.create - Dados:", {
+        amount: expense.amount,
+        emotionId: expense.emotionId,
+        categoryId: expense.categoryId,
+        type: expense.type,
+        userId: expense.userId,
+      });
+
+      const db = await DatabaseManager.getInstance();
+      const result = await db.runAsync(
+        `INSERT INTO expenses (amount, date, emotion_id, category_id, note, user_id, type)
+         VALUES (?, ?, ?, ?, ?, ?, ?)`,
+        [
+          expense.amount,
+          expense.date.toISOString(),
+          expense.emotionId,
+          expense.categoryId,
+          expense.note,
+          expense.userId,
+          expense.type,
+        ]
+      );
+      console.log(
+        "ExpenseRepository.create - Sucesso! ID:",
+        result.lastInsertRowId
+      );
+      return result.lastInsertRowId;
+    } catch (error) {
+      console.error("ExpenseRepository.create - Erro:", error);
+      throw error;
+    }
   }
 
   async findAll(): Promise<Expense[]> {
@@ -47,7 +64,7 @@ export class ExpenseRepository implements IExpenseRepository {
           row.category_id,
           row.note,
           row.user_id,
-          row.type || 'expense'
+          row.type || "expense"
         )
     );
   }
@@ -68,7 +85,7 @@ export class ExpenseRepository implements IExpenseRepository {
           row.category_id,
           row.note,
           row.user_id,
-          row.type || 'expense'
+          row.type || "expense"
         )
     );
   }
@@ -89,7 +106,7 @@ export class ExpenseRepository implements IExpenseRepository {
           row.category_id,
           row.note,
           row.user_id,
-          row.type || 'expense'
+          row.type || "expense"
         )
     );
   }
@@ -110,7 +127,7 @@ export class ExpenseRepository implements IExpenseRepository {
           row.category_id,
           row.note,
           row.user_id,
-          row.type || 'expense'
+          row.type || "expense"
         )
     );
   }
