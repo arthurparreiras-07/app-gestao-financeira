@@ -6,8 +6,8 @@ import {
   ScrollView,
   TouchableOpacity,
   ActivityIndicator,
-  SafeAreaView,
 } from "react-native";
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from "@expo/vector-icons";
 import { useAppStore } from "../../application/store/useAppStore";
 import { InsightCard } from "../components/InsightCard";
@@ -37,14 +37,14 @@ export const HomeScreen = ({ navigation }: any) => {
 
   if (loading) {
     return (
-      <SafeAreaView style={styles.loadingContainer}>
+      <SafeAreaView style={styles.loadingContainer} edges={['top', 'bottom']}>
         <ActivityIndicator size="large" color={colors.primary[500]} />
       </SafeAreaView>
     );
   }
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={styles.safeArea} edges={['bottom']}>
       <ScrollView style={styles.container}>
         <View style={styles.header}>
           <View style={styles.headerTop}>

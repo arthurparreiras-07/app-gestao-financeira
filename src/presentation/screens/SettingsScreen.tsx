@@ -6,8 +6,8 @@ import {
   TouchableOpacity,
   StyleSheet,
   Alert,
-  SafeAreaView,
 } from "react-native";
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from "@expo/vector-icons";
 import { useAppStore } from "../../application/store/useAppStore";
 import {
@@ -49,7 +49,7 @@ export const SettingsScreen: React.FC = () => {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={styles.safeArea} edges={['bottom']}>
       <ScrollView style={styles.container}>
         {/* Header */}
         <View style={styles.header}>

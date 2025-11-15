@@ -8,6 +8,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { HomeScreen } from "../screens/HomeScreen";
 import { AddExpenseScreen } from "../screens/AddExpenseScreen";
 import { ReportsScreen } from "../screens/ReportsScreen";
+import { SettingsScreen } from "../screens/SettingsScreen";
 import { colors } from "../../theme/theme";
 
 const Tab = createBottomTabNavigator();
@@ -52,6 +53,16 @@ function HomeTabs() {
           title: "Relatórios",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="stats-chart" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Settings"
+        component={SettingsScreen}
+        options={{
+          title: "Configurações",
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="settings" size={size} color={color} />
           ),
         }}
       />

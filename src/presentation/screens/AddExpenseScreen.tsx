@@ -7,10 +7,10 @@ import {
   TouchableOpacity,
   ScrollView,
   Alert,
-  SafeAreaView,
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from "@expo/vector-icons";
 import { useAppStore } from "../../application/store/useAppStore";
 import { EmotionSelector } from "../components/EmotionSelector";
@@ -63,7 +63,7 @@ export const AddExpenseScreen = ({ navigation }: any) => {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={styles.safeArea} edges={['bottom']}>
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{ flex: 1 }}
