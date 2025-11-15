@@ -77,7 +77,7 @@ export class DatabaseMigrations {
 
         case 3:
           // Adicionar novas tabelas para features avançadas
-          
+
           // Tabela de orçamentos
           await db.execAsync(`
             CREATE TABLE IF NOT EXISTS budgets (
@@ -145,7 +145,7 @@ export class DatabaseMigrations {
             CREATE INDEX IF NOT EXISTS idx_recurring_active ON recurring_expenses(is_active);
             CREATE INDEX IF NOT EXISTS idx_tags_user ON tags(user_id);
           `);
-          
+
           break;
 
         // Adicione novos cases para versões futuras

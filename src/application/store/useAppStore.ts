@@ -48,18 +48,21 @@ interface AppState {
     attachments?: string[];
     tagIds?: number[];
   }) => Promise<void>;
-  updateExpense: (id: number, data: Partial<{
-    amount: number;
-    date: Date;
-    emotionId: number;
-    categoryId: number;
-    note: string;
-    type: TransactionType;
-    attachments: string[];
-    tagIds: number[];
-  }>) => Promise<void>;
+  updateExpense: (
+    id: number,
+    data: Partial<{
+      amount: number;
+      date: Date;
+      emotionId: number;
+      categoryId: number;
+      note: string;
+      type: TransactionType;
+      attachments: string[];
+      tagIds: number[];
+    }>
+  ) => Promise<void>;
   deleteExpense: (id: number) => Promise<void>;
-  
+
   // Budget Actions
   addBudget: (data: {
     categoryId: number | null;
@@ -70,35 +73,42 @@ interface AppState {
   }) => Promise<void>;
   updateBudget: (id: number, data: Partial<Budget>) => Promise<void>;
   deleteBudget: (id: number) => Promise<void>;
-  getBudgetProgress: (budgetId: number) => { spent: number; limit: number; percentage: number };
-  
+  getBudgetProgress: (budgetId: number) => {
+    spent: number;
+    limit: number;
+    percentage: number;
+  };
+
   // Recurring Expense Actions
   addRecurringExpense: (data: {
-    frequency: 'daily' | 'weekly' | 'monthly' | 'yearly';
+    frequency: "daily" | "weekly" | "monthly" | "yearly";
     amount: number;
     emotionId: number;
     categoryId: number;
     note: string;
     startDate: Date;
     endDate?: Date | null;
-    type: 'expense' | 'saving';
+    type: "expense" | "saving";
   }) => Promise<void>;
-  updateRecurringExpense: (id: number, data: Partial<RecurringExpense>) => Promise<void>;
+  updateRecurringExpense: (
+    id: number,
+    data: Partial<RecurringExpense>
+  ) => Promise<void>;
   deleteRecurringExpense: (id: number) => Promise<void>;
   processRecurringExpenses: () => Promise<void>;
-  
+
   // Tag Actions
   addTag: (data: { name: string; color: string }) => Promise<void>;
   updateTag: (id: number, data: Partial<Tag>) => Promise<void>;
   deleteTag: (id: number) => Promise<void>;
   addTagToExpense: (expenseId: number, tagId: number) => Promise<void>;
   removeTagFromExpense: (expenseId: number, tagId: number) => Promise<void>;
-  
+
   // Export Actions
   exportToCSV: () => Promise<void>;
   exportToJSON: () => Promise<void>;
   exportReport: () => Promise<void>;
-  
+
   // Utility Actions
   refreshInsights: () => void;
   clearAllData: () => Promise<void>;
@@ -180,10 +190,10 @@ export const useAppStore = create<AppState>((set, get) => ({
   // Budget Actions
   addBudget: async (data) => {
     const { budgetRepository } = get();
-    const budget = Budget.create({ 
-      ...data, 
+    const budget = Budget.create({
+      ...data,
       alertThreshold: data.alertThreshold ?? 80,
-      userId: 1 
+      userId: 1,
     });
     await budgetRepository.create(budget);
     await get().loadData();
@@ -204,7 +214,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   getBudgetProgress: (budgetId) => {
     const { budgets, expenses } = get();
     const budget = budgets.find((b) => b.id === budgetId);
-    
+
     if (!budget) {
       return { spent: 0, limit: 0, percentage: 0 };
     }
@@ -216,8 +226,8 @@ export const useAppStore = create<AppState>((set, get) => ({
       const matchesCategory = budget.categoryId
         ? e.categoryId === budget.categoryId
         : true;
-      const isExpense = e.type === 'expense';
-      
+      const isExpense = e.type === "expense";
+
       return matchesMonth && matchesYear && matchesCategory && isExpense;
     });
 
@@ -300,8 +310,15 @@ export const useAppStore = create<AppState>((set, get) => ({
     const { exportService, expenses, categories, emotions } = get();
     const now = new Date();
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-    const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
-    
+    const endOfMonth = new Date(
+      now.getFullYear(),
+      now.getMonth() + 1,
+      0,
+      23,
+      59,
+      59
+    );
+
     await exportService.exportReport(expenses, categories, emotions, {
       start: startOfMonth,
       end: endOfMonth,

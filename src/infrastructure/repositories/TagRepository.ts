@@ -24,9 +24,7 @@ export class TagRepository implements ITagRepository {
     const rows = await db.getAllAsync<TagRow>(
       `SELECT * FROM tags ORDER BY name`
     );
-    return rows.map(
-      (row) => new Tag(row.id, row.name, row.color, row.user_id)
-    );
+    return rows.map((row) => new Tag(row.id, row.name, row.color, row.user_id));
   }
 
   async update(id: number, tag: Partial<Tag>): Promise<void> {
@@ -84,9 +82,7 @@ export class TagRepository implements ITagRepository {
        ORDER BY t.name`,
       [expenseId]
     );
-    return rows.map(
-      (row) => new Tag(row.id, row.name, row.color, row.user_id)
-    );
+    return rows.map((row) => new Tag(row.id, row.name, row.color, row.user_id));
   }
 
   async findExpensesByTag(tagId: number): Promise<number[]> {

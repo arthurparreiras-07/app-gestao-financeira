@@ -77,7 +77,7 @@ export const TransactionsScreen = () => {
   // Handle delete
   const handleDelete = () => {
     if (!selectedExpense) return;
-    
+
     Alert.alert(
       "Confirmar exclusão",
       "Tem certeza que deseja excluir esta transação?",
@@ -110,13 +110,13 @@ export const TransactionsScreen = () => {
         const emotionName = getEmotionName(e.emotionId).toLowerCase();
         const note = (e.note || "").toLowerCase();
         const amount = e.amount.toString();
-        
-        const matchesSearch = 
+
+        const matchesSearch =
           categoryName.includes(query) ||
           emotionName.includes(query) ||
           note.includes(query) ||
           amount.includes(query);
-        
+
         if (!matchesSearch) return false;
       }
 
@@ -294,7 +294,8 @@ export const TransactionsScreen = () => {
   const renderTransaction = (expense: Expense) => {
     const isExpense = expense.type === "expense";
     const categoryColor = getCategoryColor(expense.categoryId);
-    const hasAttachments = expense.attachments && expense.attachments.length > 0;
+    const hasAttachments =
+      expense.attachments && expense.attachments.length > 0;
 
     return (
       <TouchableOpacity
@@ -353,7 +354,8 @@ export const TransactionsScreen = () => {
           <View style={styles.attachmentsPreview}>
             <Ionicons name="images" size={14} color={colors.primary[500]} />
             <Text style={styles.attachmentsCount}>
-              {expense.attachments!.length} {expense.attachments!.length === 1 ? 'foto' : 'fotos'}
+              {expense.attachments!.length}{" "}
+              {expense.attachments!.length === 1 ? "foto" : "fotos"}
             </Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
               {expense.attachments!.slice(0, 3).map((uri, index) => (
@@ -671,7 +673,11 @@ export const TransactionsScreen = () => {
             />
             {searchQuery.length > 0 && (
               <TouchableOpacity onPress={() => setSearchQuery("")}>
-                <Ionicons name="close-circle" size={20} color={colors.text.tertiary} />
+                <Ionicons
+                  name="close-circle"
+                  size={20}
+                  color={colors.text.tertiary}
+                />
               </TouchableOpacity>
             )}
           </View>
@@ -1042,7 +1048,7 @@ export const TransactionsScreen = () => {
                 <Ionicons name="close" size={24} color={colors.text.primary} />
               </TouchableOpacity>
             </View>
-            
+
             <TouchableOpacity
               style={styles.actionMenuItem}
               onPress={handleDelete}
@@ -1059,11 +1065,18 @@ export const TransactionsScreen = () => {
               onPress={() => {
                 setShowActionMenu(false);
                 // TODO: Navigate to edit screen
-                Alert.alert("Em breve", "Funcionalidade de edição em desenvolvimento");
+                Alert.alert(
+                  "Em breve",
+                  "Funcionalidade de edição em desenvolvimento"
+                );
               }}
               activeOpacity={0.7}
             >
-              <Ionicons name="create-outline" size={24} color={colors.primary[500]} />
+              <Ionicons
+                name="create-outline"
+                size={24}
+                color={colors.primary[500]}
+              />
               <Text style={styles.actionMenuText}>Editar Transação</Text>
             </TouchableOpacity>
           </View>

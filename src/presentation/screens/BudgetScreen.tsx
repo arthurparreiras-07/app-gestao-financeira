@@ -23,13 +23,23 @@ import {
 } from "../../theme/theme";
 
 export const BudgetScreen = ({ navigation }: any) => {
-  const { budgets, categories, expenses, addBudget, updateBudget, deleteBudget, getBudgetProgress } = useAppStore();
+  const {
+    budgets,
+    categories,
+    expenses,
+    addBudget,
+    updateBudget,
+    deleteBudget,
+    getBudgetProgress,
+  } = useAppStore();
   const { isDark } = useTheme();
   const colors = getColors(isDark);
 
   const [showAddModal, setShowAddModal] = useState(false);
   const [editingBudget, setEditingBudget] = useState<number | null>(null);
-  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
+  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(
+    null
+  );
   const [monthlyLimit, setMonthlyLimit] = useState("");
   const [alertThreshold, setAlertThreshold] = useState("80");
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
@@ -188,7 +198,11 @@ export const BudgetScreen = ({ navigation }: any) => {
               onPress={() => handleEditBudget(budget)}
               style={styles.actionButton}
             >
-              <Ionicons name="create-outline" size={20} color={colors.primary[500]} />
+              <Ionicons
+                name="create-outline"
+                size={20}
+                color={colors.primary[500]}
+              />
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => handleDeleteBudget(budget.id)}
@@ -212,7 +226,10 @@ export const BudgetScreen = ({ navigation }: any) => {
             <View
               style={[
                 styles.progressBar,
-                { width: `${Math.min(percentage, 100)}%`, backgroundColor: statusColor },
+                {
+                  width: `${Math.min(percentage, 100)}%`,
+                  backgroundColor: statusColor,
+                },
               ]}
             />
           </View>
@@ -220,12 +237,18 @@ export const BudgetScreen = ({ navigation }: any) => {
             <View style={styles.alertBadge}>
               <Ionicons name="alert-circle" size={16} color={colors.error} />
               <Text style={styles.alertText}>
-                Orçamento ultrapassado em R$ {(progress.spent - progress.limit).toFixed(2)}
+                Orçamento ultrapassado em R${" "}
+                {(progress.spent - progress.limit).toFixed(2)}
               </Text>
             </View>
           )}
           {isNearLimit && (
-            <View style={[styles.alertBadge, { backgroundColor: `${colors.warning}15` }]}>
+            <View
+              style={[
+                styles.alertBadge,
+                { backgroundColor: `${colors.warning}15` },
+              ]}
+            >
               <Ionicons name="warning" size={16} color={colors.warning} />
               <Text style={[styles.alertText, { color: colors.warning }]}>
                 Atenção: {budget.alertThreshold}% do orçamento atingido
@@ -239,15 +262,35 @@ export const BudgetScreen = ({ navigation }: any) => {
 
   const getMonthName = (month: number) => {
     const months = [
-      "Jan", "Fev", "Mar", "Abr", "Mai", "Jun",
-      "Jul", "Ago", "Set", "Out", "Nov", "Dez"
+      "Jan",
+      "Fev",
+      "Mar",
+      "Abr",
+      "Mai",
+      "Jun",
+      "Jul",
+      "Ago",
+      "Set",
+      "Out",
+      "Nov",
+      "Dez",
     ];
     return months[month - 1];
   };
 
   const monthNames = [
-    "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
-    "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
+    "Janeiro",
+    "Fevereiro",
+    "Março",
+    "Abril",
+    "Maio",
+    "Junho",
+    "Julho",
+    "Agosto",
+    "Setembro",
+    "Outubro",
+    "Novembro",
+    "Dezembro",
   ];
 
   // Available categories (not already budgeted for current month)
@@ -265,7 +308,10 @@ export const BudgetScreen = ({ navigation }: any) => {
   return (
     <SafeAreaView style={styles.safeArea} edges={["bottom"]}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          style={styles.backButton}
+        >
           <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Orçamentos</Text>
@@ -310,7 +356,11 @@ export const BudgetScreen = ({ navigation }: any) => {
           }}
           style={styles.periodButton}
         >
-          <Ionicons name="chevron-forward" size={24} color={colors.text.primary} />
+          <Ionicons
+            name="chevron-forward"
+            size={24}
+            color={colors.text.primary}
+          />
         </TouchableOpacity>
       </View>
 
@@ -318,7 +368,9 @@ export const BudgetScreen = ({ navigation }: any) => {
       <View style={styles.summaryCard}>
         <View style={styles.summaryRow}>
           <Text style={styles.summaryLabel}>Total Orçado:</Text>
-          <Text style={styles.summaryValue}>R$ {totals.totalLimit.toFixed(2)}</Text>
+          <Text style={styles.summaryValue}>
+            R$ {totals.totalLimit.toFixed(2)}
+          </Text>
         </View>
         <View style={styles.summaryRow}>
           <Text style={styles.summaryLabel}>Total Gasto:</Text>
@@ -345,12 +397,19 @@ export const BudgetScreen = ({ navigation }: any) => {
       </View>
 
       {/* Budget List */}
-      <ScrollView style={styles.budgetList} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        style={styles.budgetList}
+        showsVerticalScrollIndicator={false}
+      >
         {currentBudgets.length > 0 ? (
           currentBudgets.map(renderBudgetCard)
         ) : (
           <View style={styles.emptyState}>
-            <Ionicons name="wallet-outline" size={64} color={colors.gray[300]} />
+            <Ionicons
+              name="wallet-outline"
+              size={64}
+              color={colors.gray[300]}
+            />
             <Text style={styles.emptyText}>Nenhum orçamento definido</Text>
             <Text style={styles.emptySubtext}>
               Toque no + para criar seu primeiro orçamento
@@ -386,7 +445,8 @@ export const BudgetScreen = ({ navigation }: any) => {
                     <TouchableOpacity
                       style={[
                         styles.categoryOption,
-                        selectedCategoryId === null && styles.categoryOptionSelected,
+                        selectedCategoryId === null &&
+                          styles.categoryOptionSelected,
                       ]}
                       onPress={() => setSelectedCategoryId(null)}
                     >
@@ -480,7 +540,11 @@ export const BudgetScreen = ({ navigation }: any) => {
                 style={styles.saveButton}
                 onPress={handleSaveBudget}
               >
-                <Ionicons name="checkmark-circle" size={20} color={colors.text.inverse} />
+                <Ionicons
+                  name="checkmark-circle"
+                  size={20}
+                  color={colors.text.inverse}
+                />
                 <Text style={styles.saveButtonText}>
                   {editingBudget ? "Atualizar" : "Criar"} Orçamento
                 </Text>

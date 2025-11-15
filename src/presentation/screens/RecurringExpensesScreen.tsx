@@ -50,7 +50,9 @@ export const RecurringExpensesScreen = ({ navigation }: any) => {
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState<Date | null>(null);
   const [hasEndDate, setHasEndDate] = useState(false);
-  const [transactionType, setTransactionType] = useState<"expense" | "saving">("expense");
+  const [transactionType, setTransactionType] = useState<"expense" | "saving">(
+    "expense"
+  );
   const [showStartDatePicker, setShowStartDatePicker] = useState(false);
   const [showEndDatePicker, setShowEndDatePicker] = useState(false);
 
@@ -76,8 +78,10 @@ export const RecurringExpensesScreen = ({ navigation }: any) => {
 
   const getNextOccurrence = (recurring: any) => {
     if (!recurring.isActive) return null;
-    
-    const last = recurring.lastProcessedDate ? new Date(recurring.lastProcessedDate) : new Date(recurring.startDate);
+
+    const last = recurring.lastProcessedDate
+      ? new Date(recurring.lastProcessedDate)
+      : new Date(recurring.startDate);
     const next = new Date(last);
 
     switch (recurring.frequency) {
@@ -244,7 +248,11 @@ export const RecurringExpensesScreen = ({ navigation }: any) => {
               onPress={() => handleEdit(recurring)}
               style={styles.actionButton}
             >
-              <Ionicons name="create-outline" size={20} color={colors.primary[500]} />
+              <Ionicons
+                name="create-outline"
+                size={20}
+                color={colors.primary[500]}
+              />
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => handleDelete(recurring.id)}
@@ -258,15 +266,23 @@ export const RecurringExpensesScreen = ({ navigation }: any) => {
         <View style={styles.cardDetails}>
           <View style={styles.detailRow}>
             <Ionicons name="repeat" size={16} color={colors.text.tertiary} />
-            <Text style={styles.detailText}>{getFrequencyLabel(recurring.frequency)}</Text>
+            <Text style={styles.detailText}>
+              {getFrequencyLabel(recurring.frequency)}
+            </Text>
           </View>
           <View style={styles.detailRow}>
             <Ionicons name="heart" size={16} color={colors.text.tertiary} />
-            <Text style={styles.detailText}>{getEmotionName(recurring.emotionId)}</Text>
+            <Text style={styles.detailText}>
+              {getEmotionName(recurring.emotionId)}
+            </Text>
           </View>
           {nextOccurrence && (
             <View style={styles.detailRow}>
-              <Ionicons name="calendar" size={16} color={colors.text.tertiary} />
+              <Ionicons
+                name="calendar"
+                size={16}
+                color={colors.text.tertiary}
+              />
               <Text style={styles.detailText}>
                 Próxima: {format(nextOccurrence, "dd/MM/yyyy")}
               </Text>
@@ -285,7 +301,11 @@ export const RecurringExpensesScreen = ({ navigation }: any) => {
             <View
               style={[
                 styles.statusDot,
-                { backgroundColor: recurring.isActive ? colors.success : colors.gray[400] },
+                {
+                  backgroundColor: recurring.isActive
+                    ? colors.success
+                    : colors.gray[400],
+                },
               ]}
             />
             <Text style={styles.statusText}>
@@ -306,11 +326,17 @@ export const RecurringExpensesScreen = ({ navigation }: any) => {
   return (
     <SafeAreaView style={styles.safeArea} edges={["bottom"]}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          style={styles.backButton}
+        >
           <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Transações Recorrentes</Text>
-        <TouchableOpacity onPress={() => setShowAddModal(true)} style={styles.addButton}>
+        <TouchableOpacity
+          onPress={() => setShowAddModal(true)}
+          style={styles.addButton}
+        >
           <Ionicons name="add-circle" size={28} color={colors.primary[500]} />
         </TouchableOpacity>
       </View>
@@ -327,11 +353,16 @@ export const RecurringExpensesScreen = ({ navigation }: any) => {
         </TouchableOpacity>
       </View>
 
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        style={styles.scrollView}
+        showsVerticalScrollIndicator={false}
+      >
         {/* Active Section */}
         {activeRecurring.length > 0 && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Ativas ({activeRecurring.length})</Text>
+            <Text style={styles.sectionTitle}>
+              Ativas ({activeRecurring.length})
+            </Text>
             {activeRecurring.map(renderRecurringCard)}
           </View>
         )}
@@ -339,7 +370,9 @@ export const RecurringExpensesScreen = ({ navigation }: any) => {
         {/* Inactive Section */}
         {inactiveRecurring.length > 0 && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Inativas ({inactiveRecurring.length})</Text>
+            <Text style={styles.sectionTitle}>
+              Inativas ({inactiveRecurring.length})
+            </Text>
             {inactiveRecurring.map(renderRecurringCard)}
           </View>
         )}
@@ -347,7 +380,11 @@ export const RecurringExpensesScreen = ({ navigation }: any) => {
         {/* Empty State */}
         {recurringExpenses.length === 0 && (
           <View style={styles.emptyState}>
-            <Ionicons name="repeat-outline" size={64} color={colors.gray[300]} />
+            <Ionicons
+              name="repeat-outline"
+              size={64}
+              color={colors.gray[300]}
+            />
             <Text style={styles.emptyText}>Nenhuma transação recorrente</Text>
             <Text style={styles.emptySubtext}>
               Toque no + para criar sua primeira transação recorrente
@@ -387,7 +424,11 @@ export const RecurringExpensesScreen = ({ navigation }: any) => {
                   <Ionicons
                     name="trending-down"
                     size={20}
-                    color={transactionType === "expense" ? colors.error : colors.text.secondary}
+                    color={
+                      transactionType === "expense"
+                        ? colors.error
+                        : colors.text.secondary
+                    }
                   />
                   <Text style={styles.typeButtonText}>Gasto</Text>
                 </TouchableOpacity>
@@ -401,7 +442,11 @@ export const RecurringExpensesScreen = ({ navigation }: any) => {
                   <Ionicons
                     name="trending-up"
                     size={20}
-                    color={transactionType === "saving" ? colors.success : colors.text.secondary}
+                    color={
+                      transactionType === "saving"
+                        ? colors.success
+                        : colors.text.secondary
+                    }
                   />
                   <Text style={styles.typeButtonText}>Economia</Text>
                 </TouchableOpacity>
@@ -483,7 +528,9 @@ export const RecurringExpensesScreen = ({ navigation }: any) => {
               <View style={styles.inputGroup}>
                 <Text style={styles.inputLabel}>Frequência *</Text>
                 <View style={styles.frequencyGrid}>
-                  {(["daily", "weekly", "monthly", "yearly"] as Frequency[]).map((freq) => (
+                  {(
+                    ["daily", "weekly", "monthly", "yearly"] as Frequency[]
+                  ).map((freq) => (
                     <TouchableOpacity
                       key={freq}
                       style={[
@@ -512,9 +559,15 @@ export const RecurringExpensesScreen = ({ navigation }: any) => {
                   style={styles.dateButton}
                   onPress={() => setShowStartDatePicker(true)}
                 >
-                  <Ionicons name="calendar" size={20} color={colors.text.secondary} />
+                  <Ionicons
+                    name="calendar"
+                    size={20}
+                    color={colors.text.secondary}
+                  />
                   <Text style={styles.dateText}>
-                    {format(startDate, "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}
+                    {format(startDate, "dd 'de' MMMM 'de' yyyy", {
+                      locale: ptBR,
+                    })}
                   </Text>
                 </TouchableOpacity>
                 {showStartDatePicker && (
@@ -536,7 +589,10 @@ export const RecurringExpensesScreen = ({ navigation }: any) => {
                   <Switch
                     value={hasEndDate}
                     onValueChange={setHasEndDate}
-                    trackColor={{ false: colors.gray[300], true: colors.primary[500] }}
+                    trackColor={{
+                      false: colors.gray[300],
+                      true: colors.primary[500],
+                    }}
                     thumbColor={colors.background}
                   />
                 </View>
@@ -546,10 +602,16 @@ export const RecurringExpensesScreen = ({ navigation }: any) => {
                       style={styles.dateButton}
                       onPress={() => setShowEndDatePicker(true)}
                     >
-                      <Ionicons name="calendar" size={20} color={colors.text.secondary} />
+                      <Ionicons
+                        name="calendar"
+                        size={20}
+                        color={colors.text.secondary}
+                      />
                       <Text style={styles.dateText}>
                         {endDate
-                          ? format(endDate, "dd 'de' MMMM 'de' yyyy", { locale: ptBR })
+                          ? format(endDate, "dd 'de' MMMM 'de' yyyy", {
+                              locale: ptBR,
+                            })
                           : "Selecionar data"}
                       </Text>
                     </TouchableOpacity>
@@ -587,7 +649,11 @@ export const RecurringExpensesScreen = ({ navigation }: any) => {
                 style={styles.saveButton}
                 onPress={handleSaveRecurring}
               >
-                <Ionicons name="checkmark-circle" size={20} color={colors.text.inverse} />
+                <Ionicons
+                  name="checkmark-circle"
+                  size={20}
+                  color={colors.text.inverse}
+                />
                 <Text style={styles.saveButtonText}>
                   {editingExpense ? "Atualizar" : "Criar"} Recorrência
                 </Text>

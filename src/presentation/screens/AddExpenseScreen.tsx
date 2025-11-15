@@ -32,7 +32,8 @@ import {
 } from "../../theme/theme";
 
 export const AddExpenseScreen = ({ navigation }: any) => {
-  const { emotions, categories, tags, addExpense, addRecurringExpense } = useAppStore();
+  const { emotions, categories, tags, addExpense, addRecurringExpense } =
+    useAppStore();
   const { isDark } = useTheme();
   const colors = getColors(isDark);
   const [transactionType, setTransactionType] =
@@ -44,19 +45,24 @@ export const AddExpenseScreen = ({ navigation }: any) => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [loading, setLoading] = useState(false);
-  
+
   // New features
   const [attachments, setAttachments] = useState<string[]>([]);
   const [selectedTags, setSelectedTags] = useState<number[]>([]);
   const [isRecurring, setIsRecurring] = useState(false);
-  const [frequency, setFrequency] = useState<'daily' | 'weekly' | 'monthly' | 'yearly'>('monthly');
+  const [frequency, setFrequency] = useState<
+    "daily" | "weekly" | "monthly" | "yearly"
+  >("monthly");
   const [recurringEndDate, setRecurringEndDate] = useState<Date | null>(null);
   const [showEndDatePicker, setShowEndDatePicker] = useState(false);
 
   const handlePickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== 'granted') {
-      Alert.alert('Permissão necessária', 'Precisamos de permissão para acessar suas fotos');
+    if (status !== "granted") {
+      Alert.alert(
+        "Permissão necessária",
+        "Precisamos de permissão para acessar suas fotos"
+      );
       return;
     }
 
@@ -67,7 +73,7 @@ export const AddExpenseScreen = ({ navigation }: any) => {
     });
 
     if (!result.canceled && result.assets) {
-      const newImages = result.assets.map(asset => asset.uri);
+      const newImages = result.assets.map((asset) => asset.uri);
       setAttachments([...attachments, ...newImages]);
     }
   };
@@ -78,7 +84,7 @@ export const AddExpenseScreen = ({ navigation }: any) => {
 
   const toggleTag = (tagId: number) => {
     if (selectedTags.includes(tagId)) {
-      setSelectedTags(selectedTags.filter(id => id !== tagId));
+      setSelectedTags(selectedTags.filter((id) => id !== tagId));
     } else {
       setSelectedTags([...selectedTags, tagId]);
     }
@@ -112,7 +118,9 @@ export const AddExpenseScreen = ({ navigation }: any) => {
         });
         Alert.alert(
           "Sucesso",
-          `${transactionType === "expense" ? "Gasto" : "Economia"} recorrente criado com sucesso!`
+          `${
+            transactionType === "expense" ? "Gasto" : "Economia"
+          } recorrente criado com sucesso!`
         );
       } else {
         // Create single expense
@@ -128,7 +136,9 @@ export const AddExpenseScreen = ({ navigation }: any) => {
         });
         Alert.alert(
           "Sucesso",
-          `${transactionType === "expense" ? "Gasto" : "Economia"} registrado com sucesso!`
+          `${
+            transactionType === "expense" ? "Gasto" : "Economia"
+          } registrado com sucesso!`
         );
       }
       navigation.goBack();
@@ -327,7 +337,11 @@ export const AddExpenseScreen = ({ navigation }: any) => {
                 onPress={handlePickImage}
                 activeOpacity={0.7}
               >
-                <Ionicons name="add-circle" size={20} color={colors.primary[500]} />
+                <Ionicons
+                  name="add-circle"
+                  size={20}
+                  color={colors.primary[500]}
+                />
                 <Text style={styles.addButtonText}>Adicionar Foto</Text>
               </TouchableOpacity>
               {attachments.length > 0 && (
@@ -339,7 +353,11 @@ export const AddExpenseScreen = ({ navigation }: any) => {
                         style={styles.removeAttachment}
                         onPress={() => removeAttachment(index)}
                       >
-                        <Ionicons name="close-circle" size={24} color={colors.error} />
+                        <Ionicons
+                          name="close-circle"
+                          size={24}
+                          color={colors.error}
+                        />
                       </TouchableOpacity>
                     </View>
                   ))}
@@ -351,7 +369,11 @@ export const AddExpenseScreen = ({ navigation }: any) => {
             {tags.length > 0 && (
               <View style={styles.inputContainer}>
                 <View style={styles.labelContainer}>
-                  <Ionicons name="pricetags" size={20} color={colors.primary[500]} />
+                  <Ionicons
+                    name="pricetags"
+                    size={20}
+                    color={colors.primary[500]}
+                  />
                   <Text style={styles.label}>Tags (opcional)</Text>
                 </View>
                 <View style={styles.tagsContainer}>
@@ -360,7 +382,8 @@ export const AddExpenseScreen = ({ navigation }: any) => {
                       key={tag.id}
                       style={[
                         styles.tagChip,
-                        selectedTags.includes(tag.id!) && styles.tagChipSelected,
+                        selectedTags.includes(tag.id!) &&
+                          styles.tagChipSelected,
                         { borderColor: tag.color },
                       ]}
                       onPress={() => toggleTag(tag.id!)}
@@ -372,7 +395,8 @@ export const AddExpenseScreen = ({ navigation }: any) => {
                       <Text
                         style={[
                           styles.tagText,
-                          selectedTags.includes(tag.id!) && styles.tagTextSelected,
+                          selectedTags.includes(tag.id!) &&
+                            styles.tagTextSelected,
                         ]}
                       >
                         {tag.name}
@@ -391,7 +415,11 @@ export const AddExpenseScreen = ({ navigation }: any) => {
                 activeOpacity={0.7}
               >
                 <View style={styles.labelContainer}>
-                  <Ionicons name="repeat" size={20} color={colors.primary[500]} />
+                  <Ionicons
+                    name="repeat"
+                    size={20}
+                    color={colors.primary[500]}
+                  />
                   <Text style={styles.label}>Transação Recorrente</Text>
                 </View>
                 <View
@@ -412,29 +440,31 @@ export const AddExpenseScreen = ({ navigation }: any) => {
               {isRecurring && (
                 <View style={styles.recurringOptions}>
                   <View style={styles.frequencyContainer}>
-                    {(['daily', 'weekly', 'monthly', 'yearly'] as const).map((freq) => (
-                      <TouchableOpacity
-                        key={freq}
-                        style={[
-                          styles.frequencyButton,
-                          frequency === freq && styles.frequencyButtonActive,
-                        ]}
-                        onPress={() => setFrequency(freq)}
-                        activeOpacity={0.7}
-                      >
-                        <Text
+                    {(["daily", "weekly", "monthly", "yearly"] as const).map(
+                      (freq) => (
+                        <TouchableOpacity
+                          key={freq}
                           style={[
-                            styles.frequencyText,
-                            frequency === freq && styles.frequencyTextActive,
+                            styles.frequencyButton,
+                            frequency === freq && styles.frequencyButtonActive,
                           ]}
+                          onPress={() => setFrequency(freq)}
+                          activeOpacity={0.7}
                         >
-                          {freq === 'daily' && 'Diário'}
-                          {freq === 'weekly' && 'Semanal'}
-                          {freq === 'monthly' && 'Mensal'}
-                          {freq === 'yearly' && 'Anual'}
-                        </Text>
-                      </TouchableOpacity>
-                    ))}
+                          <Text
+                            style={[
+                              styles.frequencyText,
+                              frequency === freq && styles.frequencyTextActive,
+                            ]}
+                          >
+                            {freq === "daily" && "Diário"}
+                            {freq === "weekly" && "Semanal"}
+                            {freq === "monthly" && "Mensal"}
+                            {freq === "yearly" && "Anual"}
+                          </Text>
+                        </TouchableOpacity>
+                      )
+                    )}
                   </View>
 
                   <TouchableOpacity
@@ -448,7 +478,7 @@ export const AddExpenseScreen = ({ navigation }: any) => {
                         ? format(recurringEndDate, "dd 'de' MMM 'de' yyyy", {
                             locale: ptBR,
                           })
-                        : 'Sem data final'}
+                        : "Sem data final"}
                     </Text>
                   </TouchableOpacity>
                   {showEndDatePicker && (

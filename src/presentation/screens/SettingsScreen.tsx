@@ -21,8 +21,11 @@ import {
   shadows,
 } from "../../theme/theme";
 
-export const SettingsScreen: React.FC<{ navigation?: any }> = ({ navigation }) => {
-  const { clearAllData, exportToCSV, exportToJSON, exportReport } = useAppStore();
+export const SettingsScreen: React.FC<{ navigation?: any }> = ({
+  navigation,
+}) => {
+  const { clearAllData, exportToCSV, exportToJSON, exportReport } =
+    useAppStore();
   const { isDark, toggleTheme } = useTheme();
   const colors = getColors(isDark);
   const [notifications, setNotifications] = useState(false);
@@ -239,9 +242,7 @@ export const SettingsScreen: React.FC<{ navigation?: any }> = ({ navigation }) =
             </View>
             <View style={styles.settingContent}>
               <Text style={styles.settingLabel}>Transações Recorrentes</Text>
-              <Text style={styles.settingDescription}>
-                Gastos automáticos
-              </Text>
+              <Text style={styles.settingDescription}>Gastos automáticos</Text>
             </View>
             <Ionicons
               name="chevron-forward"

@@ -1,4 +1,4 @@
-import { RecurringExpense } from '../entities/RecurringExpense';
+import { RecurringExpense } from "../entities/RecurringExpense";
 
 export interface IRecurringExpenseRepository {
   create(recurringExpense: RecurringExpense): Promise<number>;

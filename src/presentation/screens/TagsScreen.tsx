@@ -114,7 +114,10 @@ export const TagsScreen = ({ navigation }: any) => {
     return (
       <TouchableOpacity
         key={tag.id}
-        style={[styles.tagCard, { borderLeftColor: tag.color, borderLeftWidth: 4 }]}
+        style={[
+          styles.tagCard,
+          { borderLeftColor: tag.color, borderLeftWidth: 4 },
+        ]}
         onPress={() => handleEditTag(tag)}
         activeOpacity={0.7}
       >
@@ -127,7 +130,11 @@ export const TagsScreen = ({ navigation }: any) => {
             onPress={() => handleEditTag(tag)}
             style={styles.actionButton}
           >
-            <Ionicons name="create-outline" size={20} color={colors.primary[500]} />
+            <Ionicons
+              name="create-outline"
+              size={20}
+              color={colors.primary[500]}
+            />
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => handleDeleteTag(tag.id)}
@@ -143,32 +150,47 @@ export const TagsScreen = ({ navigation }: any) => {
   return (
     <SafeAreaView style={styles.safeArea} edges={["bottom"]}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          style={styles.backButton}
+        >
           <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Tags</Text>
-        <TouchableOpacity onPress={() => setShowAddModal(true)} style={styles.addButton}>
+        <TouchableOpacity
+          onPress={() => setShowAddModal(true)}
+          style={styles.addButton}
+        >
           <Ionicons name="add-circle" size={28} color={colors.primary[500]} />
         </TouchableOpacity>
       </View>
 
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        style={styles.scrollView}
+        showsVerticalScrollIndicator={false}
+      >
         <View style={styles.content}>
           <View style={styles.infoCard}>
-            <Ionicons name="information-circle" size={24} color={colors.primary[500]} />
+            <Ionicons
+              name="information-circle"
+              size={24}
+              color={colors.primary[500]}
+            />
             <Text style={styles.infoText}>
-              Crie tags personalizadas para organizar suas transações. Você pode associar
-              múltiplas tags a cada transação.
+              Crie tags personalizadas para organizar suas transações. Você pode
+              associar múltiplas tags a cada transação.
             </Text>
           </View>
 
           {tags.length > 0 ? (
-            <View style={styles.tagsList}>
-              {tags.map(renderTagCard)}
-            </View>
+            <View style={styles.tagsList}>{tags.map(renderTagCard)}</View>
           ) : (
             <View style={styles.emptyState}>
-              <Ionicons name="pricetags-outline" size={64} color={colors.gray[300]} />
+              <Ionicons
+                name="pricetags-outline"
+                size={64}
+                color={colors.gray[300]}
+              />
               <Text style={styles.emptyText}>Nenhuma tag criada</Text>
               <Text style={styles.emptySubtext}>
                 Toque no + para criar sua primeira tag personalizada
@@ -241,13 +263,13 @@ export const TagsScreen = ({ navigation }: any) => {
                 <Text style={styles.inputLabel}>Pré-visualização</Text>
                 <View style={styles.previewContainer}>
                   <View
-                    style={[
-                      styles.previewTag,
-                      { borderColor: selectedColor },
-                    ]}
+                    style={[styles.previewTag, { borderColor: selectedColor }]}
                   >
                     <View
-                      style={[styles.previewDot, { backgroundColor: selectedColor }]}
+                      style={[
+                        styles.previewDot,
+                        { backgroundColor: selectedColor },
+                      ]}
                     />
                     <Text style={styles.previewText}>
                       {tagName.trim() || "Nome da Tag"}
@@ -257,8 +279,15 @@ export const TagsScreen = ({ navigation }: any) => {
               </View>
 
               {/* Save Button */}
-              <TouchableOpacity style={styles.saveButton} onPress={handleSaveTag}>
-                <Ionicons name="checkmark-circle" size={20} color={colors.text.inverse} />
+              <TouchableOpacity
+                style={styles.saveButton}
+                onPress={handleSaveTag}
+              >
+                <Ionicons
+                  name="checkmark-circle"
+                  size={20}
+                  color={colors.text.inverse}
+                />
                 <Text style={styles.saveButtonText}>
                   {editingTag ? "Atualizar" : "Criar"} Tag
                 </Text>

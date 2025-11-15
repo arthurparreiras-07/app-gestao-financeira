@@ -2,7 +2,15 @@ import { RecurringExpense } from "../../domain/entities/RecurringExpense";
 import { Expense } from "../../domain/entities/Expense";
 import { IRecurringExpenseRepository } from "../../domain/repositories/IRecurringExpenseRepository";
 import { IExpenseRepository } from "../../domain/repositories/IExpenseRepository";
-import { addDays, addWeeks, addMonths, addYears, isBefore, isAfter, startOfDay } from "date-fns";
+import {
+  addDays,
+  addWeeks,
+  addMonths,
+  addYears,
+  isBefore,
+  isAfter,
+  startOfDay,
+} from "date-fns";
 
 export class RecurringExpenseService {
   constructor(
@@ -21,16 +29,25 @@ export class RecurringExpenseService {
 
     for (const recurring of activeRecurring) {
       const lastDate = await this.getLastCreatedDate(recurring);
-      const nextDate = this.calculateNextDate(lastDate || recurring.startDate, recurring.frequency);
+      const nextDate = this.calculateNextDate(
+        lastDate || recurring.startDate,
+        recurring.frequency
+      );
 
       // Se a data calculada já passou e está dentro do período ativo
       if (isBefore(nextDate, today) || nextDate.getTime() === today.getTime()) {
-        if (!recurring.endDate || isBefore(nextDate, recurring.endDate) || nextDate.getTime() === recurring.endDate.getTime()) {
+        if (
+          !recurring.endDate ||
+          isBefore(nextDate, recurring.endDate) ||
+          nextDate.getTime() === recurring.endDate.getTime()
+        ) {
           await this.createExpenseFromRecurring(recurring, nextDate);
           created++;
         } else {
           // Desativar se passou da data final
-          await this.recurringRepository.update(recurring.id!, { isActive: false });
+          await this.recurringRepository.update(recurring.id!, {
+            isActive: false,
+          });
         }
       }
     }
@@ -79,9 +96,11 @@ export class RecurringExpenseService {
   /**
    * Busca a última transação criada por esta recorrência
    */
-  private async getLastCreatedDate(recurring: RecurringExpense): Promise<Date | null> {
+  private async getLastCreatedDate(
+    recurring: RecurringExpense
+  ): Promise<Date | null> {
     const allExpenses = await this.expenseRepository.findAll();
-    
+
     // Filtra transações que correspondem à recorrência
     const matchingExpenses = allExpenses.filter(
       (e) =>
@@ -95,6 +114,8 @@ export class RecurringExpenseService {
     if (matchingExpenses.length === 0) return null;
 
     // Retorna a data mais recente
-    return matchingExpenses.sort((a, b) => b.date.getTime() - a.date.getTime())[0].date;
+    return matchingExpenses.sort(
+      (a, b) => b.date.getTime() - a.date.getTime()
+    )[0].date;
   }
 }

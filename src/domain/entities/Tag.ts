@@ -17,11 +17,7 @@ export class Tag {
     }
   }
 
-  static create(data: {
-    name: string;
-    color: string;
-    userId: number;
-  }): Tag {
+  static create(data: { name: string; color: string; userId: number }): Tag {
     return new Tag(null, data.name, data.color, data.userId);
   }
 }

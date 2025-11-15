@@ -1,5 +1,8 @@
 import { IRecurringExpenseRepository } from "../../domain/repositories/IRecurringExpenseRepository";
-import { RecurringExpense, Frequency } from "../../domain/entities/RecurringExpense";
+import {
+  RecurringExpense,
+  Frequency,
+} from "../../domain/entities/RecurringExpense";
 import { DatabaseManager } from "../database/DatabaseManager";
 
 interface RecurringExpenseRow {

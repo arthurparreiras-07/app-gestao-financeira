@@ -1,4 +1,4 @@
-import { Expense } from '../entities/Expense';
+import { Expense } from "../entities/Expense";
 
 export interface IExpenseRepository {
   create(expense: Expense): Promise<number>;

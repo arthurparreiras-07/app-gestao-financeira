@@ -7,31 +7,35 @@
 ## ✅ PROGRESSO: 90% COMPLETO
 
 ### 📊 Status Geral
-| Componente | Status | Progresso |
-|------------|--------|-----------|
-| Backend | ✅ Completo | 100% |
-| Store Integration | ✅ Completo | 100% |
-| Telas Principais | ✅ Completo | 100% |
-| Novas Telas | ✅ Completo | 100% |
-| Navegação | ✅ Completo | 100% |
-| Export UI | ✅ Completo | 100% |
-| Database Migration | ✅ Verificado | 100% |
-| Notificações | ⏳ Pendente | 0% |
+
+| Componente         | Status        | Progresso |
+| ------------------ | ------------- | --------- |
+| Backend            | ✅ Completo   | 100%      |
+| Store Integration  | ✅ Completo   | 100%      |
+| Telas Principais   | ✅ Completo   | 100%      |
+| Novas Telas        | ✅ Completo   | 100%      |
+| Navegação          | ✅ Completo   | 100%      |
+| Export UI          | ✅ Completo   | 100%      |
+| Database Migration | ✅ Verificado | 100%      |
+| Notificações       | ⏳ Pendente   | 0%        |
 
 ---
 
 ## 🎯 FEATURES IMPLEMENTADAS
 
 ### 1. Sistema de Orçamentos ✅
+
 **Localização:** `src/presentation/screens/BudgetScreen.tsx`
 
 **Backend:**
+
 - ✅ Entidade `Budget.ts`
 - ✅ Interface `IBudgetRepository.ts`
 - ✅ Implementação `BudgetRepository.ts`
 - ✅ Migração database v3
 
 **Frontend:**
+
 - ✅ Listagem com progress bars animadas
 - ✅ Navegação por mês/ano
 - ✅ Create/Edit modal responsivo
@@ -43,15 +47,18 @@
 - ✅ Dark mode completo
 
 **Navegação:**
+
 - ✅ Rota registrada em AppNavigator
 - ✅ Link em SettingsScreen → "Orçamentos"
 
 ---
 
 ### 2. Transações Recorrentes ✅
+
 **Localização:** `src/presentation/screens/RecurringExpensesScreen.tsx`
 
 **Backend:**
+
 - ✅ Entidade `RecurringExpense.ts`
 - ✅ Interface `IRecurringExpenseRepository.ts`
 - ✅ Implementação `RecurringExpenseRepository.ts`
@@ -59,6 +66,7 @@
 - ✅ Migração database v3
 
 **Frontend:**
+
 - ✅ Listagem separada (Ativas/Inativas)
 - ✅ Create/Edit modal completo
 - ✅ 4 frequências (Daily, Weekly, Monthly, Yearly)
@@ -70,15 +78,18 @@
 - ✅ Dark mode completo
 
 **Navegação:**
+
 - ✅ Rota registrada em AppNavigator
 - ✅ Link em SettingsScreen → "Transações Recorrentes"
 
 ---
 
 ### 3. Tags Personalizadas ✅
+
 **Localização:** `src/presentation/screens/TagsScreen.tsx`
 
 **Backend:**
+
 - ✅ Entidade `Tag.ts`
 - ✅ Entidade `ExpenseTag.ts` (junction)
 - ✅ Interface `ITagRepository.ts`
@@ -87,6 +98,7 @@
 - ✅ Migração database v3
 
 **Frontend:**
+
 - ✅ Listagem com visual colorido
 - ✅ Create/Edit modal
 - ✅ Color picker (12 cores predefinidas)
@@ -97,15 +109,18 @@
 - ✅ Dark mode completo
 
 **Navegação:**
+
 - ✅ Rota registrada em AppNavigator
 - ✅ Link em SettingsScreen → "Tags Personalizadas"
 
 ---
 
 ### 4. Exportação de Dados ✅
+
 **Localização:** `src/application/services/ExportService.ts`
 
 **Backend:**
+
 - ✅ Service `ExportService.ts`
 - ✅ Método `exportToCSV` (Excel-compatible)
 - ✅ Método `exportToJSON` (backup completo)
@@ -113,6 +128,7 @@
 - ✅ Dependencies instaladas
 
 **Frontend (SettingsScreen):**
+
 - ✅ Botão "Exportar CSV"
 - ✅ Botão "Backup Completo (JSON)"
 - ✅ Botão "Relatório Mensal"
@@ -123,29 +139,36 @@
 ---
 
 ### 5. Anexos em Transações ✅
+
 **Backend:**
+
 - ✅ Campo `attachments: string[]` em Expense
 - ✅ Suporte JSON no ExpenseRepository
 - ✅ Migração database v3
 
 **Frontend (AddExpenseScreen):**
+
 - ✅ Image picker (múltiplas fotos)
 - ✅ Preview com botão remover
 - ✅ expo-image-picker instalado
 
 **Frontend (TransactionsScreen):**
+
 - ✅ Exibição de thumbnails
 - ✅ Contador de fotos
 
 ---
 
 ### 6. Edição de Transações ✅
+
 **Backend:**
+
 - ✅ Método `update` em IExpenseRepository
 - ✅ Implementação em ExpenseRepository
 - ✅ Helper `rowToEntity`
 
 **Frontend (TransactionsScreen):**
+
 - ✅ Long-press para menu de ações
 - ✅ Action menu modal
 - ✅ Delete com confirmação
@@ -154,7 +177,9 @@
 ---
 
 ### 7. Busca Avançada ✅
+
 **Frontend (TransactionsScreen):**
+
 - ✅ Search bar global
 - ✅ Busca por categoria, emoção, nota, valor
 - ✅ Botão limpar busca
@@ -163,7 +188,9 @@
 ---
 
 ### 8. Transações com Tags ✅
+
 **Frontend (AddExpenseScreen):**
+
 - ✅ Seletor multi-select de tags
 - ✅ Chips coloridos
 - ✅ Integração com TagRepository
@@ -173,6 +200,7 @@
 ## 📁 ARQUIVOS CRIADOS/MODIFICADOS
 
 ### Novos Arquivos (14):
+
 1. `src/domain/entities/Budget.ts`
 2. `src/domain/entities/RecurringExpense.ts`
 3. `src/domain/entities/Tag.ts`
@@ -189,6 +217,7 @@
 14. `src/presentation/screens/TagsScreen.tsx` ✨
 
 ### Arquivos Modificados (7):
+
 1. `src/domain/entities/Expense.ts` - attachments, tagIds
 2. `src/domain/repositories/IExpenseRepository.ts` - update method
 3. `src/infrastructure/repositories/ExpenseRepository.ts` - update, rowToEntity, attachments
@@ -204,11 +233,13 @@
 ## 📊 ESTATÍSTICAS
 
 ### Linhas de Código
+
 - **Backend:** ~1,800 linhas
 - **Frontend:** ~3,000 linhas
 - **Total:** ~4,800 linhas de TypeScript/TSX
 
 ### Complexidade
+
 - **Entidades:** 6 (3 novas)
 - **Repositórios:** 6 (3 novos)
 - **Services:** 3 (2 novos)
@@ -220,18 +251,22 @@
 ## 🗄️ DATABASE MIGRATION v3
 
 ### Novas Tabelas:
+
 1. **budgets** - Orçamentos mensais
+
    ```sql
    id, category_id, monthly_limit, month, year, alert_threshold, user_id
    ```
 
 2. **recurring_expenses** - Transações recorrentes
+
    ```sql
-   id, template_expense_id, frequency, start_date, end_date, 
+   id, template_expense_id, frequency, start_date, end_date,
    last_processed_date, is_active, user_id
    ```
 
 3. **tags** - Tags personalizadas
+
    ```sql
    id, name, color, user_id
    ```
@@ -242,15 +277,18 @@
    ```
 
 ### Coluna Adicionada:
+
 - **expenses.attachments** - JSON array de URIs
 
 ### Índices Criados:
+
 - ✅ budgets (month, year)
 - ✅ recurring_expenses (is_active)
 - ✅ tags (user_id)
 - ✅ expense_tags (expense_id, tag_id)
 
 ### Status:
+
 ✅ Migration script completo em `migrations.ts`
 ✅ Executado automaticamente no `App.tsx`
 ✅ Testado em desenvolvimento
@@ -260,11 +298,13 @@
 ## 🎨 NAVEGAÇÃO ATUALIZADA
 
 ### Bottom Tabs (3):
+
 1. 🏠 **Home** - Dashboard principal
 2. 📝 **Transações** - Lista com filtros
 3. ⚙️ **Configurações** - Ajustes e gerenciamento
 
 ### Stack Navigator (7 telas):
+
 1. Main (Bottom Tabs)
 2. AddExpense - Nova transação
 3. **Budget** ✨ - Gerenciar orçamentos
@@ -274,23 +314,28 @@
 ### SettingsScreen - Seções:
 
 **Preferências:**
+
 - Toggle Notificações
 - Toggle Tema Escuro
 
 **Gerenciamento:** ✨ NEW
+
 - → Orçamentos
 - → Transações Recorrentes
 - → Tags Personalizadas
 
 **Exportar Dados:** ✨ NEW
+
 - Exportar CSV
 - Backup Completo (JSON)
 - Relatório Mensal
 
 **Zona de Perigo:**
+
 - Limpar todos os dados
 
 **Sobre:**
+
 - MindBudget v2.0.0
 
 ---
@@ -311,6 +356,7 @@
 ## ✅ CHECKLIST DE CONCLUSÃO
 
 ### Backend (100%)
+
 - [x] Entidades criadas
 - [x] Interfaces de repositórios
 - [x] Implementações de repositórios
@@ -319,6 +365,7 @@
 - [x] Dependencies instaladas
 
 ### Store Integration (100%)
+
 - [x] Repositórios integrados
 - [x] Actions para budgets
 - [x] Actions para recurring
@@ -327,6 +374,7 @@
 - [x] Action updateExpense
 
 ### Telas (100%)
+
 - [x] BudgetScreen criada e funcional
 - [x] RecurringExpensesScreen criada e funcional
 - [x] TagsScreen criada e funcional
@@ -335,16 +383,19 @@
 - [x] SettingsScreen atualizada
 
 ### Navegação (100%)
+
 - [x] Rotas registradas no AppNavigator
 - [x] Links em SettingsScreen
 - [x] Navigation prop propagada
 
 ### Database (100%)
+
 - [x] Migration script v3 completo
 - [x] Execução automática verificada
 - [x] Índices criados
 
 ### UI/UX (100%)
+
 - [x] Dark mode em todas as telas
 - [x] Loading states
 - [x] Error handling
@@ -357,7 +408,9 @@
 ## ⏳ PENDENTE (10%)
 
 ### Nice to Have:
+
 1. **Notificações (Opcional)**
+
    - Request permissions
    - Notificação diária (21:00)
    - Budget alerts
@@ -376,41 +429,48 @@
 ## 🚀 COMO TESTAR
 
 ### 1. Iniciar o Projeto
+
 ```bash
 cd "/home/user/Documents/PUC Minas/app-gestao-financeira"
 npx expo start
 ```
 
 ### 2. Testar Orçamentos
+
 1. Vá em Configurações → Orçamentos
 2. Crie um orçamento mensal
 3. Adicione gastos da categoria
 4. Veja a progress bar atualizar
 
 ### 3. Testar Recorrentes
+
 1. Vá em Configurações → Transações Recorrentes
 2. Crie uma transação recorrente
 3. Clique em "Processar Pendentes"
 4. Veja a transação ser criada automaticamente
 
 ### 4. Testar Tags
+
 1. Vá em Configurações → Tags Personalizadas
 2. Crie tags coloridas
 3. Ao adicionar transação, selecione tags
 4. Veja as tags nas transações
 
 ### 5. Testar Exportação
+
 1. Vá em Configurações → Exportar Dados
 2. Clique em qualquer formato
 3. Veja o arquivo ser criado e compartilhado
 
 ### 6. Testar Anexos
+
 1. Adicione nova transação
 2. Clique em "Adicionar Foto"
 3. Selecione imagens
 4. Veja thumbnails nas transações
 
 ### 7. Testar Busca
+
 1. Vá em Transações
 2. Digite na barra de busca
 3. Veja filtros sendo aplicados
@@ -420,6 +480,7 @@ npx expo start
 ## 💡 OBSERVAÇÕES TÉCNICAS
 
 ### Pontos de Atenção:
+
 - ⚠️ **Migration v3 roda automaticamente** - Não é necessário executar manualmente
 - ✅ **Zero erros de TypeScript** - Todo código valida corretamente
 - ✅ **Dark mode completo** - Todas as telas suportam tema escuro
@@ -428,12 +489,14 @@ npx expo start
 - ✅ **Loading states** - Feedback visual em operações assíncronas
 
 ### Performance:
+
 - ✅ UseMemo para cálculos complexos
 - ✅ Helper functions para reduzir duplicação
 - ✅ Índices no database para queries rápidas
 - ✅ Lazy loading onde aplicável
 
 ### Acessibilidade:
+
 - ✅ Labels descritivos
 - ✅ Hints informativos
 - ✅ Empty states explicativos
@@ -446,6 +509,7 @@ npx expo start
 ### Projeto 90% Completo!
 
 **O que foi alcançado:**
+
 - ✅ 6 features principais implementadas
 - ✅ 3 novas telas completas e funcionais
 - ✅ Backend robusto e escalável
@@ -454,6 +518,7 @@ npx expo start
 - ✅ ~4,800 linhas de código TypeScript/TSX
 
 **O que falta:**
+
 - ⏳ Sistema de notificações (nice to have)
 - ⏳ Melhorias adicionais (futuro)
 

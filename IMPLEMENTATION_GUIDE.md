@@ -29,30 +29,36 @@ As seguintes tabelas foram adicionadas na migration v3:
 ## ✅ O Que Foi Implementado
 
 ### 1. **Sistema de Orçamentos** ✅
+
 - Entidade: `Budget.ts`
 - Repository: `BudgetRepository.ts`
 - Interface: `IBudgetRepository.ts`
 
 ### 2. **Transações Recorrentes** ✅
+
 - Entidade: `RecurringExpense.ts`
 - Repository: `RecurringExpenseRepository.ts`
 - Service: `RecurringExpenseService.ts`
 - Interface: `IRecurringExpenseRepository.ts`
 
 ### 3. **Tags Personalizadas** ✅
+
 - Entidade: `Tag.ts`
 - Repository: `TagRepository.ts`
 - Interface: `ITagRepository.ts`
 
 ### 4. **Anexos em Transações** ✅
+
 - Campo `attachments: string[]` adicionado em `Expense`
 - Suporte no `ExpenseRepository`
 
 ### 5. **Edição de Transações** ✅
+
 - Método `update` adicionado em `IExpenseRepository`
 - Implementado em `ExpenseRepository`
 
 ### 6. **Exportação de Dados** ✅
+
 - Service: `ExportService.ts`
 - Formatos: CSV, JSON, Relatório TXT
 
