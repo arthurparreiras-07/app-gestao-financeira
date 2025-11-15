@@ -7,14 +7,15 @@ import {
   TouchableOpacity,
   ActivityIndicator,
 } from "react-native";
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useAppStore } from "../../application/store/useAppStore";
 import { InsightCard } from "../components/InsightCard";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { useTheme } from "../../theme/ThemeContext";
 import {
-  colors,
+  getColors,
   spacing,
   borderRadius,
   fontSize,
@@ -24,28 +25,47 @@ import {
 
 export const HomeScreen = ({ navigation }: any) => {
   const { expenses, insights, loading, loadData } = useAppStore();
+  const { isDark } = useTheme();
+  const colors = getColors(isDark);
 
   useEffect(() => {
     loadData();
   }, []);
 
-  const totalExpenses = expenses.reduce((sum, e) => sum + e.amount, 0);
-  const thisMonthExpenses = expenses.filter(
+  // Calcular gastos e economias separadamente
+  const allExpenses = expenses.filter(e => e.type === 'expense');
+  const allSavings = expenses.filter(e => e.type === 'saving');
+  
+  const totalExpenses = allExpenses.reduce((sum, e) => sum + e.amount, 0);
+  const totalSavings = allSavings.reduce((sum, e) => sum + e.amount, 0);
+  
+  const thisMonthExpenses = allExpenses.filter(
     (e) => e.date.getMonth() === new Date().getMonth()
   );
-  const monthTotal = thisMonthExpenses.reduce((sum, e) => sum + e.amount, 0);
+  const thisMonthSavings = allSavings.filter(
+    (e) => e.date.getMonth() === new Date().getMonth()
+  );
+  
+  const monthExpensesTotal = thisMonthExpenses.reduce((sum, e) => sum + e.amount, 0);
+  const monthSavingsTotal = thisMonthSavings.reduce((sum, e) => sum + e.amount, 0);
+
+  const styles = createStyles(colors);
 
   if (loading) {
     return (
-      <SafeAreaView style={styles.loadingContainer} edges={['top', 'bottom']}>
+      <SafeAreaView style={[styles.loadingContainer, { backgroundColor: colors.background }]} edges={["top", "bottom"]}>
         <ActivityIndicator size="large" color={colors.primary[500]} />
       </SafeAreaView>
     );
   }
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={['bottom']}>
-      <ScrollView style={styles.container}>
+    <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.backgroundSecondary }]} edges={["bottom"]}>
+      <ScrollView
+        style={[styles.container, { backgroundColor: colors.backgroundSecondary }]}
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+      >
         <View style={styles.header}>
           <View style={styles.headerTop}>
             <View>
@@ -73,6 +93,22 @@ export const HomeScreen = ({ navigation }: any) => {
             </Text>
           </View>
           <View style={styles.summaryCard}>
+            <View style={[styles.summaryIconContainer, { backgroundColor: colors.success + '15' }]}>
+              <Ionicons
+                name="trending-up"
+                size={24}
+                color={colors.success}
+              />
+            </View>
+            <Text style={styles.summaryLabel}>Economias</Text>
+            <Text style={[styles.summaryValue, { color: colors.success }]}>
+              R$ {totalSavings.toFixed(2)}
+            </Text>
+          </View>
+        </View>
+
+        <View style={styles.summaryContainer}>
+          <View style={styles.summaryCard}>
             <View style={styles.summaryIconContainer}>
               <Ionicons
                 name="calendar-outline"
@@ -80,8 +116,21 @@ export const HomeScreen = ({ navigation }: any) => {
                 color={colors.secondary[500]}
               />
             </View>
-            <Text style={styles.summaryLabel}>Este Mês</Text>
-            <Text style={styles.summaryValue}>R$ {monthTotal.toFixed(2)}</Text>
+            <Text style={styles.summaryLabel}>Gastos do Mês</Text>
+            <Text style={styles.summaryValue}>R$ {monthExpensesTotal.toFixed(2)}</Text>
+          </View>
+          <View style={styles.summaryCard}>
+            <View style={[styles.summaryIconContainer, { backgroundColor: colors.success + '15' }]}>
+              <Ionicons
+                name="calendar-clear-outline"
+                size={24}
+                color={colors.success}
+              />
+            </View>
+            <Text style={styles.summaryLabel}>Economias do Mês</Text>
+            <Text style={[styles.summaryValue, { color: colors.success }]}>
+              R$ {monthSavingsTotal.toFixed(2)}
+            </Text>
           </View>
         </View>
 
@@ -91,7 +140,7 @@ export const HomeScreen = ({ navigation }: any) => {
           activeOpacity={0.8}
         >
           <Ionicons name="add-circle" size={20} color={colors.text.inverse} />
-          <Text style={styles.addButtonText}>Adicionar Gasto</Text>
+          <Text style={styles.addButtonText}>Adicionar Transação</Text>
         </TouchableOpacity>
 
         <View style={styles.insightsContainer}>
@@ -171,7 +220,7 @@ export const HomeScreen = ({ navigation }: any) => {
   );
 };
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ReturnType<typeof getColors>) => StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: colors.backgroundSecondary,
@@ -225,7 +274,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: borderRadius.md,
-    backgroundColor: colors.gray[50],
+    backgroundColor: `${colors.primary[500]}15`,
     justifyContent: "center",
     alignItems: "center",
     marginBottom: spacing.sm,
@@ -252,6 +301,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     gap: spacing.sm,
     ...shadows.md,
+    elevation: 5,
+    zIndex: 10,
   },
   addButtonText: {
     color: colors.text.inverse,
@@ -305,7 +356,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: borderRadius.md,
-    backgroundColor: colors.gray[50],
+    backgroundColor: `${colors.secondary[500]}15`,
     justifyContent: "center",
     alignItems: "center",
   },

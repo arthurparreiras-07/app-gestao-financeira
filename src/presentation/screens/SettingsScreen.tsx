@@ -7,11 +7,12 @@ import {
   StyleSheet,
   Alert,
 } from "react-native";
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useAppStore } from "../../application/store/useAppStore";
+import { useTheme } from "../../theme/ThemeContext";
 import {
-  colors,
+  getColors,
   spacing,
   borderRadius,
   fontSize,
@@ -21,6 +22,9 @@ import {
 
 export const SettingsScreen: React.FC = () => {
   const { clearAllData } = useAppStore();
+  const { isDark, toggleTheme } = useTheme();
+  const colors = getColors(isDark);
+  const [notifications, setNotifications] = useState(false);
 
   const handleClearData = () => {
     Alert.alert(
@@ -48,9 +52,23 @@ export const SettingsScreen: React.FC = () => {
     Alert.alert("Em breve", "Funcionalidade de exportação em desenvolvimento.");
   };
 
+  const handleToggleDarkMode = () => {
+    toggleTheme();
+  };
+
+  const handleToggleNotifications = () => {
+    setNotifications(!notifications);
+    Alert.alert(
+      "Notificações",
+      notifications ? "Notificações desativadas!" : "Notificações ativadas!"
+    );
+  };
+
+  const styles = createStyles(colors);
+
   return (
-    <SafeAreaView style={styles.safeArea} edges={['bottom']}>
-      <ScrollView style={styles.container}>
+    <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]} edges={["bottom"]}>
+      <ScrollView style={[styles.container, { backgroundColor: colors.background }]}>
         {/* Header */}
         <View style={styles.header}>
           <View style={styles.iconContainer}>
@@ -66,7 +84,11 @@ export const SettingsScreen: React.FC = () => {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Preferências</Text>
 
-          <TouchableOpacity style={styles.settingItem} onPress={() => {}}>
+          <TouchableOpacity
+            style={styles.settingItem}
+            onPress={handleToggleNotifications}
+            activeOpacity={0.7}
+          >
             <View
               style={[
                 styles.settingIconContainer,
@@ -82,17 +104,21 @@ export const SettingsScreen: React.FC = () => {
             <View style={styles.settingContent}>
               <Text style={styles.settingLabel}>Notificações</Text>
               <Text style={styles.settingDescription}>
-                Receber lembretes de gastos
+                {notifications ? "Ativadas" : "Desativadas"}
               </Text>
             </View>
             <Ionicons
-              name="chevron-forward"
-              size={20}
-              color={colors.gray[400]}
+              name={notifications ? "toggle" : "toggle-outline"}
+              size={24}
+              color={notifications ? colors.primary[500] : colors.gray[400]}
             />
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.settingItem} onPress={() => {}}>
+          <TouchableOpacity
+            style={styles.settingItem}
+            onPress={handleToggleDarkMode}
+            activeOpacity={0.7}
+          >
             <View
               style={[
                 styles.settingIconContainer,
@@ -107,12 +133,14 @@ export const SettingsScreen: React.FC = () => {
             </View>
             <View style={styles.settingContent}>
               <Text style={styles.settingLabel}>Tema escuro</Text>
-              <Text style={styles.settingDescription}>Ativar modo noturno</Text>
+              <Text style={styles.settingDescription}>
+                {isDark ? "Ativado" : "Desativado"}
+              </Text>
             </View>
             <Ionicons
-              name="chevron-forward"
-              size={20}
-              color={colors.gray[400]}
+              name={isDark ? "toggle" : "toggle-outline"}
+              size={24}
+              color={isDark ? colors.primary[500] : colors.gray[400]}
             />
           </TouchableOpacity>
         </View>
@@ -198,7 +226,7 @@ export const SettingsScreen: React.FC = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ReturnType<typeof getColors>) => StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: colors.backgroundSecondary,

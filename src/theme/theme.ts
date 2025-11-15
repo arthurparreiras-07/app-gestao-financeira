@@ -3,7 +3,8 @@
  * Paleta de cores para aplicação financeira
  */
 
-export const colors = {
+// Cores base que não mudam
+const baseColors = {
   // Cores primárias - Verde financeiro
   primary: {
     50: "#E6F7F0",
@@ -32,36 +33,11 @@ export const colors = {
     900: "#0D3B5F",
   },
 
-  // Tons de cinza - GitHub style
-  gray: {
-    50: "#FAFBFC",
-    100: "#F6F8FA",
-    200: "#E1E4E8",
-    300: "#D1D5DA",
-    400: "#959DA5",
-    500: "#6A737D",
-    600: "#586069",
-    700: "#444D56",
-    800: "#2F363D",
-    900: "#24292E",
-  },
-
   // Estados
   success: "#28A745",
   warning: "#FFA500",
   error: "#DC3545",
   info: "#17A2B8",
-
-  // UI
-  background: "#FFFFFF",
-  backgroundSecondary: "#F6F8FA",
-  border: "#E1E4E8",
-  text: {
-    primary: "#24292E",
-    secondary: "#586069",
-    tertiary: "#6A737D",
-    inverse: "#FFFFFF",
-  },
 
   // Categorias (tons profissionais)
   categories: {
@@ -74,6 +50,63 @@ export const colors = {
     others: "#FCBAD3",
   },
 };
+
+// Tema claro
+const lightTheme = {
+  ...baseColors,
+  gray: {
+    50: "#FAFBFC",
+    100: "#F6F8FA",
+    200: "#E1E4E8",
+    300: "#D1D5DA",
+    400: "#959DA5",
+    500: "#6A737D",
+    600: "#586069",
+    700: "#444D56",
+    800: "#2F363D",
+    900: "#24292E",
+  },
+  background: "#FFFFFF",
+  backgroundSecondary: "#F6F8FA",
+  border: "#E1E4E8",
+  text: {
+    primary: "#24292E",
+    secondary: "#586069",
+    tertiary: "#6A737D",
+    inverse: "#FFFFFF",
+  },
+};
+
+// Tema escuro
+const darkTheme = {
+  ...baseColors,
+  gray: {
+    50: "#0D1117",
+    100: "#161B22",
+    200: "#21262D",
+    300: "#30363D",
+    400: "#484F58",
+    500: "#6E7681",
+    600: "#8B949E",
+    700: "#B1BAC4",
+    800: "#C9D1D9",
+    900: "#F0F6FC",
+  },
+  background: "#0D1117",
+  backgroundSecondary: "#161B22",
+  border: "#30363D",
+  text: {
+    primary: "#F0F6FC",
+    secondary: "#8B949E",
+    tertiary: "#6E7681",
+    inverse: "#0D1117",
+  },
+};
+
+export const getColors = (isDark: boolean) => isDark ? darkTheme : lightTheme;
+
+// Para compatibilidade com código existente
+export const colors = lightTheme;
 
 export const spacing = {
   xs: 4,

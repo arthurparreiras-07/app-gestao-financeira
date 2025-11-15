@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { Expense } from "../../domain/entities/Expense";
+import { Expense, TransactionType } from "../../domain/entities/Expense";
 import { Emotion } from "../../domain/entities/Emotion";
 import { Category } from "../../domain/entities/Category";
 import { ExpenseRepository } from "../../infrastructure/repositories/ExpenseRepository";
@@ -28,6 +28,7 @@ interface AppState {
     emotionId: number;
     categoryId: number;
     note: string;
+    type?: TransactionType;
   }) => Promise<void>;
   deleteExpense: (id: number) => Promise<void>;
   refreshInsights: () => void;

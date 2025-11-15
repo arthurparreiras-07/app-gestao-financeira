@@ -1,12 +1,6 @@
 import React from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  Dimensions,
-} from "react-native";
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { View, Text, StyleSheet, ScrollView, Dimensions } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useAppStore } from "../../application/store/useAppStore";
 import { PieChart } from "react-native-chart-kit";
@@ -24,13 +18,13 @@ export const ReportsScreen = () => {
 
   // Cores distintas para cada emoção
   const emotionColors: Record<string, string> = {
-    'Feliz': '#10B981',      // Verde vibrante
-    'Triste': '#3B82F6',     // Azul
-    'Estressado': '#F59E0B', // Laranja
-    'Entediado': '#6B7280',  // Cinza
-    'Empolgado': '#8B5CF6',  // Roxo
-    'Ansioso': '#EF4444',    // Vermelho
-    'Calmo': '#14B8A6',      // Teal
+    Feliz: "#10B981", // Verde vibrante
+    Triste: "#3B82F6", // Azul
+    Estressado: "#F59E0B", // Laranja
+    Entediado: "#6B7280", // Cinza
+    Empolgado: "#8B5CF6", // Roxo
+    Ansioso: "#EF4444", // Vermelho
+    Calmo: "#14B8A6", // Teal
   };
 
   const expensesByEmotion = emotions
@@ -73,7 +67,7 @@ export const ReportsScreen = () => {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={['bottom']}>
+    <SafeAreaView style={styles.safeArea} edges={["bottom"]}>
       <ScrollView style={styles.container}>
         <View style={styles.header}>
           <Ionicons name="stats-chart" size={32} color={colors.text.inverse} />

@@ -1,5 +1,5 @@
 import { IExpenseRepository } from "../../domain/repositories/IExpenseRepository";
-import { Expense } from "../../domain/entities/Expense";
+import { Expense, TransactionType } from "../../domain/entities/Expense";
 import { DatabaseManager } from "../database/DatabaseManager";
 
 interface ExpenseRow {
@@ -10,14 +10,15 @@ interface ExpenseRow {
   category_id: number;
   note: string;
   user_id: number;
+  type: TransactionType;
 }
 
 export class ExpenseRepository implements IExpenseRepository {
   async create(expense: Expense): Promise<number> {
     const db = await DatabaseManager.getInstance();
     const result = await db.runAsync(
-      `INSERT INTO expenses (amount, date, emotion_id, category_id, note, user_id)
-       VALUES (?, ?, ?, ?, ?, ?)`,
+      `INSERT INTO expenses (amount, date, emotion_id, category_id, note, user_id, type)
+       VALUES (?, ?, ?, ?, ?, ?, ?)`,
       [
         expense.amount,
         expense.date.toISOString(),
@@ -25,6 +26,7 @@ export class ExpenseRepository implements IExpenseRepository {
         expense.categoryId,
         expense.note,
         expense.userId,
+        expense.type,
       ]
     );
     return result.lastInsertRowId;
@@ -44,7 +46,8 @@ export class ExpenseRepository implements IExpenseRepository {
           row.emotion_id,
           row.category_id,
           row.note,
-          row.user_id
+          row.user_id,
+          row.type || 'expense'
         )
     );
   }
@@ -64,7 +67,8 @@ export class ExpenseRepository implements IExpenseRepository {
           row.emotion_id,
           row.category_id,
           row.note,
-          row.user_id
+          row.user_id,
+          row.type || 'expense'
         )
     );
   }
@@ -84,7 +88,8 @@ export class ExpenseRepository implements IExpenseRepository {
           row.emotion_id,
           row.category_id,
           row.note,
-          row.user_id
+          row.user_id,
+          row.type || 'expense'
         )
     );
   }
@@ -104,7 +109,8 @@ export class ExpenseRepository implements IExpenseRepository {
           row.emotion_id,
           row.category_id,
           row.note,
-          row.user_id
+          row.user_id,
+          row.type || 'expense'
         )
     );
   }

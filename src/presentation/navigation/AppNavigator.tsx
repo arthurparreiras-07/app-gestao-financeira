@@ -4,7 +4,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Ionicons } from "@expo/vector-icons";
 import { Platform } from "react-native";
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import { HomeScreen } from "../screens/HomeScreen";
 import { AddExpenseScreen } from "../screens/AddExpenseScreen";
 import { ReportsScreen } from "../screens/ReportsScreen";
@@ -25,14 +25,14 @@ function HomeTabs() {
           backgroundColor: colors.background,
           borderTopColor: colors.border,
           borderTopWidth: 1,
-          paddingBottom: Platform.OS === 'ios' ? 20 : 8,
+          paddingBottom: Platform.OS === "ios" ? 20 : 8,
           paddingTop: 8,
-          height: Platform.OS === 'ios' ? 85 : 65,
+          height: Platform.OS === "ios" ? 85 : 65,
         },
         tabBarLabelStyle: {
           fontSize: 12,
           fontWeight: "500",
-          marginBottom: Platform.OS === 'ios' ? 0 : 4,
+          marginBottom: Platform.OS === "ios" ? 0 : 4,
         },
       }}
     >

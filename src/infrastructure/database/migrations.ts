@@ -6,7 +6,7 @@ import { DatabaseManager } from './DatabaseManager';
  */
 
 export class DatabaseMigrations {
-  private static readonly CURRENT_VERSION = 1;
+  private static readonly CURRENT_VERSION = 2;
 
   /**
    * Executa todas as migrations necessárias
@@ -68,8 +68,15 @@ export class DatabaseMigrations {
           );
           break;
 
+        case 2:
+          // Adicionar campo type para diferenciar gastos de economias
+          await db.execAsync(`
+            ALTER TABLE expenses ADD COLUMN type TEXT DEFAULT 'expense';
+          `);
+          break;
+
         // Adicione novos cases para versões futuras
-        // case 2:
+        // case 3:
         //   await db.execAsync('ALTER TABLE expenses ADD COLUMN new_field TEXT;');
         //   break;
       }

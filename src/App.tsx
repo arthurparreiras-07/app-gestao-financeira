@@ -6,6 +6,7 @@ import { Emotion } from './domain/entities/Emotion';
 import { Category } from './domain/entities/Category';
 import { EmotionRepository } from './infrastructure/repositories/EmotionRepository';
 import { CategoryRepository } from './infrastructure/repositories/CategoryRepository';
+import { ThemeProvider } from './theme/ThemeContext';
 
 export default function App() {
 const [isReady, setIsReady] = useState(false);
@@ -48,12 +49,16 @@ const initializeApp = async () => {
 if (!isReady) {
   return (
     <View style={styles.loading}>
-      <ActivityIndicator size="large" color="#2196F3" />
+      <ActivityIndicator size="large" color="#1FA672" />
     </View>
   );
 }
 
-return <AppNavigator />;
+return (
+  <ThemeProvider>
+    <AppNavigator />
+  </ThemeProvider>
+);
 }
 
 const styles = StyleSheet.create({

@@ -10,13 +10,15 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useAppStore } from "../../application/store/useAppStore";
 import { EmotionSelector } from "../components/EmotionSelector";
 import { CategorySelector } from "../components/CategorySelector";
+import { TransactionType } from "../../domain/entities/Expense";
+import { useTheme } from "../../theme/ThemeContext";
 import {
-  colors,
+  getColors,
   spacing,
   borderRadius,
   fontSize,
@@ -26,6 +28,9 @@ import {
 
 export const AddExpenseScreen = ({ navigation }: any) => {
   const { emotions, categories, addExpense } = useAppStore();
+  const { isDark } = useTheme();
+  const colors = getColors(isDark);
+  const [transactionType, setTransactionType] = useState<TransactionType>('expense');
   const [amount, setAmount] = useState("");
   const [emotionId, setEmotionId] = useState<number>();
   const [categoryId, setCategoryId] = useState<number>();
@@ -52,24 +57,72 @@ export const AddExpenseScreen = ({ navigation }: any) => {
         emotionId,
         categoryId,
         note,
+        type: transactionType,
       });
-      Alert.alert("Sucesso", "Gasto registrado com sucesso!");
+      Alert.alert("Sucesso", `${transactionType === 'expense' ? 'Gasto' : 'Economia'} registrado com sucesso!`);
       navigation.goBack();
     } catch (error) {
-      Alert.alert("Erro", "Não foi possível salvar o gasto");
+      Alert.alert("Erro", `Não foi possível salvar ${transactionType === 'expense' ? 'o gasto' : 'a economia'}`);
     } finally {
       setLoading(false);
     }
   };
 
+  const styles = createStyles(colors);
+
   return (
-    <SafeAreaView style={styles.safeArea} edges={['bottom']}>
+    <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.backgroundSecondary }]} edges={["bottom"]}>
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{ flex: 1 }}
       >
-        <ScrollView style={styles.container}>
+        <ScrollView style={[styles.container, { backgroundColor: colors.backgroundSecondary }]}>
           <View style={styles.content}>
+            {/* Tipo de transação */}
+            <View style={styles.typeContainer}>
+              <TouchableOpacity
+                style={[
+                  styles.typeButton,
+                  transactionType === 'expense' && styles.typeButtonActive
+                ]}
+                onPress={() => setTransactionType('expense')}
+                activeOpacity={0.7}
+              >
+                <Ionicons
+                  name="trending-down"
+                  size={20}
+                  color={transactionType === 'expense' ? colors.error : colors.text.secondary}
+                />
+                <Text style={[
+                  styles.typeButtonText,
+                  transactionType === 'expense' && styles.typeButtonTextActive
+                ]}>
+                  Gasto
+                </Text>
+              </TouchableOpacity>
+              
+              <TouchableOpacity
+                style={[
+                  styles.typeButton,
+                  transactionType === 'saving' && styles.typeButtonActive
+                ]}
+                onPress={() => setTransactionType('saving')}
+                activeOpacity={0.7}
+              >
+                <Ionicons
+                  name="trending-up"
+                  size={20}
+                  color={transactionType === 'saving' ? colors.success : colors.text.secondary}
+                />
+                <Text style={[
+                  styles.typeButtonText,
+                  transactionType === 'saving' && styles.typeButtonTextActive
+                ]}>
+                  Economia
+                </Text>
+              </TouchableOpacity>
+            </View>
+
             <View style={styles.inputContainer}>
               <View style={styles.labelContainer}>
                 <Ionicons name="cash" size={20} color={colors.primary[500]} />
@@ -139,7 +192,7 @@ export const AddExpenseScreen = ({ navigation }: any) => {
                 color={colors.text.inverse}
               />
               <Text style={styles.submitButtonText}>
-                {loading ? "Salvando..." : "Salvar Gasto"}
+                {loading ? "Salvando..." : `Salvar ${transactionType === 'expense' ? 'Gasto' : 'Economia'}`}
               </Text>
             </TouchableOpacity>
           </View>
@@ -149,7 +202,7 @@ export const AddExpenseScreen = ({ navigation }: any) => {
   );
 };
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ReturnType<typeof getColors>) => StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: colors.backgroundSecondary,
@@ -160,6 +213,36 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: spacing.lg,
+  },
+  typeContainer: {
+    flexDirection: "row",
+    gap: spacing.md,
+    marginBottom: spacing.lg,
+  },
+  typeButton: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: spacing.sm,
+    backgroundColor: colors.background,
+    padding: spacing.md,
+    borderRadius: borderRadius.lg,
+    borderWidth: 2,
+    borderColor: colors.border,
+  },
+  typeButtonActive: {
+    borderColor: colors.primary[500],
+    backgroundColor: `${colors.primary[500]}10`,
+  },
+  typeButtonText: {
+    fontSize: fontSize.md,
+    fontWeight: fontWeight.medium,
+    color: colors.text.secondary,
+  },
+  typeButtonTextActive: {
+    color: colors.primary[600],
+    fontWeight: fontWeight.bold,
   },
   section: {
     marginBottom: spacing.lg,

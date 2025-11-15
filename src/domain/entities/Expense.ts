@@ -1,3 +1,5 @@
+export type TransactionType = 'expense' | 'saving';
+
 export class Expense {
 constructor(
   public readonly id: number | null,
@@ -6,7 +8,8 @@ constructor(
   public readonly emotionId: number,
   public readonly categoryId: number,
   public readonly note: string,
-  public readonly userId: number
+  public readonly userId: number,
+  public readonly type: TransactionType = 'expense'
 ) {
   this.validate();
 }
@@ -18,6 +21,9 @@ private validate(): void {
   if (!this.emotionId || !this.categoryId) {
     throw new Error('Emoção e categoria são obrigatórias');
   }
+  if (this.type !== 'expense' && this.type !== 'saving') {
+    throw new Error('Tipo deve ser "expense" ou "saving"');
+  }
 }
 
 static create(data: {
@@ -27,6 +33,7 @@ static create(data: {
   categoryId: number;
   note: string;
   userId: number;
+  type?: TransactionType;
 }): Expense {
   return new Expense(
     null,
@@ -35,7 +42,8 @@ static create(data: {
     data.emotionId,
     data.categoryId,
     data.note,
-    data.userId
+    data.userId,
+    data.type || 'expense'
   );
 }
 }
