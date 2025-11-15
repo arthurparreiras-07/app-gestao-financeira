@@ -1,7 +1,7 @@
 {
-  "name": "emotional-budget",
+  "name": "mindbudget",
   "version": "1.0.0",
-  "main": "expo/AppEntry.js",
+  "main": "node_modules/expo/AppEntry.js",
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",
@@ -25,6 +25,7 @@
   },
   "devDependencies": {
     "@types/react": "~19.1.10",
+    "@types/react-native-vector-icons": "^6.4.18",
     "typescript": "^5.3.3"
   }
 }

@@ -1,123 +1,169 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { Expense } from "../../domain/entities/Expense";
-import { Emotion } from "../../domain/entities/Emotion";
-import { Category } from "../../domain/entities/Category";
+import { Ionicons } from "@expo/vector-icons";
 import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
+import { Expense } from "../../domain/entities/Expense";
+import { Category } from "../../domain/entities/Category";
+import { Emotion } from "../../domain/entities/Emotion";
+import {
+  colors,
+  spacing,
+  borderRadius,
+  fontSize,
+  fontWeight,
+  shadows,
+} from "../../theme/theme";
 
 interface ExpenseCardProps {
   expense: Expense;
-  emotion?: Emotion;
   category?: Category;
+  emotion?: Emotion;
   onPress?: () => void;
-  onLongPress?: () => void;
 }
+
+const categoryIcons: Record<string, keyof typeof Ionicons.glyphMap> = {
+  Alimentação: "fast-food",
+  Transporte: "car",
+  Entretenimento: "game-controller",
+  Compras: "cart",
+  Saúde: "medical",
+  Educação: "school",
+  Outros: "ellipsis-horizontal",
+};
+
+const emotionIcons: Record<string, keyof typeof Ionicons.glyphMap> = {
+  Feliz: "happy",
+  Triste: "sad",
+  Estressado: "fitness",
+  Entediado: "remove-circle",
+  Empolgado: "star",
+  Ansioso: "warning",
+  Calmo: "leaf",
+};
 
 export const ExpenseCard: React.FC<ExpenseCardProps> = ({
   expense,
-  emotion,
   category,
+  emotion,
   onPress,
-  onLongPress,
 }) => {
+  const categoryIcon = categoryIcons[category?.name || ""] || "receipt";
+  const emotionIcon = emotionIcons[emotion?.name || ""] || "heart";
+
   return (
     <TouchableOpacity
-      style={[
-        styles.container,
-        category && { borderLeftColor: category.color, borderLeftWidth: 4 },
-      ]}
+      style={styles.card}
       onPress={onPress}
-      onLongPress={onLongPress}
       activeOpacity={0.7}
+      disabled={!onPress}
     >
-      <View style={styles.header}>
-        <View style={styles.iconsContainer}>
-          {emotion && <Text style={styles.emotionIcon}>{emotion.icon}</Text>}
-          {category && <Text style={styles.categoryIcon}>{category.icon}</Text>}
-        </View>
-        <Text style={styles.amount}>R$ {expense.amount.toFixed(2)}</Text>
+      <View
+        style={[
+          styles.iconContainer,
+          { backgroundColor: category?.color || colors.primary[500] },
+        ]}
+      >
+        <Ionicons name={categoryIcon} size={24} color={colors.text.inverse} />
       </View>
 
-      <View style={styles.details}>
-        <View style={styles.infoRow}>
-          {emotion && <Text style={styles.emotionName}>{emotion.name}</Text>}
-          <Text style={styles.separator}>•</Text>
-          {category && <Text style={styles.categoryName}>{category.name}</Text>}
+      <View style={styles.content}>
+        <View style={styles.header}>
+          <Text style={styles.categoryName}>
+            {category?.name || "Sem categoria"}
+          </Text>
+          <Text style={styles.amount}>R$ {expense.amount.toFixed(2)}</Text>
         </View>
 
-        <Text style={styles.date}>
-          {format(expense.date, "dd/MM/yyyy 'às' HH:mm")}
-        </Text>
+        <View style={styles.details}>
+          <View style={styles.detailItem}>
+            <Ionicons
+              name={emotionIcon}
+              size={14}
+              color={colors.text.secondary}
+            />
+            <Text style={styles.detailText}>
+              {emotion?.name || "Sem emoção"}
+            </Text>
+          </View>
+          <View style={styles.detailItem}>
+            <Ionicons
+              name="calendar-outline"
+              size={14}
+              color={colors.text.secondary}
+            />
+            <Text style={styles.detailText}>
+              {format(new Date(expense.date), "dd 'de' MMM", { locale: ptBR })}
+            </Text>
+          </View>
+        </View>
 
-        {expense.note && <Text style={styles.note}>{expense.note}</Text>}
+        {expense.note && (
+          <Text style={styles.notes} numberOfLines={1}>
+            {expense.note}
+          </Text>
+        )}
       </View>
     </TouchableOpacity>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: "#fff",
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
-    elevation: 2,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+  card: {
+    flexDirection: "row",
+    backgroundColor: colors.background,
+    borderRadius: borderRadius.lg,
+    padding: spacing.md,
+    marginBottom: spacing.md,
+    borderWidth: 1,
+    borderColor: colors.border,
+    ...shadows.sm,
+  },
+  iconContainer: {
+    width: 48,
+    height: 48,
+    borderRadius: borderRadius.md,
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: spacing.md,
+  },
+  content: {
+    flex: 1,
   },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 12,
-  },
-  iconsContainer: {
-    flexDirection: "row",
-    gap: 8,
-  },
-  emotionIcon: {
-    fontSize: 24,
-  },
-  categoryIcon: {
-    fontSize: 24,
-  },
-  amount: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#333",
-  },
-  details: {
-    gap: 6,
-  },
-  infoRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-  },
-  emotionName: {
-    fontSize: 14,
-    color: "#666",
-    fontWeight: "500",
-  },
-  separator: {
-    fontSize: 14,
-    color: "#999",
+    marginBottom: spacing.xs,
   },
   categoryName: {
-    fontSize: 14,
-    color: "#666",
-    fontWeight: "500",
+    fontSize: fontSize.md,
+    fontWeight: fontWeight.semibold,
+    color: colors.text.primary,
   },
-  date: {
-    fontSize: 12,
-    color: "#999",
+  amount: {
+    fontSize: fontSize.lg,
+    fontWeight: fontWeight.bold,
+    color: colors.primary[600],
   },
-  note: {
-    fontSize: 14,
-    color: "#666",
-    marginTop: 8,
+  details: {
+    flexDirection: "row",
+    gap: spacing.md,
+    marginBottom: spacing.xs,
+  },
+  detailItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.xs,
+  },
+  detailText: {
+    fontSize: fontSize.sm,
+    color: colors.text.secondary,
+  },
+  notes: {
+    fontSize: fontSize.sm,
+    color: colors.text.tertiary,
     fontStyle: "italic",
+    marginTop: spacing.xs,
   },
 });

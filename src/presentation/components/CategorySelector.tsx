@@ -1,72 +1,113 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { Category } from '../../domain/entities/Category';
+import { colors, spacing, borderRadius, fontSize, fontWeight, shadows } from '../../theme/theme';
 
 interface CategorySelectorProps {
-categories: Category[];
-selectedCategoryId?: number;
-onSelect: (categoryId: number) => void;
+  categories: Category[];
+  selectedCategoryId?: number;
+  onSelect: (categoryId: number) => void;
 }
 
+const categoryIcons: Record<string, keyof typeof Ionicons.glyphMap> = {
+  'Alimentação': 'fast-food',
+  'Transporte': 'car',
+  'Entretenimento': 'game-controller',
+  'Compras': 'cart',
+  'Saúde': 'medical',
+  'Educação': 'school',
+  'Outros': 'ellipsis-horizontal',
+};
+
 export const CategorySelector: React.FC<CategorySelectorProps> = ({
-categories,
-selectedCategoryId,
-onSelect,
+  categories,
+  selectedCategoryId,
+  onSelect,
 }) => {
-return (
-  <View style={styles.container}>
-    <Text style={styles.label}>Categoria do gasto</Text>
-    <View style={styles.categoriesGrid}>
-      {categories.map((category) => (
-        <TouchableOpacity
-          key={category.id}
-          style={[
-            styles.categoryButton,
-            { backgroundColor: category.color + '20' },
-            selectedCategoryId === category.id && {
-              borderWidth: 2,
-              borderColor: category.color,
-            },
-          ]}
-          onPress={() => onSelect(category.id!)}
-        >
-          <Text style={styles.categoryIcon}>{category.icon}</Text>
-          <Text style={styles.categoryName}>{category.name}</Text>
-        </TouchableOpacity>
-      ))}
+  return (
+    <View style={styles.container}>
+      <View style={styles.labelContainer}>
+        <Ionicons name="pricetags" size={20} color={colors.primary[500]} />
+        <Text style={styles.label}>Categoria do gasto *</Text>
+      </View>
+      <View style={styles.categoriesGrid}>
+        {categories.map((category) => {
+          const isSelected = selectedCategoryId === category.id;
+          const iconName = categoryIcons[category.name] || 'pricetag';
+          
+          return (
+            <TouchableOpacity
+              key={category.id}
+              style={[
+                styles.categoryButton,
+                { backgroundColor: `${category.color}15` },
+                isSelected && {
+                  backgroundColor: `${category.color}30`,
+                  borderWidth: 2,
+                  borderColor: category.color,
+                },
+              ]}
+              onPress={() => onSelect(category.id!)}
+              activeOpacity={0.7}
+            >
+              <View style={[styles.iconContainer, { backgroundColor: category.color }]}>
+                <Ionicons name={iconName} size={20} color={colors.text.inverse} />
+              </View>
+              <Text style={[styles.categoryName, isSelected && styles.categoryNameSelected]}>
+                {category.name}
+              </Text>
+            </TouchableOpacity>
+          );
+        })}
+      </View>
     </View>
-  </View>
-);
+  );
 };
 
 const styles = StyleSheet.create({
-container: {
-  marginVertical: 16,
-},
-label: {
-  fontSize: 16,
-  fontWeight: '600',
-  marginBottom: 12,
-  color: '#333',
-},
-categoriesGrid: {
-  flexDirection: 'row',
-  flexWrap: 'wrap',
-  gap: 12,
-},
-categoryButton: {
-  alignItems: 'center',
-  padding: 12,
-  borderRadius: 12,
-  width: '30%',
-},
-categoryIcon: {
-  fontSize: 28,
-  marginBottom: 4,
-},
-categoryName: {
-  fontSize: 11,
-  color: '#666',
-  textAlign: 'center',
-},
+  container: {
+    marginVertical: spacing.md,
+  },
+  labelContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    marginBottom: spacing.md,
+  },
+  label: {
+    fontSize: fontSize.md,
+    fontWeight: fontWeight.semibold,
+    color: colors.text.primary,
+  },
+  categoriesGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: spacing.sm,
+  },
+  categoryButton: {
+    alignItems: 'center',
+    padding: spacing.md,
+    borderRadius: borderRadius.lg,
+    width: '31%',
+    ...shadows.sm,
+  },
+  iconContainer: {
+    width: 40,
+    height: 40,
+    borderRadius: borderRadius.md,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: spacing.sm,
+  },
+  categoryName: {
+    fontSize: fontSize.xs,
+    color: colors.text.secondary,
+    textAlign: 'center',
+    fontWeight: fontWeight.medium,
+  },
+  categoryNameSelected: {
+    color: colors.text.primary,
+    fontWeight: fontWeight.semibold,
+  },
 });

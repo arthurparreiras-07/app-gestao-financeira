@@ -2,39 +2,40 @@ import React, { useState } from "react";
 import {
   View,
   Text,
-  StyleSheet,
   ScrollView,
   TouchableOpacity,
+  StyleSheet,
   Alert,
-  Switch,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { useAppStore } from "../../application/store/useAppStore";
-import { DatabaseMigrations } from "../../infrastructure/database/migrations";
+import {
+  colors,
+  spacing,
+  borderRadius,
+  fontSize,
+  fontWeight,
+  shadows,
+} from "../../theme/theme";
 
-export const SettingsScreen = () => {
-  const { expenses, loadData } = useAppStore();
-  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
-  const [darkModeEnabled, setDarkModeEnabled] = useState(false);
+export const SettingsScreen: React.FC = () => {
+  const { clearAllData } = useAppStore();
 
   const handleClearData = () => {
     Alert.alert(
-      "Limpar Dados",
-      "Tem certeza que deseja apagar todos os dados? Esta ação não pode ser desfeita.",
+      "Limpar todos os dados",
+      "Tem certeza que deseja excluir todos os gastos? Esta ação não pode ser desfeita.",
       [
+        { text: "Cancelar", style: "cancel" },
         {
-          text: "Cancelar",
-          style: "cancel",
-        },
-        {
-          text: "Confirmar",
+          text: "Excluir",
           style: "destructive",
           onPress: async () => {
             try {
-              await DatabaseMigrations.resetDatabase();
-              await loadData();
-              Alert.alert("Sucesso", "Todos os dados foram removidos");
+              await clearAllData();
+              Alert.alert("Sucesso", "Todos os dados foram excluídos.");
             } catch (error) {
-              Alert.alert("Erro", "Não foi possível limpar os dados");
+              Alert.alert("Erro", "Não foi possível excluir os dados.");
             }
           },
         },
@@ -43,116 +44,124 @@ export const SettingsScreen = () => {
   };
 
   const handleExportData = () => {
-    Alert.alert(
-      "Exportar Dados",
-      `Você possui ${expenses.length} gastos registrados.\n\nA funcionalidade de exportação será implementada em breve.`,
-      [{ text: "OK" }]
-    );
+    Alert.alert("Em breve", "Funcionalidade de exportação em desenvolvimento.");
   };
 
   return (
     <ScrollView style={styles.container}>
+      {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.title}>Configurações ⚙️</Text>
+        <View style={styles.iconContainer}>
+          <Ionicons name="settings" size={28} color={colors.primary[500]} />
+        </View>
+        <View style={styles.titleContainer}>
+          <Text style={styles.title}>Configurações</Text>
+          <Text style={styles.subtitle}>MindBudget - Gestão Financeira</Text>
+        </View>
       </View>
 
+      {/* Notificações */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Preferências</Text>
 
-        <View style={styles.settingItem}>
-          <View style={styles.settingInfo}>
+        <TouchableOpacity style={styles.settingItem} onPress={() => {}}>
+          <View
+            style={[
+              styles.settingIconContainer,
+              { backgroundColor: `${colors.secondary[500]}15` },
+            ]}
+          >
+            <Ionicons
+              name="notifications-outline"
+              size={20}
+              color={colors.secondary[500]}
+            />
+          </View>
+          <View style={styles.settingContent}>
             <Text style={styles.settingLabel}>Notificações</Text>
             <Text style={styles.settingDescription}>
-              Receber lembretes para registrar gastos
+              Receber lembretes de gastos
             </Text>
           </View>
-          <Switch
-            value={notificationsEnabled}
-            onValueChange={setNotificationsEnabled}
-            trackColor={{ false: "#ddd", true: "#2196F3" }}
-            thumbColor={notificationsEnabled ? "#fff" : "#f4f3f4"}
-          />
-        </View>
+          <Ionicons name="chevron-forward" size={20} color={colors.gray[400]} />
+        </TouchableOpacity>
 
-        <View style={styles.settingItem}>
-          <View style={styles.settingInfo}>
-            <Text style={styles.settingLabel}>Modo Escuro</Text>
-            <Text style={styles.settingDescription}>
-              Ativar tema escuro (em breve)
-            </Text>
+        <TouchableOpacity style={styles.settingItem} onPress={() => {}}>
+          <View
+            style={[
+              styles.settingIconContainer,
+              { backgroundColor: `${colors.gray[600]}15` },
+            ]}
+          >
+            <Ionicons name="moon-outline" size={20} color={colors.gray[600]} />
           </View>
-          <Switch
-            value={darkModeEnabled}
-            onValueChange={setDarkModeEnabled}
-            trackColor={{ false: "#ddd", true: "#2196F3" }}
-            thumbColor={darkModeEnabled ? "#fff" : "#f4f3f4"}
-            disabled
-          />
-        </View>
+          <View style={styles.settingContent}>
+            <Text style={styles.settingLabel}>Tema escuro</Text>
+            <Text style={styles.settingDescription}>Ativar modo noturno</Text>
+          </View>
+          <Ionicons name="chevron-forward" size={20} color={colors.gray[400]} />
+        </TouchableOpacity>
       </View>
 
+      {/* Dados */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Dados</Text>
+        <Text style={styles.sectionTitle}>Gerenciar Dados</Text>
 
-        <TouchableOpacity style={styles.button} onPress={handleExportData}>
-          <Text style={styles.buttonIcon}>📤</Text>
-          <View style={styles.buttonContent}>
-            <Text style={styles.buttonLabel}>Exportar Dados</Text>
-            <Text style={styles.buttonDescription}>
-              Salvar seus gastos em arquivo
+        <TouchableOpacity style={styles.settingItem} onPress={handleExportData}>
+          <View
+            style={[
+              styles.settingIconContainer,
+              { backgroundColor: `${colors.primary[500]}15` },
+            ]}
+          >
+            <Ionicons
+              name="download-outline"
+              size={20}
+              color={colors.primary[500]}
+            />
+          </View>
+          <View style={styles.settingContent}>
+            <Text style={styles.settingLabel}>Exportar dados</Text>
+            <Text style={styles.settingDescription}>
+              Baixar histórico em CSV
             </Text>
           </View>
+          <Ionicons name="chevron-forward" size={20} color={colors.gray[400]} />
         </TouchableOpacity>
 
-        <TouchableOpacity
-          style={[styles.button, styles.dangerButton]}
-          onPress={handleClearData}
-        >
-          <Text style={styles.buttonIcon}>🗑️</Text>
-          <View style={styles.buttonContent}>
-            <Text style={[styles.buttonLabel, styles.dangerText]}>
-              Limpar Todos os Dados
+        <TouchableOpacity style={styles.settingItem} onPress={handleClearData}>
+          <View
+            style={[
+              styles.settingIconContainer,
+              { backgroundColor: `${colors.error}15` },
+            ]}
+          >
+            <Ionicons name="trash-outline" size={20} color={colors.error} />
+          </View>
+          <View style={styles.settingContent}>
+            <Text style={[styles.settingLabel, { color: colors.error }]}>
+              Limpar todos os dados
             </Text>
-            <Text style={styles.buttonDescription}>
-              Remover todos os gastos registrados
+            <Text style={styles.settingDescription}>
+              Excluir permanentemente tudo
             </Text>
           </View>
+          <Ionicons name="chevron-forward" size={20} color={colors.gray[400]} />
         </TouchableOpacity>
       </View>
 
+      {/* Sobre */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Sobre</Text>
 
-        <View style={styles.infoCard}>
-          <Text style={styles.appName}>💙 Orçamento Emocional</Text>
-          <Text style={styles.appVersion}>Versão 1.0.0</Text>
-          <Text style={styles.appDescription}>
-            Um aplicativo para rastrear seus gastos e entender como suas emoções
-            influenciam seus hábitos financeiros.
+        <View style={styles.aboutCard}>
+          <Text style={styles.appName}>MindBudget</Text>
+          <Text style={styles.version}>Versão 1.0.0</Text>
+          <Text style={styles.description}>
+            Aplicativo de gestão financeira com análise emocional de gastos.
           </Text>
+          <Text style={styles.credits}>Desenvolvido com ❤️ para PUC Minas</Text>
         </View>
-
-        <View style={styles.statsCard}>
-          <Text style={styles.statsTitle}>Suas Estatísticas</Text>
-          <View style={styles.statsRow}>
-            <View style={styles.statItem}>
-              <Text style={styles.statValue}>{expenses.length}</Text>
-              <Text style={styles.statLabel}>Gastos</Text>
-            </View>
-            <View style={styles.statItem}>
-              <Text style={styles.statValue}>
-                R$ {expenses.reduce((sum, e) => sum + e.amount, 0).toFixed(2)}
-              </Text>
-              <Text style={styles.statLabel}>Total</Text>
-            </View>
-          </View>
-        </View>
-      </View>
-
-      <View style={styles.footer}>
-        <Text style={styles.footerText}>
-          Desenvolvido com ❤️ para ajudar você a entender melhor seus gastos
-        </Text>
       </View>
     </ScrollView>
   );
@@ -161,145 +170,108 @@ export const SettingsScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f8f9fa",
+    backgroundColor: colors.backgroundSecondary,
   },
   header: {
-    padding: 20,
-    backgroundColor: "#2196F3",
-    paddingTop: 60,
+    flexDirection: "row",
+    alignItems: "center",
+    padding: spacing.lg,
+    backgroundColor: colors.background,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border,
+  },
+  iconContainer: {
+    width: 56,
+    height: 56,
+    borderRadius: borderRadius.lg,
+    backgroundColor: `${colors.primary[500]}15`,
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: spacing.md,
+  },
+  titleContainer: {
+    flex: 1,
   },
   title: {
-    fontSize: 28,
-    fontWeight: "bold",
-    color: "#fff",
+    fontSize: fontSize.xl,
+    fontWeight: fontWeight.bold,
+    color: colors.text.primary,
+    marginBottom: spacing.xs,
+  },
+  subtitle: {
+    fontSize: fontSize.sm,
+    color: colors.text.secondary,
   },
   section: {
-    marginTop: 24,
-    paddingHorizontal: 16,
+    marginTop: spacing.lg,
+    paddingHorizontal: spacing.lg,
   },
   sectionTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#333",
-    marginBottom: 16,
+    fontSize: fontSize.md,
+    fontWeight: fontWeight.semibold,
+    color: colors.text.secondary,
+    marginBottom: spacing.md,
+    textTransform: "uppercase",
+    letterSpacing: 0.5,
   },
   settingItem: {
     flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center",
-    backgroundColor: "#fff",
-    padding: 16,
-    borderRadius: 12,
-    marginBottom: 12,
-    elevation: 1,
+    backgroundColor: colors.background,
+    padding: spacing.md,
+    borderRadius: borderRadius.lg,
+    marginBottom: spacing.sm,
+    ...shadows.sm,
   },
-  settingInfo: {
+  settingIconContainer: {
+    width: 40,
+    height: 40,
+    borderRadius: borderRadius.md,
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: spacing.md,
+  },
+  settingContent: {
     flex: 1,
-    marginRight: 16,
   },
   settingLabel: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#333",
-    marginBottom: 4,
+    fontSize: fontSize.md,
+    fontWeight: fontWeight.semibold,
+    color: colors.text.primary,
+    marginBottom: spacing.xs,
   },
   settingDescription: {
-    fontSize: 12,
-    color: "#666",
+    fontSize: fontSize.sm,
+    color: colors.text.secondary,
   },
-  button: {
-    flexDirection: "row",
+  aboutCard: {
+    backgroundColor: colors.background,
+    padding: spacing.xl,
+    borderRadius: borderRadius.lg,
     alignItems: "center",
-    backgroundColor: "#fff",
-    padding: 16,
-    borderRadius: 12,
-    marginBottom: 12,
-    elevation: 1,
-  },
-  dangerButton: {
-    borderWidth: 1,
-    borderColor: "#ff4444",
-  },
-  buttonIcon: {
-    fontSize: 24,
-    marginRight: 16,
-  },
-  buttonContent: {
-    flex: 1,
-  },
-  buttonLabel: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#333",
-    marginBottom: 4,
-  },
-  buttonDescription: {
-    fontSize: 12,
-    color: "#666",
-  },
-  dangerText: {
-    color: "#ff4444",
-  },
-  infoCard: {
-    backgroundColor: "#fff",
-    padding: 20,
-    borderRadius: 12,
-    marginBottom: 12,
-    elevation: 1,
+    ...shadows.md,
   },
   appName: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#2196F3",
-    marginBottom: 8,
+    fontSize: fontSize.xl,
+    fontWeight: fontWeight.bold,
+    color: colors.primary[600],
+    marginBottom: spacing.xs,
   },
-  appVersion: {
-    fontSize: 14,
-    color: "#666",
-    marginBottom: 12,
+  version: {
+    fontSize: fontSize.sm,
+    color: colors.text.secondary,
+    marginBottom: spacing.lg,
   },
-  appDescription: {
-    fontSize: 14,
-    color: "#666",
-    lineHeight: 20,
-  },
-  statsCard: {
-    backgroundColor: "#fff",
-    padding: 20,
-    borderRadius: 12,
-    elevation: 1,
-  },
-  statsTitle: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#333",
-    marginBottom: 16,
-  },
-  statsRow: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-  },
-  statItem: {
-    alignItems: "center",
-  },
-  statValue: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#2196F3",
-    marginBottom: 4,
-  },
-  statLabel: {
-    fontSize: 12,
-    color: "#666",
-  },
-  footer: {
-    padding: 24,
-    alignItems: "center",
-  },
-  footerText: {
-    fontSize: 12,
-    color: "#999",
+  description: {
+    fontSize: fontSize.md,
+    color: colors.text.primary,
     textAlign: "center",
-    lineHeight: 18,
+    lineHeight: 22,
+    marginBottom: spacing.md,
+  },
+  credits: {
+    fontSize: fontSize.sm,
+    color: colors.text.tertiary,
+    textAlign: "center",
   },
 });
