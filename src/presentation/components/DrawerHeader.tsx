@@ -68,7 +68,7 @@ export function DrawerHeader({
           />
         </TouchableOpacity>
       ) : (
-        <View style={styles.rightButton} />
+        <View style={styles.rightButtonEmpty} />
       )}
     </View>
   );
@@ -110,6 +110,11 @@ const createStyles = (colors: ReturnType<typeof getColors>) =>
       justifyContent: "center",
       borderRadius: 10,
       backgroundColor: colors.backgroundSecondary,
+      minWidth: 40,
+    },
+    rightButtonEmpty: {
+      width: 40,
+      height: 40,
       minWidth: 40,
     },
   });
