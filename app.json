@@ -49,12 +49,6 @@
           "photosPermission": "O app precisa acessar suas fotos para anexar comprovantes."
         }
       ]
-    ],
-    "extra": {
-      "eas": {
-        "projectId": "d84bd9db-84c3-471f-b4c0-761a3a5dab14"
-      }
-    },
-    "owner": "arthur_parreiras"
+    ]
   }
 }
