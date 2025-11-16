@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -6,6 +6,9 @@ import {
   ScrollView,
   TouchableOpacity,
   ActivityIndicator,
+  Image,
+  Modal,
+  Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -25,10 +28,22 @@ import {
 } from "../../theme/theme";
 
 export const HomeScreen = ({ navigation }: any) => {
-  const { expenses, insights, loading, loadData, emotions, categories } =
-    useAppStore();
+  const {
+    expenses,
+    insights,
+    loading,
+    loadData,
+    emotions,
+    categories,
+    deleteExpense,
+  } = useAppStore();
   const { isDark } = useTheme();
   const colors = getColors(isDark);
+
+  // Estados para modal e ações
+  const [selectedExpense, setSelectedExpense] = useState<any>(null);
+  const [showActionMenu, setShowActionMenu] = useState(false);
+  const [expandedImage, setExpandedImage] = useState<string | null>(null);
 
   useEffect(() => {
     loadData();
@@ -57,6 +72,37 @@ export const HomeScreen = ({ navigation }: any) => {
     (sum, e) => sum + e.amount,
     0
   );
+
+  // Funções de manipulação
+  const handleExpenseMenu = (expense: any) => {
+    setSelectedExpense(expense);
+    setShowActionMenu(true);
+  };
+
+  const handleDelete = () => {
+    if (!selectedExpense) return;
+
+    Alert.alert(
+      "Confirmar exclusão",
+      "Tem certeza que deseja excluir esta transação?",
+      [
+        { text: "Cancelar", style: "cancel" },
+        {
+          text: "Excluir",
+          style: "destructive",
+          onPress: async () => {
+            try {
+              await deleteExpense(selectedExpense.id!);
+              setShowActionMenu(false);
+              setSelectedExpense(null);
+            } catch (error) {
+              Alert.alert("Erro", "Não foi possível excluir a transação.");
+            }
+          },
+        },
+      ]
+    );
+  };
 
   const styles = createStyles(colors);
 
@@ -98,7 +144,7 @@ export const HomeScreen = ({ navigation }: any) => {
           <View style={styles.balanceCard}>
             <View style={styles.balanceHeader}>
               <View style={styles.balanceIconContainer}>
-                <Ionicons name="wallet" size={28} color={colors.text.inverse} />
+                <Ionicons name="wallet" size={28} color={colors.text.primary} />
               </View>
               <View style={styles.balanceInfo}>
                 <Text style={styles.balanceLabel}>Saldo em Conta</Text>
@@ -262,18 +308,11 @@ export const HomeScreen = ({ navigation }: any) => {
                     (c) => c.id === expense.categoryId
                   );
                   const isExpense = expense.type === "expense";
+                  const hasAttachments =
+                    expense.attachments && expense.attachments.length > 0;
 
                   return (
-                    <TouchableOpacity
-                      key={expense.id}
-                      style={styles.expenseItem}
-                      onPress={() =>
-                        navigation.navigate("EditExpense", {
-                          expenseId: expense.id,
-                        })
-                      }
-                      activeOpacity={0.7}
-                    >
+                    <View key={expense.id} style={styles.expenseItem}>
                       <View style={styles.expenseHeader}>
                         <View style={styles.expenseLeft}>
                           <View
@@ -311,23 +350,73 @@ export const HomeScreen = ({ navigation }: any) => {
                             </View>
                           </View>
                         </View>
-                        <Text
-                          style={[
-                            styles.expenseAmount,
-                            {
-                              color: isExpense ? colors.error : colors.success,
-                            },
-                          ]}
-                        >
-                          {isExpense ? "-" : "+"}R$ {expense.amount.toFixed(2)}
-                        </Text>
+                        <View style={styles.expenseRight}>
+                          <Text
+                            style={[
+                              styles.expenseAmount,
+                              {
+                                color: isExpense
+                                  ? colors.error
+                                  : colors.success,
+                              },
+                            ]}
+                          >
+                            {isExpense ? "-" : "+"}R${" "}
+                            {expense.amount.toFixed(2)}
+                          </Text>
+                          <TouchableOpacity
+                            style={styles.menuButton}
+                            onPress={() => handleExpenseMenu(expense)}
+                            activeOpacity={0.6}
+                          >
+                            <Ionicons
+                              name="ellipsis-vertical"
+                              size={18}
+                              color={colors.text.secondary}
+                            />
+                          </TouchableOpacity>
+                        </View>
                       </View>
                       {expense.note && (
                         <Text style={styles.expenseNote} numberOfLines={2}>
                           {expense.note}
                         </Text>
                       )}
-                    </TouchableOpacity>
+                      {hasAttachments && (
+                        <View style={styles.attachmentsPreview}>
+                          <Ionicons
+                            name="images"
+                            size={14}
+                            color={colors.primary[500]}
+                          />
+                          <Text style={styles.attachmentsCount}>
+                            {expense.attachments!.length}{" "}
+                            {expense.attachments!.length === 1
+                              ? "foto"
+                              : "fotos"}
+                          </Text>
+                          <ScrollView
+                            horizontal
+                            showsHorizontalScrollIndicator={false}
+                          >
+                            {expense
+                              .attachments!.slice(0, 3)
+                              .map((uri: string, index: number) => (
+                                <TouchableOpacity
+                                  key={index}
+                                  onPress={() => setExpandedImage(uri)}
+                                  activeOpacity={0.8}
+                                >
+                                  <Image
+                                    source={{ uri }}
+                                    style={styles.attachmentThumbnail}
+                                  />
+                                </TouchableOpacity>
+                              ))}
+                          </ScrollView>
+                        </View>
+                      )}
+                    </View>
                   );
                 })}
               </>
@@ -346,6 +435,67 @@ export const HomeScreen = ({ navigation }: any) => {
           })()}
         </View>
       </ScrollView>
+
+      {/* Modal de ações */}
+      <Modal
+        visible={showActionMenu}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setShowActionMenu(false)}
+      >
+        <TouchableOpacity
+          style={styles.modalOverlay}
+          activeOpacity={1}
+          onPress={() => setShowActionMenu(false)}
+        >
+          <View style={styles.actionMenu}>
+            <View style={styles.actionMenuHeader}>
+              <Text style={styles.actionMenuTitle}>Ações</Text>
+              <TouchableOpacity onPress={() => setShowActionMenu(false)}>
+                <Ionicons name="close" size={24} color={colors.text.primary} />
+              </TouchableOpacity>
+            </View>
+
+            <TouchableOpacity
+              style={styles.actionMenuItem}
+              onPress={handleDelete}
+            >
+              <Ionicons name="trash" size={20} color={colors.error} />
+              <Text style={[styles.actionMenuText, { color: colors.error }]}>
+                Excluir
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </TouchableOpacity>
+      </Modal>
+
+      {/* Modal de imagem expandida */}
+      <Modal
+        visible={expandedImage !== null}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setExpandedImage(null)}
+      >
+        <TouchableOpacity
+          style={styles.imageModalOverlay}
+          activeOpacity={1}
+          onPress={() => setExpandedImage(null)}
+        >
+          <TouchableOpacity
+            style={styles.closeImageButton}
+            onPress={() => setExpandedImage(null)}
+          >
+            <Ionicons name="close-circle" size={32} color="#FFFFFF" />
+          </TouchableOpacity>
+          {expandedImage && (
+            <Image
+              source={{ uri: expandedImage }}
+              style={styles.expandedImage}
+              resizeMode="contain"
+            />
+          )}
+        </TouchableOpacity>
+      </Modal>
     </SafeAreaView>
   );
 };
@@ -408,19 +558,19 @@ const createStyles = (colors: ReturnType<typeof getColors>) =>
     },
     balanceCard: {
       backgroundColor: colors.background,
-      padding: spacing.lg,
-      borderRadius: borderRadius.lg,
-      ...shadows.md,
+      padding: spacing.xl,
+      borderRadius: borderRadius.xl,
+      ...shadows.lg,
     },
     balanceHeader: {
       flexDirection: "row",
       alignItems: "center",
-      marginBottom: spacing.md,
+      marginBottom: spacing.lg,
     },
     balanceIconContainer: {
-      width: 48,
-      height: 48,
-      borderRadius: borderRadius.md,
+      width: 52,
+      height: 52,
+      borderRadius: borderRadius.lg,
       backgroundColor: `${colors.primary[500]}15`,
       justifyContent: "center",
       alignItems: "center",
@@ -430,37 +580,38 @@ const createStyles = (colors: ReturnType<typeof getColors>) =>
       marginLeft: spacing.md,
     },
     balanceLabel: {
-      fontSize: fontSize.md,
-      fontWeight: fontWeight.semibold,
+      fontSize: fontSize.lg,
+      fontWeight: fontWeight.bold,
       color: colors.text.primary,
       marginBottom: spacing.xs,
     },
     balanceSubtitle: {
-      fontSize: fontSize.xs,
+      fontSize: fontSize.sm,
       color: colors.text.secondary,
     },
     balanceValue: {
       fontSize: fontSize.xxxl,
       fontWeight: fontWeight.bold,
       textAlign: "center",
-      marginVertical: spacing.md,
+      marginVertical: spacing.lg,
+      letterSpacing: -1,
     },
     balanceDetails: {
       flexDirection: "row",
       justifyContent: "space-around",
-      paddingTop: spacing.md,
+      paddingTop: spacing.lg,
       borderTopWidth: 1,
       borderTopColor: colors.border,
     },
     balanceDetailItem: {
       flexDirection: "row",
       alignItems: "center",
-      gap: spacing.xs,
+      gap: spacing.sm,
     },
     balanceDetailText: {
-      fontSize: fontSize.sm,
+      fontSize: fontSize.md,
       color: colors.text.secondary,
-      fontWeight: fontWeight.medium,
+      fontWeight: fontWeight.semibold,
     },
     summaryContainer: {
       flexDirection: "row",
@@ -472,17 +623,17 @@ const createStyles = (colors: ReturnType<typeof getColors>) =>
       flex: 1,
       backgroundColor: colors.background,
       padding: spacing.lg,
-      borderRadius: borderRadius.lg,
+      borderRadius: borderRadius.xl,
       ...shadows.md,
     },
     summaryIconContainer: {
-      width: 40,
-      height: 40,
-      borderRadius: borderRadius.md,
+      width: 44,
+      height: 44,
+      borderRadius: borderRadius.lg,
       backgroundColor: `${colors.primary[500]}15`,
       justifyContent: "center",
       alignItems: "center",
-      marginBottom: spacing.sm,
+      marginBottom: spacing.md,
     },
     summaryLabel: {
       fontSize: fontSize.xs,
@@ -592,9 +743,20 @@ const createStyles = (colors: ReturnType<typeof getColors>) =>
       fontSize: fontSize.xs,
       color: colors.text.tertiary,
     },
+    expenseRight: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: spacing.sm,
+    },
     expenseAmount: {
       fontSize: fontSize.lg,
       fontWeight: fontWeight.bold,
+    },
+    menuButton: {
+      padding: spacing.xs,
+      borderRadius: borderRadius.md,
+      alignItems: "center",
+      justifyContent: "center",
     },
     expenseDate: {
       fontSize: fontSize.xs,
@@ -609,6 +771,26 @@ const createStyles = (colors: ReturnType<typeof getColors>) =>
       borderTopWidth: 1,
       borderTopColor: colors.border,
       lineHeight: 18,
+    },
+    attachmentsPreview: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: spacing.sm,
+      marginTop: spacing.sm,
+      paddingTop: spacing.sm,
+      borderTopWidth: 1,
+      borderTopColor: colors.border,
+    },
+    attachmentsCount: {
+      fontSize: fontSize.sm,
+      color: colors.text.secondary,
+      marginRight: spacing.sm,
+    },
+    attachmentThumbnail: {
+      width: 40,
+      height: 40,
+      borderRadius: borderRadius.sm,
+      marginRight: spacing.xs,
     },
     viewAllButton: {
       flexDirection: "row",
@@ -627,5 +809,59 @@ const createStyles = (colors: ReturnType<typeof getColors>) =>
       fontSize: fontSize.md,
       fontWeight: fontWeight.semibold,
       color: colors.primary[500],
+    },
+    modalOverlay: {
+      flex: 1,
+      backgroundColor: "rgba(0, 0, 0, 0.5)",
+      justifyContent: "flex-end",
+    },
+    actionMenu: {
+      backgroundColor: colors.background,
+      borderTopLeftRadius: borderRadius.xl,
+      borderTopRightRadius: borderRadius.xl,
+      padding: spacing.lg,
+      ...shadows.lg,
+    },
+    actionMenuHeader: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      marginBottom: spacing.md,
+      paddingBottom: spacing.md,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.border,
+    },
+    actionMenuTitle: {
+      fontSize: fontSize.lg,
+      fontWeight: fontWeight.bold,
+      color: colors.text.primary,
+    },
+    actionMenuItem: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: spacing.md,
+      padding: spacing.md,
+      borderRadius: borderRadius.lg,
+      marginVertical: spacing.xs,
+    },
+    actionMenuText: {
+      fontSize: fontSize.md,
+      fontWeight: fontWeight.medium,
+    },
+    imageModalOverlay: {
+      flex: 1,
+      backgroundColor: "rgba(0, 0, 0, 0.9)",
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    closeImageButton: {
+      position: "absolute",
+      top: 50,
+      right: 20,
+      zIndex: 1,
+    },
+    expandedImage: {
+      width: "90%",
+      height: "80%",
     },
   });

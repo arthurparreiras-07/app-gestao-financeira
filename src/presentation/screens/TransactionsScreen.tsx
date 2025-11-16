@@ -110,8 +110,8 @@ export const TransactionsScreen = ({ navigation }: any) => {
   // Filtrar transações
   const filteredExpenses = expenses
     .filter((e) => {
-      // Filtro por busca
-      if (searchQuery) {
+      // Filtro por busca (apenas na aba Lista)
+      if (activeTab === "list" && searchQuery) {
         const query = searchQuery.toLowerCase();
         const categoryName = getCategoryName(e.categoryId).toLowerCase();
         const emotionName = getEmotionName(e.emotionId).toLowerCase();
@@ -359,13 +359,7 @@ export const TransactionsScreen = ({ navigation }: any) => {
       expense.attachments && expense.attachments.length > 0;
 
     return (
-      <TouchableOpacity
-        key={expense.id}
-        style={styles.transactionCard}
-        onLongPress={() => handleLongPress(expense)}
-        activeOpacity={0.7}
-        delayLongPress={500}
-      >
+      <View key={expense.id} style={styles.transactionCard}>
         <View style={styles.transactionHeader}>
           <View style={styles.transactionLeft}>
             <View
@@ -393,17 +387,30 @@ export const TransactionsScreen = ({ navigation }: any) => {
             </View>
           </View>
           <View style={styles.transactionRight}>
-            <Text
-              style={[
-                styles.transactionAmount,
-                { color: isExpense ? colors.error : colors.success },
-              ]}
+            <View style={styles.transactionAmountContainer}>
+              <Text
+                style={[
+                  styles.transactionAmount,
+                  { color: isExpense ? colors.error : colors.success },
+                ]}
+              >
+                {isExpense ? "-" : "+"}R$ {expense.amount.toFixed(2)}
+              </Text>
+              <Text style={styles.transactionTime}>
+                {format(expense.date, "HH:mm")}
+              </Text>
+            </View>
+            <TouchableOpacity
+              style={styles.menuButton}
+              onPress={() => handleLongPress(expense)}
+              activeOpacity={0.6}
             >
-              {isExpense ? "-" : "+"}R$ {expense.amount.toFixed(2)}
-            </Text>
-            <Text style={styles.transactionTime}>
-              {format(expense.date, "HH:mm")}
-            </Text>
+              <Ionicons
+                name="ellipsis-vertical"
+                size={20}
+                color={colors.text.secondary}
+              />
+            </TouchableOpacity>
           </View>
         </View>
         {expense.note && (
@@ -431,7 +438,7 @@ export const TransactionsScreen = ({ navigation }: any) => {
             </ScrollView>
           </View>
         )}
-      </TouchableOpacity>
+      </View>
     );
   };
 
@@ -672,13 +679,8 @@ export const TransactionsScreen = ({ navigation }: any) => {
     <SafeAreaView
       style={[styles.safeArea, { backgroundColor: colors.backgroundSecondary }]}
     >
-      <DrawerHeader
-        title="Transações"
-        rightButton={{
-          icon: "filter",
-          onPress: () => setShowFilters(true),
-        }}
-      />
+      <DrawerHeader title="Transações" />
+
       {/* Tabs */}
       <View style={styles.tabsContainer}>
         <TouchableOpacity
@@ -728,7 +730,7 @@ export const TransactionsScreen = ({ navigation }: any) => {
         </TouchableOpacity>
       </View>
 
-      {/* Search Bar */}
+      {/* Barra de busca - apenas na aba Lista */}
       {activeTab === "list" && (
         <View style={styles.searchContainer}>
           <View style={styles.searchInputWrapper}>
@@ -739,6 +741,7 @@ export const TransactionsScreen = ({ navigation }: any) => {
               placeholderTextColor={colors.gray[400]}
               value={searchQuery}
               onChangeText={setSearchQuery}
+              editable={true}
             />
             {searchQuery.length > 0 && (
               <TouchableOpacity onPress={() => setSearchQuery("")}>
@@ -753,7 +756,7 @@ export const TransactionsScreen = ({ navigation }: any) => {
         </View>
       )}
 
-      {/* Filtros */}
+      {/* Filtros básicos e avançados */}
       <View style={styles.filterContainer}>
         <TouchableOpacity
           style={[
@@ -1553,6 +1556,11 @@ const createStyles = (colors: ReturnType<typeof getColors>) =>
       color: colors.text.tertiary,
     },
     transactionRight: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: spacing.sm,
+    },
+    transactionAmountContainer: {
       alignItems: "flex-end",
     },
     transactionAmount: {
@@ -1563,6 +1571,12 @@ const createStyles = (colors: ReturnType<typeof getColors>) =>
     transactionTime: {
       fontSize: fontSize.xs,
       color: colors.text.tertiary,
+    },
+    menuButton: {
+      padding: spacing.xs,
+      borderRadius: borderRadius.md,
+      alignItems: "center",
+      justifyContent: "center",
     },
     transactionNote: {
       fontSize: fontSize.sm,
@@ -1914,6 +1928,7 @@ const createStyles = (colors: ReturnType<typeof getColors>) =>
       backgroundColor: colors.backgroundSecondary,
       borderRadius: borderRadius.lg,
       paddingHorizontal: spacing.md,
+      paddingVertical: spacing.xs,
       gap: spacing.sm,
     },
     searchInput: {
@@ -1921,6 +1936,18 @@ const createStyles = (colors: ReturnType<typeof getColors>) =>
       padding: spacing.sm,
       fontSize: fontSize.md,
       color: colors.text.primary,
+    },
+    filterIconButton: {
+      width: 48,
+      height: 48,
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: colors.backgroundSecondary,
+      borderRadius: borderRadius.lg,
+      position: "relative",
+    },
+    filterIconButtonActive: {
+      backgroundColor: `${colors.primary[500]}15`,
     },
     attachmentsPreview: {
       flexDirection: "row",

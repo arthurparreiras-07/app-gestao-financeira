@@ -85,25 +85,26 @@ const createStyles = (colors: ReturnType<typeof getColors>) =>
   StyleSheet.create({
     container: {
       flexDirection: "row",
-      padding: spacing.md,
-      borderRadius: borderRadius.lg,
+      padding: spacing.lg,
+      borderRadius: borderRadius.xl,
       marginBottom: spacing.md,
-      ...shadows.sm,
+      ...shadows.md,
     },
     iconContainer: {
-      width: 36,
-      height: 36,
-      borderRadius: borderRadius.md,
+      width: 40,
+      height: 40,
+      borderRadius: borderRadius.lg,
       justifyContent: "center",
       alignItems: "center",
       marginRight: spacing.md,
     },
     content: {
       flex: 1,
+      justifyContent: "center",
     },
     message: {
       fontSize: fontSize.md,
       fontWeight: fontWeight.medium,
-      lineHeight: 20,
+      lineHeight: 22,
     },
   });
