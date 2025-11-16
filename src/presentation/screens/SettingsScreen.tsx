@@ -20,6 +20,7 @@ import {
   fontWeight,
   shadows,
 } from "../../theme/theme";
+import { DrawerHeader } from "../components/DrawerHeader";
 
 export const SettingsScreen: React.FC<{ navigation?: any }> = ({
   navigation,
@@ -172,16 +173,16 @@ export const SettingsScreen: React.FC<{ navigation?: any }> = ({
     <SafeAreaView
       style={[styles.safeArea, { backgroundColor: colors.background }]}
     >
+      <DrawerHeader title="Configurações" />
       <ScrollView
         style={[styles.container, { backgroundColor: colors.background }]}
       >
-        {/* Header */}
+        {/* App Info */}
         <View style={styles.header}>
           <View style={styles.iconContainer}>
             <Ionicons name="settings" size={28} color={colors.primary[500]} />
           </View>
           <View style={styles.titleContainer}>
-            <Text style={styles.title}>Configurações</Text>
             <Text style={styles.subtitle}>MindBudget - Gestão Financeira</Text>
           </View>
         </View>

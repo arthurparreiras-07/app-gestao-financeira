@@ -1,86 +1,102 @@
 import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import {
+  createDrawerNavigator,
+  DrawerContentComponentProps,
+} from "@react-navigation/drawer";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Platform, StatusBar } from "react-native";
-import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import { HomeScreen } from "../screens/HomeScreen";
 import { AddExpenseScreen } from "../screens/AddExpenseScreen";
 import { EditExpenseScreen } from "../screens/EditExpenseScreen";
 import { SettingsScreen } from "../screens/SettingsScreen";
 import { TransactionsScreen } from "../screens/TransactionsScreen";
+import { ReportsScreen } from "../screens/ReportsScreen";
 import { BudgetScreen } from "../screens/BudgetScreen";
 import { RecurringExpensesScreen } from "../screens/RecurringExpensesScreen";
 import { TagsScreen } from "../screens/TagsScreen";
 import { ManageCategoriesScreen } from "../screens/ManageCategoriesScreen";
 import { ManageEmotionsScreen } from "../screens/ManageEmotionsScreen";
+import { CustomDrawerContent } from "../components/CustomDrawerContent";
 import { useTheme } from "../../theme/ThemeContext";
 import { getColors } from "../../theme/theme";
 
-const Tab = createBottomTabNavigator();
+const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
 
-function HomeTabs() {
+function DrawerNavigator() {
   const { isDark } = useTheme();
   const colors = getColors(isDark);
 
   return (
-    <Tab.Navigator
+    <Drawer.Navigator
+      drawerContent={(props: DrawerContentComponentProps) => (
+        <CustomDrawerContent {...props} />
+      )}
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: colors.primary[500],
-        tabBarInactiveTintColor: colors.gray[400],
-        tabBarStyle: {
+        drawerType: "slide",
+        overlayColor: "rgba(0, 0, 0, 0.5)",
+        drawerStyle: {
+          width: 300,
           backgroundColor: colors.background,
-          borderTopColor: colors.border,
-          borderTopWidth: 1,
-          height: Platform.OS === "ios" ? 88 : 68,
-          paddingBottom: Platform.OS === "ios" ? 34 : 12,
-          paddingTop: 8,
-          elevation: 8,
-          shadowColor: "#000",
-          shadowOffset: { width: 0, height: -2 },
-          shadowOpacity: 0.1,
-          shadowRadius: 3,
         },
-        tabBarLabelStyle: {
-          fontSize: 12,
-          fontWeight: "500",
-        },
+        swipeEnabled: true,
+        swipeEdgeWidth: 50,
       }}
     >
-      <Tab.Screen
+      <Drawer.Screen
         name="Home"
         component={HomeScreen}
         options={{
           title: "Início",
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="home" size={size} color={color} />
-          ),
         }}
       />
-      <Tab.Screen
+      <Drawer.Screen
         name="Transactions"
         component={TransactionsScreen}
         options={{
           title: "Transações",
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="list" size={size} color={color} />
-          ),
         }}
       />
-      <Tab.Screen
+      <Drawer.Screen
+        name="Reports"
+        component={ReportsScreen}
+        options={{
+          title: "Relatórios",
+        }}
+      />
+      <Drawer.Screen
+        name="Budget"
+        component={BudgetScreen}
+        options={{
+          title: "Orçamento",
+        }}
+      />
+      <Drawer.Screen
+        name="RecurringExpenses"
+        component={RecurringExpensesScreen}
+        options={{
+          title: "Despesas Recorrentes",
+        }}
+      />
+      <Drawer.Screen
+        name="Tags"
+        component={TagsScreen}
+        options={{
+          title: "Tags",
+        }}
+      />
+      <Drawer.Screen
         name="Settings"
         component={SettingsScreen}
         options={{
           title: "Configurações",
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="settings" size={size} color={color} />
-          ),
         }}
       />
-    </Tab.Navigator>
+    </Drawer.Navigator>
   );
 }
 
@@ -99,7 +115,7 @@ export function AppNavigator() {
         <Stack.Navigator>
           <Stack.Screen
             name="Main"
-            component={HomeTabs}
+            component={DrawerNavigator}
             options={{ headerShown: false }}
           />
           <Stack.Screen
@@ -119,27 +135,6 @@ export function AppNavigator() {
           <Stack.Screen
             name="EditExpense"
             component={EditExpenseScreen}
-            options={{
-              headerShown: false,
-            }}
-          />
-          <Stack.Screen
-            name="Budget"
-            component={BudgetScreen}
-            options={{
-              headerShown: false,
-            }}
-          />
-          <Stack.Screen
-            name="RecurringExpenses"
-            component={RecurringExpensesScreen}
-            options={{
-              headerShown: false,
-            }}
-          />
-          <Stack.Screen
-            name="Tags"
-            component={TagsScreen}
             options={{
               headerShown: false,
             }}

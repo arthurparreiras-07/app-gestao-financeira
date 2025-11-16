@@ -29,6 +29,7 @@ import {
 } from "../../utils/statistics";
 import { startOfMonth, endOfMonth, subMonths, format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { DrawerHeader } from "../components/DrawerHeader";
 
 type PeriodType = "all" | "month" | "3months" | "6months" | "year";
 
@@ -92,7 +93,9 @@ export const ReportsScreen = () => {
         return [];
     }
 
-    return expenses.filter((e) => e.date >= previousStart && e.date <= previousEnd);
+    return expenses.filter(
+      (e) => e.date >= previousStart && e.date <= previousEnd
+    );
   }, [expenses, selectedPeriod]);
 
   // Cores distintas para cada emoção
@@ -109,14 +112,18 @@ export const ReportsScreen = () => {
   // Separar gastos e economias
   const allExpenses = filteredExpenses.filter((e) => e.type === "expense");
   const allSavings = filteredExpenses.filter((e) => e.type === "saving");
-  
-  const previousExpenses = previousPeriodExpenses.filter((e) => e.type === "expense");
-  const previousSavings = previousPeriodExpenses.filter((e) => e.type === "saving");
+
+  const previousExpenses = previousPeriodExpenses.filter(
+    (e) => e.type === "expense"
+  );
+  const previousSavings = previousPeriodExpenses.filter(
+    (e) => e.type === "saving"
+  );
 
   // Estatísticas
   const expenseStats = calculateStatistics(allExpenses);
   const savingsStats = calculateStatistics(allSavings);
-  
+
   // Tendências
   const expenseTrend = calculateTrend(allExpenses, previousExpenses);
   const savingsTrend = calculateTrend(allSavings, previousSavings);
@@ -197,21 +204,23 @@ export const ReportsScreen = () => {
   const monthlyData = useMemo(() => {
     const grouped = groupByMonth(filteredExpenses);
     const months = Object.keys(grouped).sort().slice(-6); // Últimos 6 meses
-    
-    const expensesData = months.map(month => {
-      const monthExpenses = grouped[month].filter(e => e.type === "expense");
+
+    const expensesData = months.map((month) => {
+      const monthExpenses = grouped[month].filter((e) => e.type === "expense");
       return monthExpenses.reduce((sum, e) => sum + e.amount, 0);
     });
-    
-    const savingsData = months.map(month => {
-      const monthSavings = grouped[month].filter(e => e.type === "saving");
+
+    const savingsData = months.map((month) => {
+      const monthSavings = grouped[month].filter((e) => e.type === "saving");
       return monthSavings.reduce((sum, e) => sum + e.amount, 0);
     });
-    
+
     return {
-      labels: months.map(m => {
+      labels: months.map((m) => {
         const [year, month] = m.split("-");
-        return format(new Date(parseInt(year), parseInt(month) - 1), "MMM", { locale: ptBR });
+        return format(new Date(parseInt(year), parseInt(month) - 1), "MMM", {
+          locale: ptBR,
+        });
       }),
       datasets: [
         {
@@ -263,13 +272,16 @@ export const ReportsScreen = () => {
 
   return (
     <SafeAreaView style={styles.safeArea}>
+      <DrawerHeader title="Relatórios" />
       <ScrollView style={styles.container}>
         {/* Seletor de Período */}
         <View style={styles.periodSelector}>
           <Text style={styles.periodTitle}>Período</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             <View style={styles.periodButtons}>
-              {(["month", "3months", "6months", "year", "all"] as PeriodType[]).map((period) => (
+              {(
+                ["month", "3months", "6months", "year", "all"] as PeriodType[]
+              ).map((period) => (
                 <TouchableOpacity
                   key={period}
                   style={[
@@ -282,7 +294,8 @@ export const ReportsScreen = () => {
                   <Text
                     style={[
                       styles.periodButtonText,
-                      selectedPeriod === period && styles.periodButtonTextActive,
+                      selectedPeriod === period &&
+                        styles.periodButtonTextActive,
                     ]}
                   >
                     {period === "month"
@@ -412,7 +425,9 @@ export const ReportsScreen = () => {
               size={24}
               color={balance >= 0 ? colors.success : colors.error}
             />
-            <Text style={styles.summaryTitle}>Balanço - {getPeriodLabel()}</Text>
+            <Text style={styles.summaryTitle}>
+              Balanço - {getPeriodLabel()}
+            </Text>
           </View>
           <View style={styles.balanceContent}>
             <Text style={styles.balanceLabel}>
@@ -454,7 +469,11 @@ export const ReportsScreen = () => {
         {monthlyData.datasets[0].data.length > 1 && (
           <View style={styles.chartContainer}>
             <View style={styles.chartHeader}>
-              <Ionicons name="analytics" size={20} color={colors.primary[500]} />
+              <Ionicons
+                name="analytics"
+                size={20}
+                color={colors.primary[500]}
+              />
               <Text style={styles.chartTitle}>Evolução Mensal</Text>
             </View>
             <LineChart

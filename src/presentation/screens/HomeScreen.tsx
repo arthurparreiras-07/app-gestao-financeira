@@ -13,6 +13,7 @@ import { useAppStore } from "../../application/store/useAppStore";
 import { InsightCard } from "../components/InsightCard";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { DrawerHeader } from "../components/DrawerHeader";
 import { useTheme } from "../../theme/ThemeContext";
 import {
   getColors,
@@ -76,6 +77,7 @@ export const HomeScreen = ({ navigation }: any) => {
     <SafeAreaView
       style={[styles.safeArea, { backgroundColor: colors.backgroundSecondary }]}
     >
+      <DrawerHeader title="MindBudget" />
       <ScrollView
         style={[
           styles.container,
@@ -84,16 +86,11 @@ export const HomeScreen = ({ navigation }: any) => {
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       >
-        <View style={styles.header}>
-          <View style={styles.headerTop}>
-            <View>
-              <Text style={styles.title}>MindBudget</Text>
-              <Text style={styles.subtitle}>
-                {format(new Date(), "EEEE, d 'de' MMMM", { locale: ptBR })}
-              </Text>
-            </View>
-            <Ionicons name="wallet" size={32} color={colors.text.inverse} />
-          </View>
+        <View style={styles.dateHeader}>
+          <Ionicons name="calendar" size={20} color={colors.text.secondary} />
+          <Text style={styles.dateText}>
+            {format(new Date(), "EEEE, d 'de' MMMM", { locale: ptBR })}
+          </Text>
         </View>
 
         {/* Saldo em Conta */}
@@ -368,6 +365,20 @@ const createStyles = (colors: ReturnType<typeof getColors>) =>
       justifyContent: "center",
       alignItems: "center",
       backgroundColor: colors.background,
+    },
+    dateHeader: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: spacing.sm,
+      paddingHorizontal: spacing.lg,
+      paddingVertical: spacing.md,
+      backgroundColor: colors.background,
+      marginBottom: spacing.md,
+    },
+    dateText: {
+      fontSize: fontSize.sm,
+      color: colors.text.secondary,
+      textTransform: "capitalize",
     },
     header: {
       backgroundColor: colors.primary[500],

@@ -28,6 +28,7 @@ import {
 } from "../../theme/theme";
 import { Expense } from "../../domain/entities/Expense";
 import { PieChart } from "react-native-chart-kit";
+import { DrawerHeader } from "../components/DrawerHeader";
 
 type FilterType = "all" | "expense" | "saving";
 type TabType = "list" | "reports";
@@ -671,6 +672,13 @@ export const TransactionsScreen = ({ navigation }: any) => {
     <SafeAreaView
       style={[styles.safeArea, { backgroundColor: colors.backgroundSecondary }]}
     >
+      <DrawerHeader
+        title="Transações"
+        rightButton={{
+          icon: "filter",
+          onPress: () => setShowFilters(true),
+        }}
+      />
       {/* Tabs */}
       <View style={styles.tabsContainer}>
         <TouchableOpacity
@@ -1030,7 +1038,12 @@ export const TransactionsScreen = ({ navigation }: any) => {
                         <Ionicons
                           name={emotion.icon as any}
                           size={16}
-                          color={selectedEmotions.includes(emotion.id) ? emotionColors[emotion.name] || colors.primary[500] : colors.text.secondary}
+                          color={
+                            selectedEmotions.includes(emotion.id)
+                              ? emotionColors[emotion.name] ||
+                                colors.primary[500]
+                              : colors.text.secondary
+                          }
                         />
                         <Text
                           style={[
@@ -1159,7 +1172,11 @@ export const TransactionsScreen = ({ navigation }: any) => {
                         <Ionicons
                           name="calendar"
                           size={16}
-                          color={sortBy === "date" ? colors.text.inverse : colors.text.secondary}
+                          color={
+                            sortBy === "date"
+                              ? colors.text.inverse
+                              : colors.text.secondary
+                          }
                         />
                         <Text
                           style={[
@@ -1180,7 +1197,11 @@ export const TransactionsScreen = ({ navigation }: any) => {
                         <Ionicons
                           name="cash"
                           size={16}
-                          color={sortBy === "amount" ? colors.text.inverse : colors.text.secondary}
+                          color={
+                            sortBy === "amount"
+                              ? colors.text.inverse
+                              : colors.text.secondary
+                          }
                         />
                         <Text
                           style={[
@@ -1206,7 +1227,11 @@ export const TransactionsScreen = ({ navigation }: any) => {
                         <Ionicons
                           name="arrow-down"
                           size={16}
-                          color={sortOrder === "desc" ? colors.text.inverse : colors.text.secondary}
+                          color={
+                            sortOrder === "desc"
+                              ? colors.text.inverse
+                              : colors.text.secondary
+                          }
                         />
                         <Text
                           style={[
@@ -1227,7 +1252,11 @@ export const TransactionsScreen = ({ navigation }: any) => {
                         <Ionicons
                           name="arrow-up"
                           size={16}
-                          color={sortOrder === "asc" ? colors.text.inverse : colors.text.secondary}
+                          color={
+                            sortOrder === "asc"
+                              ? colors.text.inverse
+                              : colors.text.secondary
+                          }
                         />
                         <Text
                           style={[
