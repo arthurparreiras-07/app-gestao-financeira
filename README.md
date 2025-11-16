@@ -15,22 +15,26 @@ O aplicativo permite que usuários registrem suas despesas associando-as a emoç
 O relatório final do projeto segue o template acadêmico fornecido e contém:
 
 1. **Descrição do Problema**
+
    - Contextualização da gestão financeira pessoal
    - Justificativa da análise emocional de gastos
    - Objetivos do aplicativo
 
 2. **Especificação do Projeto**
+
    - Requisitos funcionais e não-funcionais
    - Casos de uso
    - Regras de negócio
 
 3. **Projeto da Solução**
+
    - Protótipos de interface
    - Modelo de persistência de dados
    - Arquitetura Clean Architecture
    - Stack tecnológica utilizada
 
 4. **Utilização do Software**
+
    - Guia de instalação e configuração
    - Manual de uso das funcionalidades
    - Capturas de tela
@@ -49,6 +53,7 @@ O relatório final do projeto segue o template acadêmico fornecido e contém:
 ## 🚀 Funcionalidades Implementadas
 
 ### Gestão de Despesas
+
 - ✅ Cadastro de despesas com categoria e valor
 - ✅ Associação de emoções às despesas
 - ✅ Anexo de comprovantes (fotos)
@@ -56,6 +61,7 @@ O relatório final do projeto segue o template acadêmico fornecido e contém:
 - ✅ Filtros por categoria, período e emoção
 
 ### Análise e Insights
+
 - ✅ Geração automática de insights baseados em padrões emocionais
 - ✅ Gráficos de gastos por categoria
 - ✅ Gráficos de gastos por emoção
@@ -63,12 +69,14 @@ O relatório final do projeto segue o template acadêmico fornecido e contém:
 - ✅ Sugestões personalizadas de economia
 
 ### Relatórios
+
 - ✅ Exportação de dados em CSV
 - ✅ Exportação de dados em JSON
 - ✅ Compartilhamento de relatórios
 - ✅ Visualização de estatísticas detalhadas
 
 ### Notificações
+
 - ✅ Lembretes para registro de despesas
 - ✅ Alertas de gastos elevados
 - ✅ Sugestões de reflexão emocional
@@ -112,34 +120,41 @@ src/
 ## 🛠️ Tecnologias Utilizadas
 
 ### Core
+
 - **React Native 0.81.5** - Framework mobile
 - **Expo ~54.0.0** - Plataforma de desenvolvimento
 - **TypeScript 5.3.3** - Linguagem tipada
 
 ### Navegação
+
 - **React Navigation 6.x** - Navegação entre telas
   - Bottom Tabs Navigator
   - Native Stack Navigator
 
 ### Persistência
+
 - **Expo SQLite** - Banco de dados local
 - **AsyncStorage** - Armazenamento simples
 
 ### Estado
+
 - **Zustand 4.5.7** - Gerenciamento de estado global
 
 ### UI/UX
+
 - **React Native Chart Kit** - Gráficos e visualizações
 - **React Native SVG** - Gráficos vetoriais
 - **DateTimePicker** - Seleção de datas
 
 ### Funcionalidades Nativas
+
 - **Expo Notifications** - Sistema de notificações
 - **Expo Image Picker** - Câmera e galeria
 - **Expo File System** - Sistema de arquivos
 - **Expo Sharing** - Compartilhamento de arquivos
 
 ### Utilitários
+
 - **date-fns** - Manipulação de datas
 
 ---
@@ -149,6 +164,7 @@ src/
 ### Entidades Principais
 
 #### Expense (Despesa)
+
 ```typescript
 {
   id: string
@@ -163,33 +179,36 @@ src/
 ```
 
 #### Category (Categoria)
+
 ```typescript
 {
-  id: string
-  name: string
-  icon: string
-  color: string
+  id: string;
+  name: string;
+  icon: string;
+  color: string;
 }
 ```
 
 #### Emotion (Emoção)
+
 ```typescript
 {
-  id: string
-  name: string
-  icon: string
-  color: string
+  id: string;
+  name: string;
+  icon: string;
+  color: string;
 }
 ```
 
 #### User (Usuário)
+
 ```typescript
 {
-  id: string
-  name: string
-  email: string
-  monthlyBudget: number
-  createdAt: string
+  id: string;
+  name: string;
+  email: string;
+  monthlyBudget: number;
+  createdAt: string;
 }
 ```
 
@@ -198,6 +217,7 @@ src/
 ## 🚀 Instalação e Execução
 
 ### Pré-requisitos
+
 - Node.js 18+ instalado
 - npm ou yarn
 - Expo CLI (instalado globalmente)
@@ -237,12 +257,14 @@ npm run web
 ## 📱 Utilização do Software
 
 ### 1. Tela Inicial (Home)
+
 - Visualização do saldo atual
 - Resumo de gastos do mês
 - Insights emocionais destacados
 - Acesso rápido às principais funcionalidades
 
 ### 2. Adicionar Despesa
+
 - Preencha descrição e valor
 - Selecione categoria (Alimentação, Transporte, Lazer, etc.)
 - Escolha emoção associada (Feliz, Estressado, Ansioso, etc.)
@@ -250,17 +272,20 @@ npm run web
 - Adicione observações
 
 ### 3. Relatórios
+
 - Visualize gráficos de gastos por categoria
 - Analise gastos por emoção
 - Compare períodos diferentes
 - Identifique padrões de comportamento
 
 ### 4. Insights
+
 - Receba análises automáticas sobre seus gastos
 - Veja correlações entre emoções e despesas
 - Obtenha sugestões personalizadas de economia
 
 ### 5. Exportar Dados
+
 - Exporte seus dados em formato CSV ou JSON
 - Compartilhe relatórios via e-mail ou mensagens
 - Mantenha backup das suas informações
@@ -301,6 +326,7 @@ Este README serve como documentação técnica do projeto. O **relatório final 
 ### Estrutura do Código
 
 O código foi desenvolvido seguindo:
+
 - ✅ Princípios SOLID
 - ✅ Clean Architecture
 - ✅ Clean Code

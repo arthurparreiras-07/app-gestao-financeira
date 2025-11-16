@@ -14,6 +14,7 @@ import { TagRepository } from "../../infrastructure/repositories/TagRepository";
 import { Insight, InsightsService } from "../services/InsightsService";
 import { RecurringExpenseService } from "../services/RecurringExpenseService";
 import { ExportService } from "../services/ExportService";
+import { ImportService } from "../services/ImportService";
 
 interface AppState {
   expenses: Expense[];
@@ -35,6 +36,7 @@ interface AppState {
   insightsService: InsightsService;
   recurringExpenseService: RecurringExpenseService;
   exportService: ExportService;
+  importService: ImportService;
 
   // Expense Actions
   loadData: () => Promise<void>;
@@ -109,6 +111,10 @@ interface AppState {
   exportToJSON: () => Promise<void>;
   exportReport: () => Promise<void>;
 
+  // Import Actions
+  importFromJSON: () => Promise<{ success: boolean; message: string }>;
+  importFromCSV: () => Promise<{ success: boolean; message: string }>;
+
   // Utility Actions
   refreshInsights: () => void;
   clearAllData: () => Promise<void>;
@@ -136,6 +142,7 @@ export const useAppStore = create<AppState>((set, get) => ({
     new ExpenseRepository()
   ),
   exportService: new ExportService(),
+  importService: new ImportService(),
 
   loadData: async () => {
     set({ loading: true });
@@ -323,6 +330,88 @@ export const useAppStore = create<AppState>((set, get) => ({
       start: startOfMonth,
       end: endOfMonth,
     });
+  },
+
+  // Import Actions
+  importFromJSON: async () => {
+    const {
+      importService,
+      expenseRepository,
+      categoryRepository,
+      emotionRepository,
+    } = get();
+
+    try {
+      const result = await importService.importFromJSON();
+
+      if (!result.success) {
+        return { success: false, message: result.message };
+      }
+
+      // Salvar despesas importadas
+      if (result.data?.expenses) {
+        for (const expense of result.data.expenses) {
+          await expenseRepository.create(expense);
+        }
+      }
+
+      // Salvar categorias se fornecidas
+      if (result.data?.categories) {
+        for (const category of result.data.categories) {
+          const existing = await categoryRepository.findAll();
+          const alreadyExists = existing.some((c) => c.name === category.name);
+          if (!alreadyExists) {
+            await categoryRepository.create(category);
+          }
+        }
+      }
+
+      // Salvar emoções se fornecidas
+      if (result.data?.emotions) {
+        for (const emotion of result.data.emotions) {
+          const existing = await emotionRepository.findAll();
+          const alreadyExists = existing.some((e) => e.name === emotion.name);
+          if (!alreadyExists) {
+            await emotionRepository.create(emotion);
+          }
+        }
+      }
+
+      await get().loadData();
+      return { success: true, message: result.message };
+    } catch (error) {
+      return {
+        success: false,
+        message: error instanceof Error ? error.message : "Erro ao importar",
+      };
+    }
+  },
+
+  importFromCSV: async () => {
+    const { importService, expenseRepository } = get();
+
+    try {
+      const result = await importService.importFromCSV();
+
+      if (!result.success) {
+        return { success: false, message: result.message };
+      }
+
+      // Salvar despesas importadas
+      if (result.data?.expenses) {
+        for (const expense of result.data.expenses) {
+          await expenseRepository.create(expense);
+        }
+      }
+
+      await get().loadData();
+      return { success: true, message: result.message };
+    } catch (error) {
+      return {
+        success: false,
+        message: error instanceof Error ? error.message : "Erro ao importar",
+      };
+    }
   },
 
   refreshInsights: () => {

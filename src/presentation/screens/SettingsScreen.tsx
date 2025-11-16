@@ -9,7 +9,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Ionicons } from "@expo/vector-icons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { useAppStore } from "../../application/store/useAppStore";
 import { useTheme } from "../../theme/ThemeContext";
 import {
@@ -24,14 +24,21 @@ import {
 export const SettingsScreen: React.FC<{ navigation?: any }> = ({
   navigation,
 }) => {
-  const { clearAllData, exportToCSV, exportToJSON, exportReport } =
-    useAppStore();
+  const {
+    clearAllData,
+    exportToCSV,
+    exportToJSON,
+    exportReport,
+    importFromJSON,
+    importFromCSV,
+  } = useAppStore();
   const { isDark, toggleTheme } = useTheme();
   const colors = getColors(isDark);
   const [notifications, setNotifications] = useState(false);
   const [exportingCSV, setExportingCSV] = useState(false);
   const [exportingJSON, setExportingJSON] = useState(false);
   const [exportingReport, setExportingReport] = useState(false);
+  const [importing, setImporting] = useState(false);
 
   const handleClearData = () => {
     Alert.alert(
@@ -89,6 +96,62 @@ export const SettingsScreen: React.FC<{ navigation?: any }> = ({
     } finally {
       setExportingReport(false);
     }
+  };
+
+  const handleImportJSON = async () => {
+    Alert.alert(
+      "Importar Backup",
+      "Selecione um arquivo JSON de backup. Os dados serão adicionados aos existentes.",
+      [
+        { text: "Cancelar", style: "cancel" },
+        {
+          text: "Selecionar Arquivo",
+          onPress: async () => {
+            setImporting(true);
+            try {
+              const result = await importFromJSON();
+              if (result.success) {
+                Alert.alert("Sucesso ✅", result.message);
+              } else {
+                Alert.alert("Erro ❌", result.message);
+              }
+            } catch (error) {
+              Alert.alert("Erro", "Não foi possível importar o arquivo.");
+            } finally {
+              setImporting(false);
+            }
+          },
+        },
+      ]
+    );
+  };
+
+  const handleImportCSV = async () => {
+    Alert.alert(
+      "Importar CSV",
+      "Selecione um arquivo CSV exportado anteriormente. As transações serão importadas.",
+      [
+        { text: "Cancelar", style: "cancel" },
+        {
+          text: "Selecionar Arquivo",
+          onPress: async () => {
+            setImporting(true);
+            try {
+              const result = await importFromCSV();
+              if (result.success) {
+                Alert.alert("Sucesso ✅", result.message);
+              } else {
+                Alert.alert("Erro ❌", result.message);
+              }
+            } catch (error) {
+              Alert.alert("Erro", "Não foi possível importar o arquivo.");
+            } finally {
+              setImporting(false);
+            }
+          },
+        },
+      ]
+    );
   };
 
   const handleToggleDarkMode = () => {
@@ -381,6 +444,81 @@ export const SettingsScreen: React.FC<{ navigation?: any }> = ({
               </Text>
             </View>
             {exportingReport ? (
+              <ActivityIndicator size="small" color={colors.primary[500]} />
+            ) : (
+              <Ionicons
+                name="chevron-forward"
+                size={20}
+                color={colors.gray[400]}
+              />
+            )}
+          </TouchableOpacity>
+        </View>
+
+        {/* Importar Dados */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Importar Dados</Text>
+
+          <TouchableOpacity
+            style={styles.settingItem}
+            onPress={handleImportJSON}
+            disabled={importing}
+            activeOpacity={0.7}
+          >
+            <View
+              style={[
+                styles.settingIconContainer,
+                { backgroundColor: `${colors.primary[500]}15` },
+              ]}
+            >
+              <Ionicons
+                name="cloud-upload-outline"
+                size={20}
+                color={colors.primary[500]}
+              />
+            </View>
+            <View style={styles.settingContent}>
+              <Text style={styles.settingLabel}>Restaurar Backup (JSON)</Text>
+              <Text style={styles.settingDescription}>
+                Importar dados de backup
+              </Text>
+            </View>
+            {importing ? (
+              <ActivityIndicator size="small" color={colors.primary[500]} />
+            ) : (
+              <Ionicons
+                name="chevron-forward"
+                size={20}
+                color={colors.gray[400]}
+              />
+            )}
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.settingItem}
+            onPress={handleImportCSV}
+            disabled={importing}
+            activeOpacity={0.7}
+          >
+            <View
+              style={[
+                styles.settingIconContainer,
+                { backgroundColor: `${colors.success}15` },
+              ]}
+            >
+              <Ionicons
+                name="document-attach-outline"
+                size={20}
+                color={colors.success}
+              />
+            </View>
+            <View style={styles.settingContent}>
+              <Text style={styles.settingLabel}>Importar CSV</Text>
+              <Text style={styles.settingDescription}>
+                Importar de planilha
+              </Text>
+            </View>
+            {importing ? (
               <ActivityIndicator size="small" color={colors.primary[500]} />
             ) : (
               <Ionicons

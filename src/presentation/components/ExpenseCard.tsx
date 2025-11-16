@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Expense } from "../../domain/entities/Expense";

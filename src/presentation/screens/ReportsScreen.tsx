@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, ScrollView, Dimensions } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Ionicons } from "@expo/vector-icons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { useAppStore } from "../../application/store/useAppStore";
 import { PieChart } from "react-native-chart-kit";
 import { useTheme } from "../../theme/ThemeContext";
