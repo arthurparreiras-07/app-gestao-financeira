@@ -51,8 +51,13 @@ export const TransactionsScreen = ({ navigation }: any) => {
   const [showFilters, setShowFilters] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
   const [selectedEmotions, setSelectedEmotions] = useState<number[]>([]);
+  const [selectedTags, setSelectedTags] = useState<number[]>([]);
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
+  const [minAmount, setMinAmount] = useState<string>("");
+  const [maxAmount, setMaxAmount] = useState<string>("");
+  const [sortBy, setSortBy] = useState<"date" | "amount">("date");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const [showStartDatePicker, setShowStartDatePicker] = useState(false);
   const [showEndDatePicker, setShowEndDatePicker] = useState(false);
 
@@ -140,6 +145,17 @@ export const TransactionsScreen = ({ navigation }: any) => {
         return false;
       }
 
+      // Filtro por tags
+      if (selectedTags.length > 0) {
+        const expenseTags = tags
+          .filter((t) => (e as any).tagIds?.includes(t.id))
+          .map((t) => t.id);
+        const hasSelectedTag = selectedTags.some((tagId) =>
+          expenseTags.includes(tagId)
+        );
+        if (!hasSelectedTag) return false;
+      }
+
       // Filtro por data mínima
       if (startDate && e.date < startDate) {
         return false;
@@ -154,9 +170,34 @@ export const TransactionsScreen = ({ navigation }: any) => {
         }
       }
 
+      // Filtro por valor mínimo
+      if (minAmount) {
+        const min = parseFloat(minAmount.replace(",", "."));
+        if (!isNaN(min) && e.amount < min) {
+          return false;
+        }
+      }
+
+      // Filtro por valor máximo
+      if (maxAmount) {
+        const max = parseFloat(maxAmount.replace(",", "."));
+        if (!isNaN(max) && e.amount > max) {
+          return false;
+        }
+      }
+
       return true;
     })
-    .sort((a, b) => b.date.getTime() - a.date.getTime());
+    .sort((a, b) => {
+      // Ordenação
+      let comparison = 0;
+      if (sortBy === "date") {
+        comparison = a.date.getTime() - b.date.getTime();
+      } else if (sortBy === "amount") {
+        comparison = a.amount - b.amount;
+      }
+      return sortOrder === "asc" ? comparison : -comparison;
+    });
 
   // Separar gastos e economias
   const allExpenses = filteredExpenses.filter((e) => e.type === "expense");
@@ -276,18 +317,36 @@ export const TransactionsScreen = ({ navigation }: any) => {
     );
   };
 
+  const toggleTag = (tagId: number) => {
+    setSelectedTags((prev) =>
+      prev.includes(tagId)
+        ? prev.filter((id) => id !== tagId)
+        : [...prev, tagId]
+    );
+  };
+
   const clearFilters = () => {
     setSelectedCategories([]);
     setSelectedEmotions([]);
+    setSelectedTags([]);
     setStartDate(null);
     setEndDate(null);
+    setMinAmount("");
+    setMaxAmount("");
+    setSortBy("date");
+    setSortOrder("desc");
   };
 
   const hasActiveFilters =
     selectedCategories.length > 0 ||
     selectedEmotions.length > 0 ||
+    selectedTags.length > 0 ||
     startDate !== null ||
-    endDate !== null;
+    endDate !== null ||
+    minAmount !== "" ||
+    maxAmount !== "" ||
+    sortBy !== "date" ||
+    sortOrder !== "desc";
 
   const styles = createStyles(colors);
 
@@ -611,7 +670,6 @@ export const TransactionsScreen = ({ navigation }: any) => {
   return (
     <SafeAreaView
       style={[styles.safeArea, { backgroundColor: colors.backgroundSecondary }]}
-      edges={["bottom"]}
     >
       {/* Tabs */}
       <View style={styles.tabsContainer}>
@@ -969,7 +1027,11 @@ export const TransactionsScreen = ({ navigation }: any) => {
                         ]}
                         onPress={() => toggleEmotion(emotion.id!)}
                       >
-                        <Text style={styles.emotionIcon}>{emotion.icon}</Text>
+                        <Ionicons
+                          name={emotion.icon as any}
+                          size={16}
+                          color={selectedEmotions.includes(emotion.id) ? emotionColors[emotion.name] || colors.primary[500] : colors.text.secondary}
+                        />
                         <Text
                           style={[
                             styles.filterChipText,
@@ -991,6 +1053,193 @@ export const TransactionsScreen = ({ navigation }: any) => {
                       </TouchableOpacity>
                     );
                   })}
+                </View>
+              </View>
+
+              {/* Filtro de Tags */}
+              {tags.length > 0 && (
+                <View style={styles.filterSection}>
+                  <Text style={styles.filterSectionTitle}>Tags</Text>
+                  <View style={styles.filterChipsContainer}>
+                    {tags.map((tag) => {
+                      if (!tag.id) return null;
+                      return (
+                        <TouchableOpacity
+                          key={tag.id}
+                          style={[
+                            styles.filterChip,
+                            selectedTags.includes(tag.id) &&
+                              styles.filterChipActive,
+                            {
+                              borderColor: selectedTags.includes(tag.id)
+                                ? tag.color
+                                : colors.border,
+                            },
+                          ]}
+                          onPress={() => toggleTag(tag.id!)}
+                        >
+                          <View
+                            style={[
+                              styles.tagDot,
+                              { backgroundColor: tag.color },
+                            ]}
+                          />
+                          <Text
+                            style={[
+                              styles.filterChipText,
+                              selectedTags.includes(tag.id) &&
+                                styles.filterChipTextActive,
+                            ]}
+                          >
+                            {tag.name}
+                          </Text>
+                          {selectedTags.includes(tag.id) && (
+                            <Ionicons
+                              name="checkmark-circle"
+                              size={16}
+                              color={tag.color}
+                            />
+                          )}
+                        </TouchableOpacity>
+                      );
+                    })}
+                  </View>
+                </View>
+              )}
+
+              {/* Filtro de Valor */}
+              <View style={styles.filterSection}>
+                <Text style={styles.filterSectionTitle}>Faixa de Valor</Text>
+                <View style={styles.amountFilterRow}>
+                  <View style={styles.amountFilterItem}>
+                    <Text style={styles.amountFilterLabel}>Valor Mínimo</Text>
+                    <View style={styles.amountInputContainer}>
+                      <Text style={styles.currencySymbol}>R$</Text>
+                      <TextInput
+                        style={styles.amountInput}
+                        value={minAmount}
+                        onChangeText={setMinAmount}
+                        placeholder="0,00"
+                        placeholderTextColor={colors.text.tertiary}
+                        keyboardType="numeric"
+                      />
+                    </View>
+                  </View>
+                  <View style={styles.amountFilterItem}>
+                    <Text style={styles.amountFilterLabel}>Valor Máximo</Text>
+                    <View style={styles.amountInputContainer}>
+                      <Text style={styles.currencySymbol}>R$</Text>
+                      <TextInput
+                        style={styles.amountInput}
+                        value={maxAmount}
+                        onChangeText={setMaxAmount}
+                        placeholder="0,00"
+                        placeholderTextColor={colors.text.tertiary}
+                        keyboardType="numeric"
+                      />
+                    </View>
+                  </View>
+                </View>
+              </View>
+
+              {/* Ordenação */}
+              <View style={styles.filterSection}>
+                <Text style={styles.filterSectionTitle}>Ordenação</Text>
+                <View style={styles.sortRow}>
+                  <View style={styles.sortItem}>
+                    <Text style={styles.sortLabel}>Ordenar por:</Text>
+                    <View style={styles.sortButtons}>
+                      <TouchableOpacity
+                        style={[
+                          styles.sortButton,
+                          sortBy === "date" && styles.sortButtonActive,
+                        ]}
+                        onPress={() => setSortBy("date")}
+                      >
+                        <Ionicons
+                          name="calendar"
+                          size={16}
+                          color={sortBy === "date" ? colors.text.inverse : colors.text.secondary}
+                        />
+                        <Text
+                          style={[
+                            styles.sortButtonText,
+                            sortBy === "date" && styles.sortButtonTextActive,
+                          ]}
+                        >
+                          Data
+                        </Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        style={[
+                          styles.sortButton,
+                          sortBy === "amount" && styles.sortButtonActive,
+                        ]}
+                        onPress={() => setSortBy("amount")}
+                      >
+                        <Ionicons
+                          name="cash"
+                          size={16}
+                          color={sortBy === "amount" ? colors.text.inverse : colors.text.secondary}
+                        />
+                        <Text
+                          style={[
+                            styles.sortButtonText,
+                            sortBy === "amount" && styles.sortButtonTextActive,
+                          ]}
+                        >
+                          Valor
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                  <View style={styles.sortItem}>
+                    <Text style={styles.sortLabel}>Ordem:</Text>
+                    <View style={styles.sortButtons}>
+                      <TouchableOpacity
+                        style={[
+                          styles.sortButton,
+                          sortOrder === "desc" && styles.sortButtonActive,
+                        ]}
+                        onPress={() => setSortOrder("desc")}
+                      >
+                        <Ionicons
+                          name="arrow-down"
+                          size={16}
+                          color={sortOrder === "desc" ? colors.text.inverse : colors.text.secondary}
+                        />
+                        <Text
+                          style={[
+                            styles.sortButtonText,
+                            sortOrder === "desc" && styles.sortButtonTextActive,
+                          ]}
+                        >
+                          Decrescente
+                        </Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        style={[
+                          styles.sortButton,
+                          sortOrder === "asc" && styles.sortButtonActive,
+                        ]}
+                        onPress={() => setSortOrder("asc")}
+                      >
+                        <Ionicons
+                          name="arrow-up"
+                          size={16}
+                          color={sortOrder === "asc" ? colors.text.inverse : colors.text.secondary}
+                        />
+                        <Text
+                          style={[
+                            styles.sortButtonText,
+                            sortOrder === "asc" && styles.sortButtonTextActive,
+                          ]}
+                        >
+                          Crescente
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
                 </View>
               </View>
             </ScrollView>
@@ -1499,6 +1748,86 @@ const createStyles = (colors: ReturnType<typeof getColors>) =>
     },
     emotionIcon: {
       fontSize: fontSize.md,
+    },
+    tagDot: {
+      width: 10,
+      height: 10,
+      borderRadius: 5,
+    },
+    amountFilterRow: {
+      flexDirection: "row",
+      gap: spacing.md,
+    },
+    amountFilterItem: {
+      flex: 1,
+    },
+    amountFilterLabel: {
+      fontSize: fontSize.sm,
+      color: colors.text.secondary,
+      marginBottom: spacing.xs,
+      fontWeight: fontWeight.medium,
+    },
+    amountInputContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+      backgroundColor: colors.backgroundSecondary,
+      borderRadius: borderRadius.md,
+      borderWidth: 1,
+      borderColor: colors.border,
+      paddingHorizontal: spacing.md,
+    },
+    currencySymbol: {
+      fontSize: fontSize.md,
+      color: colors.text.secondary,
+      marginRight: spacing.xs,
+    },
+    amountInput: {
+      flex: 1,
+      padding: spacing.sm,
+      fontSize: fontSize.md,
+      color: colors.text.primary,
+    },
+    sortRow: {
+      gap: spacing.md,
+    },
+    sortItem: {
+      marginBottom: spacing.md,
+    },
+    sortLabel: {
+      fontSize: fontSize.sm,
+      color: colors.text.secondary,
+      marginBottom: spacing.sm,
+      fontWeight: fontWeight.medium,
+    },
+    sortButtons: {
+      flexDirection: "row",
+      gap: spacing.sm,
+    },
+    sortButton: {
+      flex: 1,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: spacing.xs,
+      paddingVertical: spacing.sm,
+      paddingHorizontal: spacing.md,
+      borderRadius: borderRadius.md,
+      borderWidth: 1,
+      borderColor: colors.border,
+      backgroundColor: colors.backgroundSecondary,
+    },
+    sortButtonActive: {
+      backgroundColor: colors.primary[500],
+      borderColor: colors.primary[500],
+    },
+    sortButtonText: {
+      fontSize: fontSize.sm,
+      fontWeight: fontWeight.medium,
+      color: colors.text.secondary,
+    },
+    sortButtonTextActive: {
+      color: colors.text.inverse,
+      fontWeight: fontWeight.semibold,
     },
     modalFooter: {
       flexDirection: "row",

@@ -155,7 +155,6 @@ export const EditExpenseScreen: React.FC<any> = ({ navigation, route }) => {
   return (
     <SafeAreaView
       style={[styles.safeArea, { backgroundColor: colors.background }]}
-      edges={["bottom"]}
     >
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}

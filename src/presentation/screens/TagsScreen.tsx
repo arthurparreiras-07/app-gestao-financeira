@@ -148,7 +148,7 @@ export const TagsScreen = ({ navigation }: any) => {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={["bottom"]}>
+    <SafeAreaView style={styles.safeArea}>
       <View style={styles.header}>
         <TouchableOpacity
           onPress={() => navigation.goBack()}

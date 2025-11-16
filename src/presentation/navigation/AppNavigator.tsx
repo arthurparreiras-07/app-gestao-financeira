@@ -3,8 +3,8 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { Platform } from "react-native";
-import { SafeAreaProvider } from "react-native-safe-area-context";
+import { Platform, StatusBar } from "react-native";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { HomeScreen } from "../screens/HomeScreen";
 import { AddExpenseScreen } from "../screens/AddExpenseScreen";
 import { EditExpenseScreen } from "../screens/EditExpenseScreen";
@@ -35,14 +35,18 @@ function HomeTabs() {
           backgroundColor: colors.background,
           borderTopColor: colors.border,
           borderTopWidth: 1,
-          paddingBottom: Platform.OS === "ios" ? 20 : 8,
+          height: Platform.OS === "ios" ? 88 : 68,
+          paddingBottom: Platform.OS === "ios" ? 34 : 12,
           paddingTop: 8,
-          height: Platform.OS === "ios" ? 85 : 65,
+          elevation: 8,
+          shadowColor: "#000",
+          shadowOffset: { width: 0, height: -2 },
+          shadowOpacity: 0.1,
+          shadowRadius: 3,
         },
         tabBarLabelStyle: {
           fontSize: 12,
           fontWeight: "500",
-          marginBottom: Platform.OS === "ios" ? 0 : 4,
         },
       }}
     >
@@ -86,6 +90,11 @@ export function AppNavigator() {
 
   return (
     <SafeAreaProvider>
+      <StatusBar
+        barStyle={isDark ? "light-content" : "dark-content"}
+        backgroundColor={colors.background}
+        translucent={false}
+      />
       <NavigationContainer>
         <Stack.Navigator>
           <Stack.Screen

@@ -160,7 +160,6 @@ export const AddExpenseScreen = ({ navigation }: any) => {
   return (
     <SafeAreaView
       style={[styles.safeArea, { backgroundColor: colors.backgroundSecondary }]}
-      edges={["bottom"]}
     >
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}

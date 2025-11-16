@@ -171,7 +171,6 @@ export const SettingsScreen: React.FC<{ navigation?: any }> = ({
   return (
     <SafeAreaView
       style={[styles.safeArea, { backgroundColor: colors.background }]}
-      edges={["bottom"]}
     >
       <ScrollView
         style={[styles.container, { backgroundColor: colors.background }]}

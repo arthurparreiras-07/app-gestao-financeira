@@ -66,7 +66,6 @@ export const HomeScreen = ({ navigation }: any) => {
           styles.loadingContainer,
           { backgroundColor: colors.background },
         ]}
-        edges={["top", "bottom"]}
       >
         <ActivityIndicator size="large" color={colors.primary[500]} />
       </SafeAreaView>
@@ -76,7 +75,6 @@ export const HomeScreen = ({ navigation }: any) => {
   return (
     <SafeAreaView
       style={[styles.safeArea, { backgroundColor: colors.backgroundSecondary }]}
-      edges={["bottom"]}
     >
       <ScrollView
         style={[
