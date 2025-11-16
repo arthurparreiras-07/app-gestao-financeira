@@ -30,10 +30,7 @@ import {
 } from "../../theme/theme";
 import { Expense, TransactionType } from "../../domain/entities/Expense";
 
-export const EditExpenseScreen: React.FC<any> = ({
-  navigation,
-  route,
-}) => {
+export const EditExpenseScreen: React.FC<any> = ({ navigation, route }) => {
   const { expenseId } = route.params;
   const { expenses, categories, emotions, updateExpense } = useAppStore();
   const { isDark } = useTheme();
@@ -143,14 +140,10 @@ export const EditExpenseScreen: React.FC<any> = ({
   };
 
   const handleCancel = () => {
-    Alert.alert(
-      "Cancelar edição",
-      "Deseja descartar as alterações?",
-      [
-        { text: "Não", style: "cancel" },
-        { text: "Sim", onPress: () => navigation.goBack() },
-      ]
-    );
+    Alert.alert("Cancelar edição", "Deseja descartar as alterações?", [
+      { text: "Não", style: "cancel" },
+      { text: "Sim", onPress: () => navigation.goBack() },
+    ]);
   };
 
   const styles = createStyles(colors);
@@ -179,7 +172,11 @@ export const EditExpenseScreen: React.FC<any> = ({
               style={styles.backButton}
               activeOpacity={0.7}
             >
-              <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
+              <Ionicons
+                name="arrow-back"
+                size={24}
+                color={colors.text.primary}
+              />
             </TouchableOpacity>
             <Text style={styles.title}>Editar Transação</Text>
             <View style={{ width: 24 }} />
@@ -211,7 +208,9 @@ export const EditExpenseScreen: React.FC<any> = ({
                   name="trending-down"
                   size={24}
                   color={
-                    transactionType === "expense" ? colors.error : colors.text.primary
+                    transactionType === "expense"
+                      ? colors.error
+                      : colors.text.primary
                   }
                 />
                 <Text
@@ -246,7 +245,9 @@ export const EditExpenseScreen: React.FC<any> = ({
                   name="trending-up"
                   size={24}
                   color={
-                    transactionType === "saving" ? colors.success : colors.text.primary
+                    transactionType === "saving"
+                      ? colors.success
+                      : colors.text.primary
                   }
                 />
                 <Text
@@ -322,7 +323,9 @@ export const EditExpenseScreen: React.FC<any> = ({
 
           {/* Emoção */}
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Como você estava se sentindo?</Text>
+            <Text style={styles.sectionTitle}>
+              Como você estava se sentindo?
+            </Text>
             <EmotionSelector
               emotions={emotions}
               selectedEmotionId={selectedEmotionId ?? undefined}
@@ -634,4 +637,3 @@ const createStyles = (colors: any) =>
       height: "80%",
     },
   });
-

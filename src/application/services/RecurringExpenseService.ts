@@ -28,14 +28,23 @@ export class RecurringExpenseService {
     let created = 0;
 
     for (const recurring of activeRecurring) {
-      const lastDate = await this.getLastCreatedDate(recurring);
-      const nextDate = this.calculateNextDate(
-        lastDate || recurring.startDate,
-        recurring.frequency
-      );
+      let lastDate = await this.getLastCreatedDate(recurring);
 
-      // Se a data calculada já passou e está dentro do período ativo
-      if (isBefore(nextDate, today) || nextDate.getTime() === today.getTime()) {
+      // Se nunca foi criada nenhuma transação, usar a startDate como referência
+      let currentDate = lastDate || recurring.startDate;
+
+      // Criar todas as transações pendentes até hoje
+      while (true) {
+        const nextDate = lastDate
+          ? this.calculateNextDate(currentDate, recurring.frequency)
+          : startOfDay(recurring.startDate); // Primeira transação usa startDate diretamente
+
+        // Parar se a próxima data for no futuro
+        if (isAfter(nextDate, today)) {
+          break;
+        }
+
+        // Verificar se está dentro do período ativo
         if (
           !recurring.endDate ||
           isBefore(nextDate, recurring.endDate) ||
@@ -43,11 +52,18 @@ export class RecurringExpenseService {
         ) {
           await this.createExpenseFromRecurring(recurring, nextDate);
           created++;
+          currentDate = nextDate;
+
+          // Após criar a primeira, atualizar lastDate para continuar o loop
+          if (!lastDate) {
+            lastDate = nextDate;
+          }
         } else {
           // Desativar se passou da data final
           await this.recurringRepository.update(recurring.id!, {
             isActive: false,
           });
+          break;
         }
       }
     }

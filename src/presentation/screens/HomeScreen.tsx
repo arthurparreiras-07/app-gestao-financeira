@@ -39,6 +39,7 @@ export const HomeScreen = ({ navigation }: any) => {
 
   const totalExpenses = allExpenses.reduce((sum, e) => sum + e.amount, 0);
   const totalSavings = allSavings.reduce((sum, e) => sum + e.amount, 0);
+  const balance = totalSavings - totalExpenses;
 
   const thisMonthExpenses = allExpenses.filter(
     (e) => e.date.getMonth() === new Date().getMonth()
@@ -94,6 +95,53 @@ export const HomeScreen = ({ navigation }: any) => {
               </Text>
             </View>
             <Ionicons name="wallet" size={32} color={colors.text.inverse} />
+          </View>
+        </View>
+
+        {/* Saldo em Conta */}
+        <View style={styles.balanceContainer}>
+          <View style={styles.balanceCard}>
+            <View style={styles.balanceHeader}>
+              <View style={styles.balanceIconContainer}>
+                <Ionicons name="wallet" size={28} color={colors.text.inverse} />
+              </View>
+              <View style={styles.balanceInfo}>
+                <Text style={styles.balanceLabel}>Saldo em Conta</Text>
+                <Text style={styles.balanceSubtitle}>Economias - Gastos</Text>
+              </View>
+            </View>
+            <Text
+              style={[
+                styles.balanceValue,
+                {
+                  color: balance >= 0 ? colors.success : colors.error,
+                },
+              ]}
+            >
+              {balance >= 0 ? "+" : "-"}R$ {Math.abs(balance).toFixed(2)}
+            </Text>
+            <View style={styles.balanceDetails}>
+              <View style={styles.balanceDetailItem}>
+                <Ionicons
+                  name="arrow-up-circle"
+                  size={16}
+                  color={colors.success}
+                />
+                <Text style={styles.balanceDetailText}>
+                  R$ {totalSavings.toFixed(2)}
+                </Text>
+              </View>
+              <View style={styles.balanceDetailItem}>
+                <Ionicons
+                  name="arrow-down-circle"
+                  size={16}
+                  color={colors.error}
+                />
+                <Text style={styles.balanceDetailText}>
+                  R$ {totalExpenses.toFixed(2)}
+                </Text>
+              </View>
+            </View>
           </View>
         </View>
 
@@ -344,6 +392,66 @@ const createStyles = (colors: ReturnType<typeof getColors>) =>
       fontSize: fontSize.sm,
       color: colors.text.inverse,
       opacity: 0.9,
+    },
+    balanceContainer: {
+      marginHorizontal: spacing.md,
+      marginBottom: spacing.md,
+    },
+    balanceCard: {
+      backgroundColor: colors.background,
+      padding: spacing.lg,
+      borderRadius: borderRadius.lg,
+      ...shadows.md,
+    },
+    balanceHeader: {
+      flexDirection: "row",
+      alignItems: "center",
+      marginBottom: spacing.md,
+    },
+    balanceIconContainer: {
+      width: 48,
+      height: 48,
+      borderRadius: borderRadius.md,
+      backgroundColor: `${colors.primary[500]}15`,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    balanceInfo: {
+      flex: 1,
+      marginLeft: spacing.md,
+    },
+    balanceLabel: {
+      fontSize: fontSize.md,
+      fontWeight: fontWeight.semibold,
+      color: colors.text.primary,
+      marginBottom: spacing.xs,
+    },
+    balanceSubtitle: {
+      fontSize: fontSize.xs,
+      color: colors.text.secondary,
+    },
+    balanceValue: {
+      fontSize: fontSize.xxxl,
+      fontWeight: fontWeight.bold,
+      textAlign: "center",
+      marginVertical: spacing.md,
+    },
+    balanceDetails: {
+      flexDirection: "row",
+      justifyContent: "space-around",
+      paddingTop: spacing.md,
+      borderTopWidth: 1,
+      borderTopColor: colors.border,
+    },
+    balanceDetailItem: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: spacing.xs,
+    },
+    balanceDetailText: {
+      fontSize: fontSize.sm,
+      color: colors.text.secondary,
+      fontWeight: fontWeight.medium,
     },
     summaryContainer: {
       flexDirection: "row",

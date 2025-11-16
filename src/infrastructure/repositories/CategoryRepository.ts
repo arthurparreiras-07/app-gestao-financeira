@@ -38,4 +38,36 @@ export class CategoryRepository implements ICategoryRepository {
     }
     return null;
   }
+
+  async update(id: number, data: Partial<Category>): Promise<void> {
+    const db = await DatabaseManager.getInstance();
+    const updates: string[] = [];
+    const values: any[] = [];
+
+    if (data.name !== undefined) {
+      updates.push("name = ?");
+      values.push(data.name);
+    }
+    if (data.icon !== undefined) {
+      updates.push("icon = ?");
+      values.push(data.icon);
+    }
+    if (data.color !== undefined) {
+      updates.push("color = ?");
+      values.push(data.color);
+    }
+
+    if (updates.length === 0) return;
+
+    values.push(id);
+    await db.runAsync(
+      `UPDATE categories SET ${updates.join(", ")} WHERE id = ?`,
+      values
+    );
+  }
+
+  async delete(id: number): Promise<void> {
+    const db = await DatabaseManager.getInstance();
+    await db.runAsync(`DELETE FROM categories WHERE id = ?`, [id]);
+  }
 }

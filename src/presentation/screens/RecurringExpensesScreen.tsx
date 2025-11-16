@@ -142,6 +142,10 @@ export const RecurringExpensesScreen = ({ navigation }: any) => {
           endDate: hasEndDate ? endDate : null,
           type: transactionType,
         });
+
+        // Processar imediatamente para criar a primeira transação se a data for hoje ou no passado
+        await processRecurringExpenses();
+
         Alert.alert("Sucesso", "Transação recorrente criada!");
       }
       resetForm();

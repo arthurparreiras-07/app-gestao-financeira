@@ -65,6 +65,24 @@ interface AppState {
   ) => Promise<void>;
   deleteExpense: (id: number) => Promise<void>;
 
+  // Category Actions
+  addCategory: (data: {
+    name: string;
+    icon: string;
+    color: string;
+  }) => Promise<void>;
+  updateCategory: (id: number, data: Partial<Category>) => Promise<void>;
+  deleteCategory: (id: number) => Promise<void>;
+
+  // Emotion Actions
+  addEmotion: (data: {
+    name: string;
+    icon: string;
+    intensity: number;
+  }) => Promise<void>;
+  updateEmotion: (id: number, data: Partial<Emotion>) => Promise<void>;
+  deleteEmotion: (id: number) => Promise<void>;
+
   // Budget Actions
   addBudget: (data: {
     categoryId: number | null;
@@ -191,6 +209,46 @@ export const useAppStore = create<AppState>((set, get) => ({
   deleteExpense: async (id) => {
     const { expenseRepository } = get();
     await expenseRepository.delete(id);
+    await get().loadData();
+  },
+
+  // Category Actions
+  addCategory: async (data) => {
+    const { categoryRepository } = get();
+    const category = new Category(null, data.name, data.icon, data.color);
+    await categoryRepository.create(category);
+    await get().loadData();
+  },
+
+  updateCategory: async (id, data) => {
+    const { categoryRepository } = get();
+    await categoryRepository.update(id, data);
+    await get().loadData();
+  },
+
+  deleteCategory: async (id) => {
+    const { categoryRepository } = get();
+    await categoryRepository.delete(id);
+    await get().loadData();
+  },
+
+  // Emotion Actions
+  addEmotion: async (data) => {
+    const { emotionRepository } = get();
+    const emotion = new Emotion(null, data.name, data.intensity, data.icon);
+    await emotionRepository.create(emotion);
+    await get().loadData();
+  },
+
+  updateEmotion: async (id, data) => {
+    const { emotionRepository } = get();
+    await emotionRepository.update(id, data);
+    await get().loadData();
+  },
+
+  deleteEmotion: async (id) => {
+    const { emotionRepository } = get();
+    await emotionRepository.delete(id);
     await get().loadData();
   },
 

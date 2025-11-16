@@ -13,6 +13,8 @@ import { TransactionsScreen } from "../screens/TransactionsScreen";
 import { BudgetScreen } from "../screens/BudgetScreen";
 import { RecurringExpensesScreen } from "../screens/RecurringExpensesScreen";
 import { TagsScreen } from "../screens/TagsScreen";
+import { ManageCategoriesScreen } from "../screens/ManageCategoriesScreen";
+import { ManageEmotionsScreen } from "../screens/ManageEmotionsScreen";
 import { useTheme } from "../../theme/ThemeContext";
 import { getColors } from "../../theme/theme";
 
@@ -129,6 +131,20 @@ export function AppNavigator() {
           <Stack.Screen
             name="Tags"
             component={TagsScreen}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="ManageCategories"
+            component={ManageCategoriesScreen}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="ManageEmotions"
+            component={ManageEmotionsScreen}
             options={{
               headerShown: false,
             }}

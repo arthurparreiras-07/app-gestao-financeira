@@ -343,6 +343,58 @@ export const SettingsScreen: React.FC<{ navigation?: any }> = ({
               color={colors.gray[400]}
             />
           </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.settingItem}
+            onPress={() => navigation?.navigate("ManageCategories")}
+            activeOpacity={0.7}
+          >
+            <View
+              style={[
+                styles.settingIconContainer,
+                { backgroundColor: `${colors.warning}15` },
+              ]}
+            >
+              <Ionicons name="grid-outline" size={20} color={colors.warning} />
+            </View>
+            <View style={styles.settingContent}>
+              <Text style={styles.settingLabel}>Categorias</Text>
+              <Text style={styles.settingDescription}>
+                Crie e edite categorias
+              </Text>
+            </View>
+            <Ionicons
+              name="chevron-forward"
+              size={20}
+              color={colors.gray[400]}
+            />
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.settingItem}
+            onPress={() => navigation?.navigate("ManageEmotions")}
+            activeOpacity={0.7}
+          >
+            <View
+              style={[
+                styles.settingIconContainer,
+                { backgroundColor: `${colors.error}15` },
+              ]}
+            >
+              <Ionicons name="heart-outline" size={20} color={colors.error} />
+            </View>
+            <View style={styles.settingContent}>
+              <Text style={styles.settingLabel}>Emoções</Text>
+              <Text style={styles.settingDescription}>
+                Personalize suas emoções
+              </Text>
+            </View>
+            <Ionicons
+              name="chevron-forward"
+              size={20}
+              color={colors.gray[400]}
+            />
+          </TouchableOpacity>
         </View>
 
         {/* Dados */}

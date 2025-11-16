@@ -365,10 +365,7 @@ export const TransactionsScreen = ({ navigation }: any) => {
                   onPress={() => setExpandedImage(uri)}
                   activeOpacity={0.8}
                 >
-                  <Image
-                    source={{ uri }}
-                    style={styles.attachmentThumbnail}
-                  />
+                  <Image source={{ uri }} style={styles.attachmentThumbnail} />
                 </TouchableOpacity>
               ))}
             </ScrollView>
@@ -1640,4 +1637,3 @@ const createStyles = (colors: ReturnType<typeof getColors>) =>
       height: "80%",
     },
   });
-
