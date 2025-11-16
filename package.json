@@ -1,15 +1,37 @@
 {
   "name": "mindbudget",
-  "version": "1.0.0",
+  "version": "2.0.0",
+  "description": "Gestão financeira pessoal com análise emocional de gastos",
   "main": "node_modules/expo/AppEntry.js",
+  "author": {
+    "name": "Arthur Parreiras",
+    "email": "arthurparreiras07@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/arthurparreiras-07/app-gestao-financeira.git"
+  },
+  "license": "MIT",
+  "keywords": [
+    "react-native",
+    "expo",
+    "typescript",
+    "finance",
+    "budget",
+    "emotional-analysis",
+    "sqlite"
+  ],
   "scripts": {
     "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
+    "start:clear": "expo start --clear",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
     "web": "expo start --web",
     "build:apk": "eas build -p android --profile preview",
     "build:prod": "eas build -p android --profile production",
-    "build:local": "expo prebuild --platform android && cd android && ./gradlew assembleRelease"
+    "build:local": "expo prebuild --platform android && cd android && ./gradlew assembleRelease",
+    "type-check": "tsc --noEmit",
+    "clean": "rm -rf node_modules && rm -rf .expo && npm install"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^2.2.0",
@@ -34,7 +56,6 @@
   },
   "devDependencies": {
     "@types/react": "~19.1.10",
-    "@types/react-native-vector-icons": "^6.4.18",
     "typescript": "^5.3.3"
   }
 }
