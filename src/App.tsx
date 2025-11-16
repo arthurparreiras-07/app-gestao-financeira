@@ -7,6 +7,9 @@ import { Emotion } from "./domain/entities/Emotion";
 import { Category } from "./domain/entities/Category";
 import { EmotionRepository } from "./infrastructure/repositories/EmotionRepository";
 import { CategoryRepository } from "./infrastructure/repositories/CategoryRepository";
+import { RecurringExpenseRepository } from "./infrastructure/repositories/RecurringExpenseRepository";
+import { ExpenseRepository } from "./infrastructure/repositories/ExpenseRepository";
+import { RecurringExpenseService } from "./application/services/RecurringExpenseService";
 import { ThemeProvider } from "./theme/ThemeContext";
 
 export default function App() {
@@ -45,6 +48,15 @@ export default function App() {
           );
         }
       }
+
+      // Processar despesas recorrentes pendentes
+      const recurringRepo = new RecurringExpenseRepository();
+      const expenseRepo = new ExpenseRepository();
+      const recurringService = new RecurringExpenseService(
+        recurringRepo,
+        expenseRepo
+      );
+      await recurringService.processRecurringExpenses();
 
       setIsReady(true);
     } catch (error) {

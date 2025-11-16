@@ -7,6 +7,7 @@ import { Platform } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { HomeScreen } from "../screens/HomeScreen";
 import { AddExpenseScreen } from "../screens/AddExpenseScreen";
+import { EditExpenseScreen } from "../screens/EditExpenseScreen";
 import { SettingsScreen } from "../screens/SettingsScreen";
 import { TransactionsScreen } from "../screens/TransactionsScreen";
 import { BudgetScreen } from "../screens/BudgetScreen";
@@ -102,6 +103,13 @@ export function AppNavigator() {
               headerTitleStyle: {
                 fontWeight: "600",
               },
+            }}
+          />
+          <Stack.Screen
+            name="EditExpense"
+            component={EditExpenseScreen}
+            options={{
+              headerShown: false,
             }}
           />
           <Stack.Screen

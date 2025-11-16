@@ -62,6 +62,10 @@ export class RecurringExpenseRepository implements IRecurringExpenseRepository {
     const updates: string[] = [];
     const values: any[] = [];
 
+    if (data.frequency !== undefined) {
+      updates.push("frequency = ?");
+      values.push(data.frequency);
+    }
     if (data.amount !== undefined) {
       updates.push("amount = ?");
       values.push(data.amount);
@@ -78,13 +82,21 @@ export class RecurringExpenseRepository implements IRecurringExpenseRepository {
       updates.push("note = ?");
       values.push(data.note);
     }
-    if (data.isActive !== undefined) {
-      updates.push("is_active = ?");
-      values.push(data.isActive ? 1 : 0);
+    if (data.startDate !== undefined) {
+      updates.push("start_date = ?");
+      values.push(data.startDate.toISOString());
     }
     if (data.endDate !== undefined) {
       updates.push("end_date = ?");
       values.push(data.endDate?.toISOString() || null);
+    }
+    if (data.isActive !== undefined) {
+      updates.push("is_active = ?");
+      values.push(data.isActive ? 1 : 0);
+    }
+    if (data.type !== undefined) {
+      updates.push("type = ?");
+      values.push(data.type);
     }
 
     if (updates.length === 0) return;

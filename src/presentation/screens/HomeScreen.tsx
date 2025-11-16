@@ -221,7 +221,16 @@ export const HomeScreen = ({ navigation }: any) => {
                   const isExpense = expense.type === "expense";
 
                   return (
-                    <View key={expense.id} style={styles.expenseItem}>
+                    <TouchableOpacity
+                      key={expense.id}
+                      style={styles.expenseItem}
+                      onPress={() =>
+                        navigation.navigate("EditExpense", {
+                          expenseId: expense.id,
+                        })
+                      }
+                      activeOpacity={0.7}
+                    >
                       <View style={styles.expenseHeader}>
                         <View style={styles.expenseLeft}>
                           <View
@@ -275,7 +284,7 @@ export const HomeScreen = ({ navigation }: any) => {
                           {expense.note}
                         </Text>
                       )}
-                    </View>
+                    </TouchableOpacity>
                   );
                 })}
               </>

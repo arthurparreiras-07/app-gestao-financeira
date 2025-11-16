@@ -32,7 +32,7 @@ import { PieChart } from "react-native-chart-kit";
 type FilterType = "all" | "expense" | "saving";
 type TabType = "list" | "reports";
 
-export const TransactionsScreen = () => {
+export const TransactionsScreen = ({ navigation }: any) => {
   const { expenses, emotions, categories, deleteExpense, tags } = useAppStore();
   const { isDark } = useTheme();
   const colors = getColors(isDark);
@@ -45,6 +45,7 @@ export const TransactionsScreen = () => {
   // Edit/Delete
   const [selectedExpense, setSelectedExpense] = useState<Expense | null>(null);
   const [showActionMenu, setShowActionMenu] = useState(false);
+  const [expandedImage, setExpandedImage] = useState<string | null>(null);
 
   // Filtros avançados
   const [showFilters, setShowFilters] = useState(false);
@@ -359,11 +360,16 @@ export const TransactionsScreen = () => {
             </Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
               {expense.attachments!.slice(0, 3).map((uri, index) => (
-                <Image
+                <TouchableOpacity
                   key={index}
-                  source={{ uri }}
-                  style={styles.attachmentThumbnail}
-                />
+                  onPress={() => setExpandedImage(uri)}
+                  activeOpacity={0.8}
+                >
+                  <Image
+                    source={{ uri }}
+                    style={styles.attachmentThumbnail}
+                  />
+                </TouchableOpacity>
               ))}
             </ScrollView>
           </View>
@@ -1064,11 +1070,11 @@ export const TransactionsScreen = () => {
               style={styles.actionMenuItem}
               onPress={() => {
                 setShowActionMenu(false);
-                // TODO: Navigate to edit screen
-                Alert.alert(
-                  "Em breve",
-                  "Funcionalidade de edição em desenvolvimento"
-                );
+                if (selectedExpense?.id) {
+                  navigation.navigate("EditExpense", {
+                    expenseId: selectedExpense.id,
+                  });
+                }
               }}
               activeOpacity={0.7}
             >
@@ -1081,6 +1087,31 @@ export const TransactionsScreen = () => {
             </TouchableOpacity>
           </View>
         </TouchableOpacity>
+      </Modal>
+
+      {/* Modal de Imagem Expandida */}
+      <Modal
+        visible={expandedImage !== null}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setExpandedImage(null)}
+      >
+        <View style={styles.imageModalOverlay}>
+          <TouchableOpacity
+            style={styles.imageModalClose}
+            onPress={() => setExpandedImage(null)}
+            activeOpacity={0.8}
+          >
+            <Ionicons name="close" size={32} color="#FFFFFF" />
+          </TouchableOpacity>
+          {expandedImage && (
+            <Image
+              source={{ uri: expandedImage }}
+              style={styles.expandedImage}
+              resizeMode="contain"
+            />
+          )}
+        </View>
       </Modal>
     </SafeAreaView>
   );
@@ -1591,4 +1622,22 @@ const createStyles = (colors: ReturnType<typeof getColors>) =>
       fontWeight: fontWeight.medium,
       color: colors.text.primary,
     },
+    imageModalOverlay: {
+      flex: 1,
+      backgroundColor: "rgba(0, 0, 0, 0.95)",
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    imageModalClose: {
+      position: "absolute",
+      top: 50,
+      right: 20,
+      zIndex: 10,
+      padding: spacing.sm,
+    },
+    expandedImage: {
+      width: "90%",
+      height: "80%",
+    },
   });
+
